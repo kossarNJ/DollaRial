@@ -9,7 +9,7 @@
 {% if latest_questions %}
     <ul>
         {% for question in latest_questions %}
-            <li>
+            <li name="question_{{ question.id }}">
                 <a href="/seleniumtest/{{ question.id }}/">{{ question.question_text }}</a>
             </li>
         {% endfor %}
