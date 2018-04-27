@@ -20,6 +20,7 @@ class LoginTest(StaticLiveServerTestCase):
 
     def setUp(self):
         self.__create_users()
+        self.selenium.get('%s%s' % (self.live_server_url, '/account/login/'))
 
     def tearDown(self):
         # TODO: drop database
@@ -36,28 +37,25 @@ class LoginTest(StaticLiveServerTestCase):
         return LoginPage(self.selenium)
 
     def test_successful_login(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/account/login/'))
-        contact_page = self.__get_page()
-        contact_page.email.send_keys('soroush@divar.ir')
-        contact_page.password.send_keys('123')
-        contact_page.button.click()
+        page = self.__get_page()
+        page.email.send_keys('soroush@divar.ir')
+        page.password.send_keys('123')
+        page.button.click()
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Hi Soroush!")
 
     def test_wrong_email_login(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/account/login/'))
-        contact_page = self.__get_page()
-        contact_page.email.send_keys('soroush')
-        contact_page.password.send_keys('123')
-        contact_page.button.click()
+        page = self.__get_page()
+        page.email.send_keys('soroush')
+        page.password.send_keys('123')
+        page.button.click()
         error = self.selenium.find_element_by_css_selector('.has-error')
         self.assertEqual(error.text, "Wrong email/password.")
 
     def test_wrong_password_login(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/account/login/'))
-        contact_page = self.__get_page()
-        contact_page.email.send_keys('soroush@divar.ir')
-        contact_page.password.send_keys('xxx')
-        contact_page.button.click()
+        page = self.__get_page()
+        page.email.send_keys('soroush@divar.ir')
+        page.password.send_keys('xxx')
+        page.button.click()
         error = self.selenium.find_element_by_css_selector('.has-error')
         self.assertEqual(error.text, "Wrong email/password.")

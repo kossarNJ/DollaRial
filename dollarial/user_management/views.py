@@ -6,4 +6,4 @@ def login(request):
 
 
 def registration(request):
-    return render(request, 'user_management/signup.html')
+    return render(request, 'user_management/registration.html')
