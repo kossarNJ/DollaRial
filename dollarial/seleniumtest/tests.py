@@ -1,5 +1,6 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from unittest import skip
 
 from seleniumtest.models import Question
 
@@ -21,9 +22,10 @@ class MySeleniumTests(StaticLiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
+    @skip
     def test_index(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/seleniumtest/'))
         print("address:", self.live_server_url)
-        question0 = self.selenium.find_element_by_name("question_1")
-        question1 = self.selenium.find_element_by_name("question_2")
+        ـ = self.selenium.find_element_by_name("question_1")
+        ـ = self.selenium.find_element_by_name("question_2")
         self.selenium.find_element_by_xpath('//li[@name="question_1"]/a').click()
