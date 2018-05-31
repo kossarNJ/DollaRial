@@ -1,0 +1,6 @@
+Setup:
+
+# move to the environment
+brew install requirements
+pip install -r pip-requirements
+
