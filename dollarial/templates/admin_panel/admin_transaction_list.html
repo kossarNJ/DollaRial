@@ -37,7 +37,7 @@ Transactions
                     </thead>
                     <tbody>
                         {% for transaction in transactions %}
-                          <tr>
+                          <tr id="transaction_row_{{ forloop.counter }}">
                             <td>{{ transaction.id }}</td>
                             <td>{{ transaction.transaction_type }}</td>
                             <td>{{ transaction.amount }}</td>
