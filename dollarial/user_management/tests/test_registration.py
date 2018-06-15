@@ -15,7 +15,13 @@ class RegistrationTest(StaticLiveServerTestCase):
         pass
 
     def __create_users(self):
-        # TODO: add user to database
+        """
+         TODO: add user to database
+         Insert users:
+            user1: email: dollarial.sharif@gmail.com
+            user2: email: soroushebadian@gmail.com
+            ...
+        """
         pass
 
     def __get_page(self):

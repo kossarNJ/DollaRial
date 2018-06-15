@@ -95,5 +95,28 @@ def reviewer_list(request):
     return render(request, 'admin_panel/admin_reviewer_list.html', data)
 
 
+def skipped_transaction_list(request):
+    # TODO: read from db
+    data = {
+        "skipped_items": [
+            {
+                "id": "1",
+                "reviewer_id": "2",
+                "reviewer_username": "soroush",
+                "transaction_id": "10",
+                "time": "01/01/99"
+            },
+            {
+                "id": "2",
+                "reviewer_id": "1",
+                "reviewer_username": "parand",
+                "transaction_id": "9",
+                "time": "01/01/99"
+            }
+        ]
+    }
+    return render(request, 'admin_panel/admin_skipped_transaction_list.html', data)
+
+
 def index(request):
     return render(request, 'admin_panel/admin_index.html')
