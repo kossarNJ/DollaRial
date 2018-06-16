@@ -248,5 +248,9 @@ def transaction_type_view(request, transaction_type_id):
     return render(request, 'admin_panel/admin_transaction_type_view.html', data)
 
 
+def admin_login(request):
+    return render(request, 'admin_panel/admin_login.html')
+
+
 def index(request):
     return render(request, 'admin_panel/admin_index.html')
