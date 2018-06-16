@@ -138,6 +138,10 @@ def reviewer_view(request, reviewer_id):
     return render(request, 'admin_panel/admin_reviewer_view.html', data)
 
 
+def reviewer_add(request):
+    return render(request, 'admin_panel/admin_reviewer_add.html')
+
+
 def skipped_transaction_list(request):
     # TODO: read from db
     data = {
