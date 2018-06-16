@@ -60,23 +60,30 @@
                     <h3 class="menu-title">Models</h3><!-- /.menu-title -->
                     <li class="menu-item-has-children active dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="menu-icon fa fa-table"></i>Tables
+                            <i class="menu-icon fa fa-usd"></i>Transactions
                         </a>
                         <ul class="sub-menu children dropdown-menu">
                             <li><i class="menu-icon fa fa-table"></i>
                                 <a href="{% url 'admin_transaction_list' %}">Transactions</a>
                             </li>
-                            <li><i class="menu-icon fa fa-users"></i>
-                                <a href="{% url 'admin_costumer_list' %}">Costumers</a>
-                            </li>
-                            <li><i class="menu-icon fa fa-users"></i>
-                                <a href="{% url 'admin_reviewer_list' %}">Reviewers</a>
+                            <li><i class="menu-icon fa fa-table"></i>
+                                <a href="">Transaction Types</a>
                             </li>
                             <li><i class="menu-icon fa fa-table"></i>
                                 <a href="{% url 'admin_skipped_transaction_list' %}">Skipped Transactions</a>
                             </li>
-                            <li><i class="menu-icon fa fa-money"></i>
-                                <a href="">Transaction Types</a>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children active dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="menu-icon fa fa-users"></i>Users
+                        </a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="menu-icon fa fa-user"></i>
+                                <a href="{% url 'admin_costumer_list' %}">Costumers</a>
+                            </li>
+                            <li><i class="menu-icon fa fa-user"></i>
+                                <a href="{% url 'admin_reviewer_list' %}">Reviewers</a>
                             </li>
                         </ul>
                     </li>
