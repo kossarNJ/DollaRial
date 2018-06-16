@@ -248,6 +248,28 @@ def transaction_type_view(request, transaction_type_id):
     return render(request, 'admin_panel/admin_transaction_type_view.html', data)
 
 
+def reports_list(request):
+    data = {
+        "reports": [
+            {
+                "id": 1,
+                "transaction_id": 10,
+                "reporter_id": 100,
+                "message": "salam modir\n khubi?\nchakeram\nin yaru ekhtelas karde 3000 milion dollar\n"
+                           "bebandesh damet garm\n"
+            },
+            {
+                "id": 2,
+                "transaction_id": 11,
+                "reporter_id": 101,
+                "message": "salam modir\nkhubi?\nchakeram\nin yaru ekhtelas karde 3000 milion dollar\n"
+                           "bebandesh damet garm\n"
+            }
+        ]
+    }
+    return render(request, 'admin_panel/admin_reports_list.html', data)
+
+
 def index(request):
     data = {
         "wallets": {
