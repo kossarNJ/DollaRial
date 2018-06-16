@@ -1,0 +1,56 @@
+{% extends "admin_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Notification Panel {% endblock title %}
+
+{% block page_title %}
+Transaction View
+{% endblock page_title %}
+
+{% block right_breadcrumb %}
+    <li class="active">Notification Panel</li>
+{% endblock right_breadcrumb %}
+
+{% block right_panel %}
+<div class="content mt-3">
+    <div class="animated fadeIn">
+        <div class="row">
+            <!-- Report -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <strong>Notification Panel</strong>
+                    </div>
+                    <div class="card-body">
+                      <!-- Credit Card -->
+                      <div id="report-card">
+                          <div class="card-body">
+                              <div class="form-group">
+                                  <label for="notification-text" class="control-label mb-1">Notification Text</label>
+                                  <textarea name="notification-text" id="notification-text" rows="9"
+                                            placeholder="Notification text goes here ..." class="form-control"></textarea>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
+                    <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                Send
+                            </button>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                Cancel
+                            </button>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Report -->
+
+        </div>
+    </div>
+</div>
+{% endblock right_panel %}
