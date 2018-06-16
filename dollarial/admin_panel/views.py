@@ -138,6 +138,10 @@ def reviewer_view(request, reviewer_id):
     return render(request, 'admin_panel/admin_reviewer_view.html', data)
 
 
+def reviewer_add(request):
+    return render(request, 'admin_panel/admin_reviewer_add.html')
+
+
 def skipped_transaction_list(request):
     # TODO: read from db
     data = {
@@ -159,6 +163,89 @@ def skipped_transaction_list(request):
         ]
     }
     return render(request, 'admin_panel/admin_skipped_transaction_list.html', data)
+
+
+def transaction_type_list(request):
+    data = {
+        "transaction_types": [
+            {
+                "id": "1",
+                "name": "Toefl",
+                "fixed_price": True,
+                "price": 200,
+                "currency": "$",
+                "minimum": 1000,
+                "maximum": 2000,
+                "wage": 10
+            },
+            {
+                "id": "2",
+                "name": "IELTS",
+                "fixed_price": True,
+                "price": 200,
+                "currency": "$",
+                "minimum": None,
+                "maximum": None,
+                "wage": 10
+            },
+            {
+                "id": "3",
+                "name": "Europe University",
+                "fixed_price": False,
+                "price": None,
+                "currency": "€",
+                "minimum": 1000,
+                "maximum": 2000,
+                "wage": 10
+            },
+            {
+                "id": "4",
+                "name": "America University",
+                "fixed_price": False,
+                "price": None,
+                "currency": "$",
+                "minimum": 1000,
+                "maximum": 2000,
+                "wage": 10
+            },
+        ]
+    }
+    return render(request, 'admin_panel/admin_transaction_type_list.html', data)
+
+
+def transaction_type_add(request):
+    data = {
+        "currencies": [
+            "dollar", "euro", "rial"
+        ]
+    }
+    return render(request, 'admin_panel/admin_transaction_type_add.html', data)
+
+
+def transaction_type_view(request, transaction_type_id):
+    data = {
+        "transaction_type": {
+            "id": transaction_type_id,
+            "name": "Toefl",
+            "description": "Toefl kheili khube!\nNice :))\n\n\nSo what?",
+            "fixed_price": True,
+            "price": None,
+            "minimum": 1000,
+            "maximum": 2000,
+            "wage": 10,
+            "currency": "rial",
+            "required_information": {
+                "personal": True,
+                "public": True,
+                "university": True,
+                "quiz": False
+            }
+        },
+        "currencies": [
+            "dollar", "euro", "rial"
+        ]
+    }
+    return render(request, 'admin_panel/admin_transaction_type_view.html', data)
 
 
 def index(request):
