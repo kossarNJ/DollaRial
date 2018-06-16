@@ -31,11 +31,11 @@ class TransactionListTest(StaticLiveServerTestCase):
         pass
 
 
-
-
-self.client.login(username=superuser.username, password='superpassword') #Native django test client
-cookie = self.client.cookies['sessionid']
-self.browser.get(self.live_server_url + '/admin/')  #selenium will set cookie domain based on current page domain
-self.browser.add_cookie({'name': 'sessionid', 'value': cookie.value, 'secure': False, 'path': '/'})
-self.browser.refresh() #need to update page for logged in user
-self.browser.get(self.live_server_url + '/admin/')
+#
+#
+# self.client.login(username=superuser.username, password='superpassword') #Native django test client
+# cookie = self.client.cookies['sessionid']
+# self.browser.get(self.live_server_url + '/admin/')  #selenium will set cookie domain based on current page domain
+# self.browser.add_cookie({'name': 'sessionid', 'value': cookie.value, 'secure': False, 'path': '/'})
+# self.browser.refresh() #need to update page for logged in user
+# self.browser.get(self.live_server_url + '/admin/')
