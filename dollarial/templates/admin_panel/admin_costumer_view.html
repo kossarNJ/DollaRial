@@ -8,108 +8,110 @@
 {% block title %} Costumer View {% endblock title %}
 
 {% block page_title %}
-Costumer View
+    Costumer View
 {% endblock page_title %}
 
 {% block right_breadcrumb %}
-    <li> <a href="{% url 'admin_costumer_list' %}">Costumers</a></li>
+    <li><a href="{% url 'admin_costumer_list' %}">Costumers</a></li>
     <li class="active">Costumer View</li>
 {% endblock right_breadcrumb %}
 
 {% block right_panel %}
-<div class="content mt-3">
-    <div class="animated fadeIn">
-        <div class="row">
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
 
-            <!-- Transaction View -->
-          <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">
-                    <strong class="card-title">Costumer {{ costumer.id }}</strong>
-                </div>
-                <div class="card-body">
-                  <!-- Credit Card -->
-                  <div id="transaction-card">
-                      <div class="card-body">
-                          <div class="form-group">
-                              <label for="cc-id" class="control-label mb-1">ID</label>
-                              <input id="cc-id" name="cc-id" type="number" class="form-control"
-                                     value="{{ costumer.id }}">
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-fname" class="control-label mb-1">First Name</label>
-                              <input id="cc-fname" name="cc-fname" type="text" class="form-control"
-                                     value="{{ costumer.first_name }}">
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-lname" class="control-label mb-1">Last Name</label>
-                              <input id="cc-lname" name="cc-lname" type="text" class="form-control"
-                                     value="{{ costumer.last_name }}">
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-account" class="control-label mb-1">Account Number</label>
-                              <input id="cc-account" name="cc-account" type="number" class="form-control"
-                                     value="{{ costumer.account_number }}">
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-email" class="control-label mb-1">Email</label>
-                              <input id="cc-email" name="cc-email" type="email" class="form-control"
-                                     value="{{ costumer.email }}">
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-phone" class="control-label mb-1">Phone Number</label>
-                              <input id="cc-phone" name="cc-phone" type="text" class="form-control"
-                                     value="{{ costumer.phone_number }}">
-                          </div>
-                          <div class="form-check">
-                                <div class="checkbox">
-                                  <label for="cc-banned" class="form-check-label ">
-                                    <input type="checkbox" id="cc-banned" name="cc-banned" value="Banned" class="form-check-input" checked="{{ costumer.banned }}">
-                                      Banned
-                                  </label>
-                                </div>
-                          </div>
-                      </div>
-                  </div>
-                </div>
-                <div class="card-footer">
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            <i class="fa fa-dot-circle-o"></i> Save
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#ban-modal">
-                            <i class="fa fa-ban"></i> Ban User
-                        </button>
-
-                  </div>
-            </div>
-          </div>
-            <!-- End of Transaction View -->
-        </div>
-    </div>
-</div>
-
-
-                    <!-- Modal for ban user -->
-                        <div class="modal fade" id="ban-modal" tabindex="-1" role="dialog" aria-labelledby="ban-modalLabel" >
-                            <div class="modal-dialog modal-sm" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="ban-modalLabel">Ban User </h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
+                <!-- Transaction View -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Costumer {{ costumer.id }}</strong>
+                        </div>
+                        <div class="card-body">
+                            <!-- Credit Card -->
+                            <div id="transaction-card">
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label for="cc-id" class="control-label mb-1">ID</label>
+                                        <input id="cc-id" name="cc-id" type="number" class="form-control"
+                                               value="{{ costumer.id }}">
                                     </div>
-                                    <div class="modal-body">
-                                        <p>
-                                            Are you sure about banning this user?
-                                        </p>
+                                    <div class="form-group">
+                                        <label for="cc-fname" class="control-label mb-1">First Name</label>
+                                        <input id="cc-fname" name="cc-fname" type="text" class="form-control"
+                                               value="{{ costumer.first_name }}">
                                     </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                        <button type="button" class="btn btn-primary">Ban User</button>
+                                    <div class="form-group">
+                                        <label for="cc-lname" class="control-label mb-1">Last Name</label>
+                                        <input id="cc-lname" name="cc-lname" type="text" class="form-control"
+                                               value="{{ costumer.last_name }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cc-account" class="control-label mb-1">Account Number</label>
+                                        <input id="cc-account" name="cc-account" type="number" class="form-control"
+                                               value="{{ costumer.account_number }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cc-email" class="control-label mb-1">Email</label>
+                                        <input id="cc-email" name="cc-email" type="email" class="form-control"
+                                               value="{{ costumer.email }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="cc-phone" class="control-label mb-1">Phone Number</label>
+                                        <input id="cc-phone" name="cc-phone" type="text" class="form-control"
+                                               value="{{ costumer.phone_number }}">
+                                    </div>
+                                    <div class="form-check">
+                                        <div class="checkbox">
+                                            <label for="cc-banned" class="form-check-label ">
+                                                <input type="checkbox" id="cc-banned" name="cc-banned" value="Banned"
+                                                       class="form-check-input" checked="{{ costumer.banned }}">
+                                                Banned
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    <!-- Modal for ban user -->
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-dot-circle-o"></i> Save
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#ban-modal">
+                                <i class="fa fa-ban"></i> Ban User
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Transaction View -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal for ban user -->
+    <div class="modal fade" id="ban-modal" tabindex="-1" role="dialog" aria-labelledby="ban-modalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ban-modalLabel">Ban User </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Are you sure about banning this user?
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Ban User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for ban user -->
 {% endblock right_panel %}

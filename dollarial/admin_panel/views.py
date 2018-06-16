@@ -249,4 +249,17 @@ def transaction_type_view(request, transaction_type_id):
 
 
 def index(request):
-    return render(request, 'admin_panel/admin_index.html')
+    data = {
+        "wallets": {
+            "dollar": {
+                "credit": 2200,
+            },
+            "rial": {
+                "credit": 1000,
+            },
+            "euro": {
+                "credit": 1020
+            }
+        }
+    }
+    return render(request, 'admin_panel/admin_index.html', data)
