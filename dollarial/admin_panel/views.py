@@ -248,7 +248,6 @@ def transaction_type_view(request, transaction_type_id):
     return render(request, 'admin_panel/admin_transaction_type_view.html', data)
 
 
-<<<<<<< HEAD
 def reports_list(request):
     data = {
         "reports": [
