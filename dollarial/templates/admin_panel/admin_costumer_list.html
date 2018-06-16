@@ -35,7 +35,9 @@
                     <tbody>
                         {% for costumer in costumers %}
                           <tr>
-                            <td>{{ costumer.id }}</td>
+                            <td>
+                                <a href="{% url 'admin_costumer_view' costumer.id %}">{{ costumer.id }}</a>
+                            </td>
                             <td>{{ costumer.first_name }}</td>
                             <td>{{ costumer.last_name }}</td>
                             <td>{{ costumer.account_number }}</td>

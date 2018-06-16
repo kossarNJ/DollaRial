@@ -86,6 +86,20 @@ def costumer_list(request):
     return render(request, 'admin_panel/admin_costumer_list.html', data)
 
 
+def costumer_view(request, costumer_id):
+    data = {
+        'costumer': {
+            "id": "1",
+            "first_name": "soroush",
+            "last_name": "ebadian",
+            "account_number": "123456789123",
+            "email": "soroushebadian@gmail.com",
+            "phone_number": "0989352543617"
+        }
+    }
+    return render(request, 'admin_panel/admin_costumer_view.html', data)
+
+
 def reviewer_list(request):
     # TODO: read from db
     data = {
