@@ -46,6 +46,21 @@ def transaction_list(request):
     return render(request, 'admin_panel/admin_transaction_list.html', data)
 
 
+def transaction_view(request, transaction_id):
+    data = {
+        "transaction": {
+            "id": transaction_id,
+            "transaction_type": "Toefl",
+            "amount": "200",
+            "currency": "$",
+            "owner": "user1",
+            "destination": "Toefl Co.",
+            "status": "reject"
+        }
+    }
+    return render(request, 'admin_panel/admin_transaction_view.html', data)
+
+
 def costumer_list(request):
     # TODO: read from db
     data = {

@@ -13,50 +13,52 @@ Transactions
 {% endblock page_title %}
 
 {% block right_panel %}
-        <div class="content mt-3">
-            <div class="animated fadeIn">
-                <div class="row">
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
 
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Transaction Table</strong>
-                        </div>
-                        <div class="card-body">
-                  <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Transaction Type</th>
-                        <th>Amount</th>
-                        <th>Currency</th>
-                        <th>Owner</th>
-                        <th>Destination</th>
-                        <th>Status</th>
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Transaction Table</strong>
+                    </div>
+                    <div class="card-body">
+              <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Transaction Type</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Owner</th>
+                    <th>Destination</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                      <tr id="transaction_row_{{ forloop.counter }}">
+                        <td>
+                            <a href="{% url 'admin_transaction_view' transaction.id %}">{{ transaction.id }}</a>
+                        </td>
+                        <td>{{ transaction.transaction_type }}</td>
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.currency }}</td>
+                        <td>{{ transaction.owner }}</td>
+                        <td>{{ transaction.destination }}</td>
+                        <td>{{ transaction.status }}</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                        {% for transaction in transactions %}
-                          <tr id="transaction_row_{{ forloop.counter }}">
-                            <td>{{ transaction.id }}</td>
-                            <td>{{ transaction.transaction_type }}</td>
-                            <td>{{ transaction.amount }}</td>
-                            <td>{{ transaction.currency }}</td>
-                            <td>{{ transaction.owner }}</td>
-                            <td>{{ transaction.destination }}</td>
-                            <td>{{ transaction.status }}</td>
-                          </tr>
-                        {% endfor %}
-                    </tbody>
-                  </table>
-                        </div>
+                    {% endfor %}
+                </tbody>
+              </table>
                     </div>
                 </div>
+            </div>
 
 
-                </div>
-            </div><!-- .animated -->
-        </div><!-- .content -->
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
 {% endblock right_panel %}
 
 {% block js_files %}
