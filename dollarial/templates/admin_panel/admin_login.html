@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Admin Login {% endblock title %}
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+{% block content %}
+    <div id="page">
+		<nav class="colorlib-nav" role="navigation">
+			<div class="top-menu">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-xs-2">
+							<div id="colorlib-logo"><a href="index.html">DollaRial</a></div>
+						</div>
+						<div class="col-xs-10 text-right menu-1">
+						<ul>
+
+								<li><a href="website.html">Home</a></li>
+								<li ><a href="about.html">About</a></li>
+								<li ><a href="history.html">History</a></li>
+								<li><a href="contact.html">Contact</a></li>
+								<li><a href="services.html">Services</a></li>
+								<li ><a href="signup.html">Sign up</a></li>
+								<li ><a href="login.html">Login</a></li>
+							    <li ><a href="website.html">Log out</a></li>
+
+							</ul>
+						</div>
+
+				</div>
+				</div>
+			</div>
+		</nav>
+
+
+		<div id="colorlib-contact">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1 animate-box">
+						<h3>Log In</h3>
+						<form action="#">
+
+
+							<div class="row form-group">
+								<div class="col-md-6 padding-bottom">
+									<label for="username">Username</label>
+									<input type="text" id="username" class="form-control" placeholder="Your Username">
+								</div>
+								<div class="col-md-6">
+									<label for="pass">Password</label>
+									<input type="password" id="pass" class="form-control" placeholder="Your password">
+								</div>
+							</div>
+							<div class="form-group text-center">
+								<input type="submit" value="Log In" class="btn btn-primary">
+							</div>
+
+						</form>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}
