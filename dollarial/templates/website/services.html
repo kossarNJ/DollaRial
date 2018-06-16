@@ -73,12 +73,12 @@
 											<div class="room-wrap">
 												<div class="row">
 
-													<div class="col-md-6 col-sm-6">
+													<div class="col-md-6 col-sm-6" >
 														<div class="desc">
-															<h2>{{ t.name }}</h2>
-                                                            <p>{{ t.type }}</p>
-															<p class="price"><span>{{ t.price }}</span>
-															<p>{{ t.details }}</p>
+															<h2 id = "name_{{ forloop.counter0 }}">{{ t.name }}</h2>
+                                                            <p id = "type_{{ forloop.counter0 }}">{{ t.type }}</p>
+															<p class="price" id = "price_{{ forloop.counter0 }}"><span>{{ t.price }}</span>
+															<p id = "details_{{ forloop.counter0 }}">{{ t.details }}</p>
 															<p><a href="#" class="btn btn-primary">View</a></p>
 														</div>
 													</div>
