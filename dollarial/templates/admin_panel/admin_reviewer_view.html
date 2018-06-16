@@ -1,0 +1,89 @@
+{% extends "admin_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+{{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Reviewer View {% endblock title %}
+
+{% block page_title %}
+Reviewer View
+{% endblock page_title %}
+
+{% block right_breadcrumb %}
+<li><a href="{% url 'admin_reviewer_list' %}">Reviewers</a></li>
+<li class="active">Reviewer View</li>
+{% endblock right_breadcrumb %}
+
+{% block right_panel %}
+<div class="content mt-3">
+    <div class="animated fadeIn">
+        <div class="row">
+
+            <!-- Transaction View -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Reviewer {{ reviewer.id }}</strong>
+                    </div>
+                    <div class="card-body">
+                        <!-- Credit Card -->
+                        <div id="transaction-card">
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label for="cc-id" class="control-label mb-1">ID</label>
+                                    <input id="cc-id" name="cc-id" type="number" class="form-control"
+                                           value="{{ reviewer.id }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cc-username" class="control-label mb-1">Username</label>
+                                    <input id="cc-username" name="cc-username" type="text" class="form-control"
+                                           value="{{ reviewer.username }}">
+                                </div>
+                                <div class="form-group">
+                                    <label for="cc-salary" class="control-label mb-1">Salary</label>
+                                    <input id="cc-salary" name="cc-lname" type="number" class="form-control"
+                                           value="{{ reviewer.salary }}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            <i class="fa fa-dot-circle-o"></i> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- End of Transaction View -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">New Password</div>
+                    <div class="card-body card-block">
+                        <form action="" method="post" class="">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                                    <input type="password" id="password" name="password" placeholder="Enter Password"
+                                           class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon"><i class="fa fa-asterisk"></i></div>
+                                    <input type="password" id="re_password" name="password" placeholder="Re-enter Password"
+                                           class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-actions form-group">
+                                <button type="submit" class="btn btn-success btn-sm">Set Password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock right_panel %}

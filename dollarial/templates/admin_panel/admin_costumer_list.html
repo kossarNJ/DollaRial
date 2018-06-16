@@ -30,6 +30,7 @@
                         <th>Account Number</th>
                         <th>Email</th>
                         <th>Phone Number</th>
+                        <th>Ban Status</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -43,6 +44,7 @@
                             <td>{{ costumer.account_number }}</td>
                             <td>{{ costumer.email }}</td>
                             <td>{{ costumer.phone_number }}</td>
+                            <td>{{ costumer.banned }}</td>
                           </tr>
                         {% endfor %}
 

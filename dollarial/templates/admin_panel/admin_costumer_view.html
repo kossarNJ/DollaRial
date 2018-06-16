@@ -61,6 +61,14 @@ Costumer View
                               <input id="cc-phone" name="cc-phone" type="text" class="form-control"
                                      value="{{ costumer.phone_number }}">
                           </div>
+                          <div class="form-check">
+                                <div class="checkbox">
+                                  <label for="cc-banned" class="form-check-label ">
+                                    <input type="checkbox" id="cc-banned" name="cc-banned" value="Banned" class="form-check-input" checked="{{ costumer.banned }}">
+                                      Banned
+                                  </label>
+                                </div>
+                          </div>
                       </div>
                   </div>
                 </div>

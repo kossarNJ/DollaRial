@@ -32,7 +32,7 @@
                     <tbody>
                         {% for reviewer in reviewers %}
                           <tr>
-                            <td>{{ reviewer.id }}</td>
+                            <td><a href="{% url 'admin_reviewer_view' reviewer.id %}">{{ reviewer.id }}</a></td>
                             <td>{{ reviewer.username }}</td>
                             <td>{{ reviewer.salary }}</td>
                           </tr>

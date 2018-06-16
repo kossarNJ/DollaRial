@@ -71,7 +71,8 @@ def costumer_list(request):
                 "last_name": "ebadian",
                 "account_number": "123456789123",
                 "email": "soroushebadian@gmail.com",
-                "phone_number": "0989352543617"
+                "phone_number": "0989352543617",
+                "banned": False
             },
             {
                 "id": "2",
@@ -79,7 +80,8 @@ def costumer_list(request):
                 "last_name": "ebadian2",
                 "account_number": "1234567891232",
                 "email": "soro2ushebadian@gmail.com",
-                "phone_number": "0989352523617"
+                "phone_number": "0989352523617",
+                "banned": True
             },
         ]
     }
@@ -89,12 +91,13 @@ def costumer_list(request):
 def costumer_view(request, costumer_id):
     data = {
         'costumer': {
-            "id": "1",
+            "id": costumer_id,
             "first_name": "soroush",
             "last_name": "ebadian",
             "account_number": "123456789123",
             "email": "soroushebadian@gmail.com",
-            "phone_number": "0989352543617"
+            "phone_number": "0989352543617",
+            "banned": True
         }
     }
     return render(request, 'admin_panel/admin_costumer_view.html', data)
@@ -110,18 +113,29 @@ def reviewer_list(request):
                 "salary": "200000",
             },
             {
-                "id": "1",
+                "id": "2",
                 "username": "parand",
                 "salary": "210000",
             },
             {
-                "id": "1",
+                "id": "3",
                 "username": "kosar",
                 "salary": "100000",
             }
         ]
     }
     return render(request, 'admin_panel/admin_reviewer_list.html', data)
+
+
+def reviewer_view(request, reviewer_id):
+    data = {
+        'reviewer': {
+            "id": reviewer_id,
+            "username": "soroushe",
+            "salary": "20000"
+        }
+    }
+    return render(request, 'admin_panel/admin_reviewer_view.html', data)
 
 
 def skipped_transaction_list(request):
