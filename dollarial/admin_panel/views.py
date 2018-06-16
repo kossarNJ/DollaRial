@@ -248,6 +248,7 @@ def transaction_type_view(request, transaction_type_id):
     return render(request, 'admin_panel/admin_transaction_type_view.html', data)
 
 
+<<<<<<< HEAD
 def reports_list(request):
     data = {
         "reports": [
@@ -272,6 +273,12 @@ def reports_list(request):
 
 def send_notification(request):
     return render(request, 'admin_panel/admin_send_notification.html')
+
+
+
+def admin_login(request):
+    return render(request, 'admin_panel/admin_login.html')
+
 
 
 def index(request):
