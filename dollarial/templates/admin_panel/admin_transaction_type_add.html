@@ -1,0 +1,132 @@
+{% extends "admin_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Add Transaction Type {% endblock title %}
+
+{% block page_title %}
+    Add Transaction Type
+{% endblock page_title %}
+
+{% block right_breadcrumb %}
+    <li><a href="{% url 'admin_transaction_type_list' %}">Transaction Types</a></li>
+    <li class="active">Add Transaction Type</li>
+{% endblock right_breadcrumb %}
+
+{% block right_panel %}
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+
+                <!-- Add Reviewer -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">New Transaction Type</strong>
+                        </div>
+                        <div class="card-body">
+                            <div id="transaction-type-card">
+                                <div class="card-body">
+                                    {# Name #}
+                                    <div class="form-group">
+                                        <label for="cc-name" class="control-label mb-1">Name</label>
+                                        <input id="cc-name" name="cc-name" type="text" class="form-control">
+                                    </div>
+                                    {# Description #}
+                                    <div class="form-group">
+                                        <label for="cc-description" class="control-label mb-1">Description</label>
+                                        <textarea name="cc-description" id="cc-description" rows="6"
+                                                  placeholder="Description ..." class="form-control"></textarea>
+                                    </div>
+                                    {# Fixed price #}
+                                    <div class="form-check">
+                                        <div class="checkbox">
+                                            <label for="cc-fixed-price" class="form-check-label ">
+                                                <input type="checkbox" id="cc-fixed-price" name="cc-fixed-price" class="form-check-input">
+                                                Fixed Price
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    {# currency #}
+                                    <div class="form-group">
+                                        <label for="currency-select" class="control-label mb-1">Currency</label>
+                                        <select data-placeholder="Choose currency ..." class="standardSelect" id="currency-select" tabindex="1">
+                                            <option value=""></option>
+                                            {% for c in currencies %}
+                                                <option value="{{ c }}">{{ c|capfirst }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    {# Price #}
+                                    <div class="form-group">
+                                        <label for="cc-price" class="control-label mb-1">Price</label>
+                                        <input id="cc-price" name="cc-price" type="number" min="0" class="form-control">
+                                    </div>
+                                    {# min #}
+                                    <div class="form-group">
+                                        <label for="cc-min-price" class="control-label mb-1">Minimum</label>
+                                        <input id="cc-min-price" name="cc-min-price" type="number" min="0" class="form-control">
+                                    </div>
+                                    {# max #}
+                                    <div class="form-group">
+                                        <label for="cc-max-price" class="control-label mb-1">Maximum</label>
+                                        <input id="cc-max-price" name="cc-max-price" type="number" min="0" class="form-control">
+                                    </div>
+                                    {# wage = کارمزد #}
+                                    <div class="form-group">
+                                        <label for="cc-wage" class="control-label mb-1">Wage Percentage</label>
+                                        <input id="cc-wage" name="cc-wage" type="number" min="0" max="100" class="form-control">
+                                    </div>
+                                    {# requered forms #}
+                                    <div class="form-group">
+                                        <label for="information-checkboxes" class="control-label mb-1">Required Information</label>
+                                        <div class="form-check" id="information-checkboxes">
+                                            <div class="checkbox">
+                                                <label for="personal-info" class="form-check-label ">
+                                                    <input type="checkbox" id="personal-info" name="personal-info" class="form-check-input">
+                                                    Personal Info
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label for="public-info" class="form-check-label ">
+                                                    <input type="checkbox" id="public-info" name="public-info" class="form-check-input">
+                                                    Public Info
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label for="university-info" class="form-check-label ">
+                                                    <input type="checkbox" id="university-info" name="university-info" class="form-check-input">
+                                                    University Info
+                                                </label>
+                                            </div>
+                                            <div class="checkbox">
+                                                <label for="Quiz-info" class="form-check-label ">
+                                                    <input type="checkbox" id="Quiz-info" name="Quiz-info" class="form-check-input">
+                                                    Quiz Info
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fa fa-dot-circle-o"></i> Save
+                            </button>
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                <i class="fa fa-ban"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Add Reviewer -->
+
+            </div>
+        </div>
+    </div>
+{% endblock right_panel %}
