@@ -1,5 +1,8 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class CustomerViewTest(StaticLiveServerTestCase):
@@ -28,12 +31,21 @@ class CustomerViewTest(StaticLiveServerTestCase):
                 self.email = self.selenium.find_element_by_id('cc-email')
                 self.phone = self.selenium.find_element_by_id('cc-phone')
                 self.banned = self.selenium.find_element_by_xpath("//input[@type='checkbox' and @id='cc-banned']")
+
+                try:
+                    self.confirm_ban_button = WebDriverWait(self.selenium, 10).until(
+                        EC.presence_of_element_located((By.ID, "confirm_ban_button"))
+                    )
+                    self.cancel_ban_button = WebDriverWait(self.selenium, 10).until(
+                        EC.presence_of_element_located((By.ID, "cancel_ban_button"))
+                    )
+                finally:
+                    pass
+
                 self.ban_button = self.selenium.find_element_by_xpath("//button[@type='button' and @class='btn "
                                                                       "btn-danger btn-sm']")
                 self.save_button = self.selenium.find_element_by_xpath("//button[@type='submit' and @class='btn "
                                                                        "btn-primary btn-sm']")
-                self.confirm_ban_button = None
-                self.cancel_ban_button = None
 
             def save(self):
                 self.save_button.click()
@@ -95,9 +107,6 @@ class CustomerViewTest(StaticLiveServerTestCase):
     def test_ban_button(self):
         page = self.__get_page()
         page.ban_costumer()
-        page.confirm_ban_button = self.selenium.find_element_by_xpath("//button[@type='submit' and @class='btn "
-                                                                      "btn-primary']")
-
         if self.__get_checked(page.banned) is "false":
             self.assertEqual("Ban User", self.__get_text(page.banned))
             page.confirm_ban()
@@ -116,8 +125,6 @@ class CustomerViewTest(StaticLiveServerTestCase):
     def test_ban_button_cancel(self):
         page = self.__get_page()
         page.ban_costumer()
-        self.cancel_ban_button = self.selenium.find_element_by_xpath("//button[@type='submit' and @class='btn "
-                                                                     "btn-secondary']")
         if self.__get_checked(page.banned) is "false":
             self.assertEqual("Ban User", self.__get_text(page.banned))
             page.cancel_ban()
@@ -129,4 +136,10 @@ class CustomerViewTest(StaticLiveServerTestCase):
             self.assertEqual("true", self.__get_checked(page.banned))
             self.assertEqual("Lift Ban", self.__get_text(page.banned))
 
+    def test_not_logged_in_user_access(self):
+        # TODO: implement. Non_manager user should not be able to access this page.
+        pass
 
+    def test_logged_in_user_access(self):
+        # TODO: implement. Manager user should be able to access this page.
+        pass

@@ -34,11 +34,11 @@
                     <tbody>
                         {% for skipped_item in skipped_items %}
                           <tr>
-                            <td>{{ skipped_item.id }}</td>
-                            <td>{{ skipped_item.reviewer_id }}</td>
-                            <td>{{ skipped_item.reviewer_username }}</td>
-                            <td>{{ skipped_item.transaction_id }}</td>
-                            <td>{{ skipped_item.time }}</td>
+                            <td id="item_id_{{ skipped_item.id }}">{{ skipped_item.id }}</td>
+                            <td id="item_reviewer_id_{{ skipped_item.id }}">{{ skipped_item.reviewer_id }}</td>
+                            <td id="item_reviewer_username_{{ skipped_item.id }}">{{ skipped_item.reviewer_username }}</td>
+                            <td id="item_transaction_id_{{ skipped_item.id }}">{{ skipped_item.transaction_id }}</td>
+                            <td id="item_time_{{ skipped_item.id }}">{{ skipped_item.time }}</td>
                           </tr>
                         {% endfor %}
                     </tbody>

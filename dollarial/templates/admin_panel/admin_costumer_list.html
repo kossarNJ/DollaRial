@@ -36,15 +36,15 @@
                     <tbody>
                         {% for costumer in costumers %}
                           <tr>
-                            <td>
+                            <td id="costumer_id_{{ costumer.id }}">
                                 <a href="{% url 'admin_costumer_view' costumer.id %}">{{ costumer.id }}</a>
                             </td>
-                            <td>{{ costumer.first_name }}</td>
-                            <td>{{ costumer.last_name }}</td>
-                            <td>{{ costumer.account_number }}</td>
-                            <td>{{ costumer.email }}</td>
-                            <td>{{ costumer.phone_number }}</td>
-                            <td>{{ costumer.banned }}</td>
+                            <td id="costumer_fname_{{ costumer.id }}">{{ costumer.first_name }}</td>
+                            <td id="costumer_lname_{{ costumer.id }}">{{ costumer.last_name }}</td>
+                            <td id="costumer_account_number_{{ costumer.id }}">{{ costumer.account_number }}</td>
+                            <td id="costumer_email_{{ costumer.id }}">{{ costumer.email }}</td>
+                            <td id="costumer_phone_number_{{ costumer.id }}">{{ costumer.phone_number }}</td>
+                            <td id="costumer_ban_status_{{ costumer.id }}">{{ costumer.banned }}</td>
                           </tr>
                         {% endfor %}
 
