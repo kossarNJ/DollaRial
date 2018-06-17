@@ -61,14 +61,26 @@ def transaction_view(request, transaction_id):
     return render(request, 'user_panel/user_transaction_view.html', data)
 
 
+def edit_profile(request):
+    data = {
+        "user": {
+            "fname": "kossar",
+            "lname": "najafi",
+            "email": "kossar.najafi@gmail.com",
+            "phone": "09351234567"
+        }
+    }
+    return render(request, 'user_panel/user_edit_profile.html', data)
+
+
 def index(request):
     data = {
         "wallets": [
+            {"name": "rial",
+             "credit": 1000,
+             },
             {   "name": "dollar",
                 "credit": 2200,
-            },
-            {   "name": "rial",
-                "credit": 1000,
             },
             {   "name": "euro",
                 "credit": 1020

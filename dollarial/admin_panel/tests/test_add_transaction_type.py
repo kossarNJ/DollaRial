@@ -2,11 +2,11 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 
-class TransactionTypeViewTest(StaticLiveServerTestCase):
+class TransactionTypeAddTest(StaticLiveServerTestCase):
     def setUp(self):
         self.selenium = WebDriver()
         self.selenium.implicitly_wait(10)
-        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/transaction_types/1'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/transaction_types/add'))
         self.__create_users()
 
     def tearDown(self):
@@ -24,7 +24,7 @@ class TransactionTypeViewTest(StaticLiveServerTestCase):
         pass
 
     def __get_page(self):
-        class TransactionTypeViewPage(object):
+        class TransactionTypeAddPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
                 self.name = self.selenium.find_element_by_id('cc-name')
@@ -41,8 +41,13 @@ class TransactionTypeViewTest(StaticLiveServerTestCase):
                 self.Quiz_info = self.selenium.find_element_by_id('Quiz-info')
 
                 self.save_button = self.selenium.find_element_by_id('save_button')
+                self.reset_button = self.selenium.find_element_by_id('reset_button')
 
-        return TransactionTypeViewPage(self.selenium)
+        return TransactionTypeAddPage(self.selenium)
+
+    def check_transaction_type_creation(self):
+        # TODO: check transaction type GRE creation
+        pass
 
     @staticmethod
     def _fill(page):
@@ -73,12 +78,17 @@ class TransactionTypeViewTest(StaticLiveServerTestCase):
         self._login(page)
         self._fill(page)
         page.save_button.click()
+        self.check_transaction_type_creation()
         success = self.selenium.find_element_by_css_selector('.success')
-        self.assertEqual(success.text, "Changes Successfully Saved")
+        self.assertEqual(success.text, "Transaction Type Added Successfully")
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
+
+    @staticmethod
+    def __get_checked(element):
+        return element.get_attribute('checked')
 
     def test_empty_parts_add(self):
         page = self.__get_page()
@@ -93,3 +103,25 @@ class TransactionTypeViewTest(StaticLiveServerTestCase):
             error = self.selenium.find_element_by_css_selector('.has-error')
             self.assertEqual(error.text, "Please fill all required fields.")
             field.send_keys(prev_text)
+
+    def test_already_existing_transaction_type(self):
+        page = self.__get_page()
+        self._login(page)
+        self._fill(page)
+        page.name.clear()
+        page.name.send_keys('Toefl')
+        page.save_button.click()
+        error = self.selenium.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, "There exists a Transaction Type with entered name.")
+
+    def test_reset_button(self):
+        page = self.__get_page()
+        self._login(page)
+        text_fields = [page.name, page.description, page.price, page.min_price, page.max_price, page.wage]
+        self._fill(page)
+        page.reset_button.click()
+        for field in text_fields:
+            self.assertEqual(self.__get_text(field), "")
+        checkboxes = [page.fixed_price, page.personal_info, page.public_info, page.university_info, page.Quiz_info]
+        for checkbox in checkboxes:
+            self.assertEqual(self.__get_checked(checkbox), 'false')
