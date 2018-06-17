@@ -27,7 +27,7 @@
                                     </div>
                                     <div class="stat-content dib">
                                         <div class="stat-text">{{ w.name|capfirst }} Wallet</div>
-                                        <div class="stat-digit">{{ w.credit }}</div>
+                                        <div class="stat-digit">10200</div>
                                     </div>
                                 </div>
                             </div>
@@ -47,9 +47,28 @@
                                 <input id="charge-price" name="charge-price" type="number" min="0"
                                        class="form-control">
                             </div>
+                            <button type="button" class="btn btn-primary btn-sm">
+                                Charge Wallet
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title mb-3">Withdraw from Rial Wallet</strong>
+                        </div>
+                        {# Price #}
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="withdraw-price" class="control-label mb-1">Amount
+                                    (in Rial)</label>
+                                <input id="withdraw-price" name="charge-price" type="number" min="0"
+                                       class="form-control">
+                            </div>
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                     data-target="#credit-change-modal">
-                                Charge Wallet
+                                Withdraw from Wallet
                             </button>
                         </div>
                     </div>
@@ -57,7 +76,6 @@
             </div>
         </div>
     </div>
-    <!-- Modal for ban user -->
     <div class="modal fade" id="credit-change-modal" tabindex="-1" role="dialog"
          aria-labelledby="credit-change-modalLabel">
         <div class="modal-dialog modal-sm" role="document">
@@ -70,12 +88,12 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        Are you sure to add 1000$ to your credit?
+                        Are you sure to Withdraw 1000﷼ from your account?
                     </p>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Withdraw</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary">Charge</button>
                 </div>
             </div>
         </div>
