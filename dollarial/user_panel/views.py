@@ -19,7 +19,7 @@ def transaction_list(request):
                 "transaction_type": "Gaj",
                 "amount": "20000000000",
                 "currency": "﷼",
-                "owner": "user2",
+                "owner": "user1",
                 "destination": "Gaj Co.",
                 "status": "unknown"
             },
@@ -37,7 +37,7 @@ def transaction_list(request):
                 "transaction_type": "Toefl",
                 "amount": "200",
                 "currency": "$",
-                "owner": "user2",
+                "owner": "user1",
                 "destination": "Toefl Co.",
                 "status": "reject"
             },
@@ -63,16 +63,16 @@ def transaction_view(request, transaction_id):
 
 def index(request):
     data = {
-        "wallets": {
-            "rial": {
-                "credit": 1000,
-            },
-            "dollar": {
+        "wallets": [
+            {   "name": "dollar",
                 "credit": 2200,
             },
-            "euro": {
+            {   "name": "rial",
+                "credit": 1000,
+            },
+            {   "name": "euro",
                 "credit": 1020
             }
-        }
+        ]
     }
     return render(request, 'user_panel/user_index.html', data)

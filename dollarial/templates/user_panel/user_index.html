@@ -18,7 +18,7 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <strong class="card-title mb-3">{{ w|capfirst }} Wallet</strong>
+                                <strong class="card-title mb-3">{{ w.name|capfirst }} Wallet</strong>
                             </div>
                             <div class="card-body">
                                 <div class="stat-widget-one">
@@ -26,8 +26,8 @@
                                             class="ti-money text-success border-success"></i>
                                     </div>
                                     <div class="stat-content dib">
-                                        <div class="stat-text">{{ w|capfirst }} Wallet</div>
-                                        <div class="stat-digit">10200</div>
+                                        <div class="stat-text">{{ w.name|capfirst }} Wallet</div>
+                                        <div class="stat-digit">{{ w.credit }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        Are you sure to add 1000$ to company's credit?
+                        Are you sure to add 1000$ to your credit?
                     </p>
                 </div>
                 <div class="modal-footer">
