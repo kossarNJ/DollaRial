@@ -1,4 +1,7 @@
+from time import sleep
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 
@@ -60,12 +63,23 @@ class TransactionListTest(StaticLiveServerTestCase):
                     self.owner += [self.selenium.find_element_by_id('transaction_owner_' + row.transaction_id)]
                     self.destination += [self.selenium.find_element_by_id('transaction_destination_' + row.transaction_id)]
                     self.status += [self.selenium.find_element_by_id('transaction_status_' + row.transaction_id)]
+                    self.search = self.selenium.find_element_by_xpath("//input[@type='search']")
 
         return TransactionListPage(self.selenium, self.__get_transaction())
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
+
+    def test_filter_by_status(self):
+        page = self.__get_page()
+        page.search.send_keys("reject")
+        sleep(10)
+
+    def test_filter_by_user(self):
+        page = self.__get_page()
+        page.search.send_keys("user1")
+        sleep(10)
 
     def test_fields_content(self):
         transactions = self.__get_transaction()
