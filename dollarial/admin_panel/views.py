@@ -274,18 +274,24 @@ def send_notification(request):
     return render(request, 'admin_panel/admin_send_notification.html')
 
 
+
+def admin_login(request):
+    return render(request, 'admin_panel/admin_login.html')
+
+
+
 def index(request):
     data = {
-        "wallets": {
-            "dollar": {
+        "wallets": [
+            {   "name": "dollar",
                 "credit": 2200,
             },
-            "rial": {
+            {   "name": "rial",
                 "credit": 1000,
             },
-            "euro": {
+            {   "name": "euro",
                 "credit": 1020
             }
-        }
+        ]
     }
     return render(request, 'admin_panel/admin_index.html', data)

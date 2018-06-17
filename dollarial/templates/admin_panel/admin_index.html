@@ -18,7 +18,7 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <strong class="card-title mb-3">{{ w|capfirst }} Wallet</strong>
+                                <strong class="card-title mb-3">{{ w.name|capfirst }} Wallet</strong>
                             </div>
                             <div class="card-body">
                                 <div class="card">
@@ -28,8 +28,8 @@
                                                     class="ti-money text-success border-success"></i>
                                             </div>
                                             <div class="stat-content dib">
-                                                <div class="stat-text">{{ w|capfirst }} Wallet</div>
-                                                <div class="stat-digit">10200</div>
+                                                <div class="stat-text">{{ w.name|capfirst }} Wallet</div>
+                                                <div class="stat-digit">1{{ w.credit }}</div>
                                             </div>
                                         </div>
                                     </div>
@@ -37,14 +37,14 @@
                                     <div class="card-body">
                                         {# Price #}
                                         <div class="form-group">
-                                            <label for="cc-price" class="control-label mb-1">Amount
-                                                (in {{ w|capfirst }})</label>
-                                            <input id="cc-price" name="cc-price" type="number" min="0"
+                                            <label for="cc-price_{{ forloop.counter0 }}" class="control-label mb-1">Amount
+                                                (in {{ w.name|capfirst }})</label>
+                                            <input id="cc-price_{{ forloop.counter0 }}" name="cc-price" type="number" min="0"
                                                    class="form-control">
                                         </div>
 
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                data-target="#credit-change-modal">
+                                                data-target="#credit-change-modal" id = "charge_{{ forloop.counter0 }}">
                                             Charge Wallet
                                         </button>
                                     </div>
