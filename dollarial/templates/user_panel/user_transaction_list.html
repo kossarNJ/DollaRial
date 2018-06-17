@@ -1,0 +1,86 @@
+{% extends "user_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'assets/css/lib/datatable/dataTables.bootstrap.min.css' %}">
+{% endblock stylesheets %}
+
+{% block title %} Transactions {% endblock title %}
+
+{% block page_title %}
+Transactions
+{% endblock page_title %}
+
+{% block right_panel %}
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">Transaction Table</strong>
+                    </div>
+                    <div class="card-body">
+              <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Transaction Type</th>
+                    <th>Amount</th>
+                    <th>Currency</th>
+                    <th>Owner</th>
+                    <th>Destination</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                      <tr id="transaction_row_{{ forloop.counter }}">
+                        <td>
+                            <a href="{% url 'user_transaction_view' transaction.id %}">{{ transaction.id }}</a>
+                        </td>
+                        <td>{{ transaction.transaction_type }}</td>
+                        <td>{{ transaction.amount }}</td>
+                        <td>{{ transaction.currency }}</td>
+                        <td>{{ transaction.owner }}</td>
+                        <td>{{ transaction.destination }}</td>
+                        <td>{{ transaction.status }}</td>
+                      </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+                    </div>
+                </div>
+            </div>
+
+
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+{% endblock right_panel %}
+
+{% block js_files %}
+
+
+    <script src="{% static 'assets/js/lib/data-table/datatables.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/jszip.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/pdfmake.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/vfs_fonts.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.print.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/datatables-init.js' %}"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+          $('#bootstrap-data-table-export').DataTable();
+        } );
+    </script>
+{% endblock js_files %}
+

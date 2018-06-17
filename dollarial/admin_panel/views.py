@@ -274,10 +274,8 @@ def send_notification(request):
     return render(request, 'admin_panel/admin_send_notification.html')
 
 
-
 def admin_login(request):
     return render(request, 'admin_panel/admin_login.html')
-
 
 
 def index(request):
