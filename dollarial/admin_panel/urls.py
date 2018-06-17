@@ -16,8 +16,6 @@ urlpatterns = [
     path('transaction_types/<int:transaction_type_id>', views.transaction_type_view, name='admin_transaction_type_view'),
     path('reports/', views.reports_list, name='admin_report_list'),
     path('send_notification/', views.send_notification, name='admin_send_notification'),
-    path('', views.index, name='admin_index'),
     path('login/', views.admin_login, name='admin_login'),
     path('', views.index, name='admin_index'),
-
 ]
