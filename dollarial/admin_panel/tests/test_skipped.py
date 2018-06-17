@@ -8,6 +8,7 @@ class SkippedTest(StaticLiveServerTestCase):
         super().setUpClass()
         cls.selenium = WebDriver()
         cls.selenium.implicitly_wait(10)
+        cls.__create_skipped_transactions()
 
     @classmethod
     def tearDownClass(cls):
@@ -17,8 +18,13 @@ class SkippedTest(StaticLiveServerTestCase):
     def setUp(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/skipped/'))
 
-    def __get_list(self):
-        # TODO: get list of skipped transactions
+    @classmethod
+    def __create_skipped_transactions(self):
+        # TODO: insert skipped transactions to DB with fields of SkippedItem
+        pass
+
+    def __get_skipped(self):
+        # TODO: get list of skipped transactions from DB
         class SkippedItem(object):
             def __init__(self, item_id, reviewer_id, reviewer_username, transaction_id, review_time):
                 self.item_id = item_id
@@ -45,14 +51,14 @@ class SkippedTest(StaticLiveServerTestCase):
                     self.transaction_id += [self.selenium.find_element_by_id('item_transaction_id_'+row.item_id)]
                     self.review_time += [self.selenium.find_element_by_id('item_time_'+row.item_id)]
 
-        return SkippedPage(self.selenium, self.__get_list())
+        return SkippedPage(self.selenium, self.__get_skipped())
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
 
-    def test_save_button(self):
-        skipped_transactions = self.__get_list()
+    def test_fields_content(self):
+        skipped_transactions = self.__get_skipped()
         page = self.__get_page()
         i = 0
         for item in skipped_transactions:
@@ -62,3 +68,11 @@ class SkippedTest(StaticLiveServerTestCase):
             self.assertEqual(item.transaction_id, self.__get_text(page.transaction_id[i]))
             self.assertEqual(item.review_time, self.__get_text(page.review_time[i]))
             i += 1
+
+    def test_not_logged_in_user_access(self):
+        # TODO: implement. Non_manager user should not be able to access this page.
+        pass
+
+    def test_logged_in_user_access(self):
+        # TODO: implement. Manager user should be able to access this page.
+        pass

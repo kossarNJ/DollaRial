@@ -1,5 +1,8 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 class TransactionViewTest(StaticLiveServerTestCase):
@@ -29,24 +32,24 @@ class TransactionViewTest(StaticLiveServerTestCase):
                 self.destination = self.selenium.find_element_by_id('cc-destination')
                 self.status = self.selenium.find_element_by_id('cc-status')
 
-                # self.banned = self.selenium.find_element_by_xpath("//input[@type='checkbox' and @id='cc-banned']")
-                self.accept_button = self.selenium.find_element_by_xpath("//button[@type='button' and @class='btn "
-                                                                         "btn-success btn-sm']")
-                self.reject_button = self.selenium.find_element_by_xpath("//button[@type='submit' and @class='btn "
-                                                                         "btn-danger btn-sm']")
-                self.skip_button = self.selenium.find_element_by_xpath("//button[@type='reset' and @class='btn "
-                                                                       "btn-secondary btn-sm']")
-                self.report_button = self.selenium.find_element_by_xpath("//button[@type='submit' and @class='btn "
-                                                                         "btn-warning btn-sm']")
+                try:
+                    self.accept_button = WebDriverWait(self.selenium, 10).until(
+                        EC.presence_of_element_located((By.ID, "transaction_accept"))
+                    )
+                    self.reject_button = WebDriverWait(self.selenium, 10).until(
+                        EC.presence_of_element_located((By.ID, "transaction_reject"))
+                    )
+                    self.skip_button = WebDriverWait(self.selenium, 10).until(
+                        EC.presence_of_element_located((By.ID, "transaction_skip"))
+                    )
+                finally:
+                    pass
 
             def accept(self):
                 self.accept_button.click()
 
             def reject(self):
                 self.reject_button.click()
-
-            def report(self):
-                self.report_button.click()
 
             def skip(self):
                 self.skip_button.click()
@@ -79,16 +82,16 @@ class TransactionViewTest(StaticLiveServerTestCase):
 
         return Costumer()
 
-    # def test_fields_of_costumer(self):
-    #     page = self.__get_page()
-    #     costumer = self.__get_transaction()
-    #     self.assertEqual(costumer.id, self.__get_value(page.id))
-    #     self.assertEqual(costumer.type, self.__get_value(page.type))
-    #     self.assertEqual(costumer.link, self.__get_value(page.link))
-    #     self.assertEqual(costumer.amount, self.__get_value(page.amount))
-    #     self.assertEqual(costumer.owner, self.__get_value(page.owner))
-    #     self.assertEqual(costumer.destination, self.__get_value(page.destination))
-    #     self.assertEqual(costumer.status, self.__get_checked(page.status))
+    def test_fields_of_costumer(self):
+        page = self.__get_page()
+        costumer = self.__get_transaction()
+        self.assertEqual(costumer.id, self.__get_value(page.id))
+        self.assertEqual(costumer.type, self.__get_value(page.type))
+        self.assertEqual(costumer.link, self.__get_value(page.link))
+        self.assertEqual(costumer.amount, self.__get_value(page.amount))
+        self.assertEqual(costumer.owner, self.__get_value(page.owner))
+        self.assertEqual(costumer.destination, self.__get_value(page.destination))
+        self.assertEqual(costumer.status, self.__get_checked(page.status))
 
     def test_accept_button(self):
         page = self.__get_page()
@@ -108,5 +111,10 @@ class TransactionViewTest(StaticLiveServerTestCase):
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Transaction has been skipped.")  # TODO: update this if necessary
 
-    def test_report_button(self):
+    def test_not_logged_in_user_access(self):
+        # TODO: implement. Non_clerk user should not be able to access this page.
+        pass
+
+    def test_logged_in_user_access(self):
+        # TODO: implement. Clerk user should be able to access this page.
         pass

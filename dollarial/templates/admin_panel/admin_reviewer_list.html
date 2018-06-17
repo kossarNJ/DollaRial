@@ -32,9 +32,9 @@
                     <tbody>
                         {% for reviewer in reviewers %}
                           <tr>
-                            <td><a href="{% url 'admin_reviewer_view' reviewer.id %}">{{ reviewer.id }}</a></td>
-                            <td>{{ reviewer.username }}</td>
-                            <td>{{ reviewer.salary }}</td>
+                            <td id="reviewer_id_{{ reviewer.id }}"><a href="{% url 'admin_reviewer_view' reviewer.id %}">{{ reviewer.id }}</a></td>
+                            <td id="reviewer_username_{{ reviewer.id }}">{{ reviewer.username }}</td>
+                            <td id="reviewer_salary_{{ reviewer.id }}">{{ reviewer.salary }}</td>
                           </tr>
                         {% endfor %}
 

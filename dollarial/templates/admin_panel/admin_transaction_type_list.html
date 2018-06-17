@@ -37,16 +37,16 @@
                                 <tbody>
                                 {% for type in transaction_types %}
                                     <tr>
-                                        <td>
+                                        <td id="type_id_{{ type.id }}">
                                             <a href="{% url 'admin_transaction_type_view' type.id %}">{{ type.id }}</a>
                                         </td>
-                                        <td>{{ type.name }}</td>
-                                        <td>{{ type.fixed_price }}</td>
-                                        <td>{{ type.price }}</td>
-                                        <td>{{ type.currency }}</td>
-                                        <td>{{ type.minimum }}</td>
-                                        <td>{{ type.maxmimum }}</td>
-                                        <td>{{ type.wage }}</td>
+                                        <td id="type_name_{{ type.id }}">{{ type.name }}</td>
+                                        <td id="type_fixed_price_{{ type.id }}">{{ type.fixed_price }}</td>
+                                        <td id="type_price_{{ type.id }}">{{ type.price }}</td>
+                                        <td id="type_currency_{{ type.id }}">{{ type.currency }}</td>
+                                        <td id="type_min_{{ type.id }}">{{ type.minimum }}</td>
+                                        <td id="type_max_{{ type.id }}">{{ type.maximum }}</td>
+                                        <td id="type_wage_{{ type.id }}">{{ type.wage }}</td>
                                     </tr>
                                 {% endfor %}
 
