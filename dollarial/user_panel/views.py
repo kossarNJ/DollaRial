@@ -73,6 +73,23 @@ def edit_profile(request):
     return render(request, 'user_panel/user_edit_profile.html', data)
 
 
+def exchange(request):
+    data = {
+        "wallets": {
+            "rial": {
+                "credit": 1000,
+            },
+            "dollar": {
+                "credit": 2200,
+            },
+            "euro": {
+                "credit": 1020
+            }
+        }
+    }
+    return render(request, 'user_panel/user_exchange_credit.html', data)
+
+
 def index(request):
     data = {
         "wallets": {

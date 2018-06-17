@@ -59,12 +59,20 @@
                     <a href="{% url 'user_index' %}"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
                 </li>
 
-                <h3 class="menu-title">History</h3><!-- /.menu-title -->
+                <h3 class="menu-title">Transactions</h3><!-- /.menu-title -->
                 <li>
                     <a href="{% url 'user_transaction_list' %}">
                         <i class="menu-icon fa fa-table"></i> Transactions
                     </a>
                 </li>
+
+                <h3 class="menu-title">Actions</h3><!-- /.menu-title -->
+                <li>
+                    <a href="{% url 'user_exchange' %}">
+                        <i class="menu-icon fa fa-money"></i> Exchange credit
+                    </a>
+                </li>
+
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>

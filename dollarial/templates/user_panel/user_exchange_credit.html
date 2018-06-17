@@ -1,0 +1,74 @@
+{% extends "user_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Exchange Credit {% endblock title %}
+
+{% block page_title %}Exchange Credit
+{% endblock page_title %}
+
+{% block right_breadcrumb %}
+    <li class="active">Exchange Credit</li>
+{% endblock right_breadcrumb %}
+
+{% block right_panel %}
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+
+                <!-- Transaction View -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Profile</strong>
+                        </div>
+                        <div class="card-body">
+                            <div id="profile-card">
+                                <div class="card-body">
+                                    <form action="#">
+                                        <div class="row form-group">
+                                            <div class="col-md-6 padding-bottom">
+                                                <label for="from-currency-select" class="control-label mb-1">From</label>
+                                                <select data-placeholder="Choose currency ..." class="standardSelect"
+                                                        id="from-currency-select" tabindex="1">
+                                                    <option value=""></option>
+                                                    {% for c in wallets %}
+                                                        <option value="{{ c }}">{{ c|capfirst }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 padding-bottom">
+                                                <label for="to-currency-select" class="control-label mb-1">To</label>
+                                                <select data-placeholder="Choose currency ..." class="standardSelect"
+                                                        id="to-currency-select" tabindex="1">
+                                                    <option value=""></option>
+                                                    {% for c in wallets %}
+                                                        <option value="{{ c }}">{{ c|capfirst }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row form-group">
+                                            <div class="col-md-12">
+                                                <label for="amount">Amount</label>
+                                                <input type="number" id="amount" class="form-control">
+                                            </div>
+                                        </div>
+
+
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock right_panel %}
