@@ -90,18 +90,34 @@ def exchange(request):
     return render(request, 'user_panel/user_exchange_credit.html', data)
 
 
+def exchange_accept(request):
+    data = {
+        "currencies": [
+            "rial", "dollar", "euro"
+        ],
+        "from": "dollar",
+        "to": "rial",
+        "amount": {
+            "from": 1,
+            "to": 75000 * 0.93,
+            "wage": 75000 * 0.07,
+        }
+    }
+    return render(request, 'user_panel/user_exchange_acceptance.html', data)
+
+
 def index(request):
     data = {
         "wallets": [
             {"name": "rial",
              "credit": 1000,
              },
-            {   "name": "dollar",
-                "credit": 2200,
-            },
-            {   "name": "euro",
-                "credit": 1020
-            }
+            {"name": "dollar",
+             "credit": 2200,
+             },
+            {"name": "euro",
+             "credit": 1020
+             }
         ]
     }
     return render(request, 'user_panel/user_index.html', data)

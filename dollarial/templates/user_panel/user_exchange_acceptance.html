@@ -34,20 +34,26 @@
                                                 <label for="from-currency-select"
                                                        class="control-label mb-1">From</label>
                                                 <select data-placeholder="Choose currency ..." class="standardSelect"
-                                                        id="from-currency-select" tabindex="1">
+                                                        id="from-currency-select" tabindex="1" disabled="disabled">
                                                     <option value=""></option>
-                                                    {% for c in wallets %}
-                                                        <option value="{{ c }}">{{ c|capfirst }}</option>
+                                                    {% for c in currencies %}
+                                                        <option value="{{ c }}"
+                                                                {% if c == from %}selected="selected"{% endif %}>
+                                                            {{ c|capfirst }}
+                                                        </option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
                                             <div class="col-md-6 padding-bottom">
                                                 <label for="to-currency-select" class="control-label mb-1">To</label>
                                                 <select data-placeholder="Choose currency ..." class="standardSelect"
-                                                        id="to-currency-select" tabindex="1">
+                                                        id="to-currency-select" tabindex="1" disabled="disabled">
                                                     <option value=""></option>
-                                                    {% for c in wallets %}
-                                                        <option value="{{ c }}">{{ c|capfirst }}</option>
+                                                    {% for c in currencies %}
+                                                        <option value="{{ c }}"
+                                                                {% if c == to %}selected="selected"{% endif %}>
+                                                            {{ c|capfirst }}
+                                                        </option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -55,25 +61,26 @@
 
                                         <div class="row form-group">
                                             <div class="col-md-12">
-                                                <label for="amount">Amount</label>
-                                                <input type="number" id="amount" class="form-control">
+                                                <label for="amount_from">Amount From</label>
+                                                <input type="number" id="amount_from" value="{{ amount.from }}" step="0.1"
+                                                       class="form-control" readonly>
                                             </div>
-                                        </div>
-
-                                        <div class="row form-group">
                                             <div class="col-md-12">
-                                                <label>Transaction amount should be calculated:</label><br>
-                                                <input type="radio" id="from_credit" name="option_credit" value="from">
-                                                <label for="from_credit">Exact withdraw from selected "from currency"</label> <br>
-
-                                                <input type="radio" id="to_credit" name="option_credit" value="to">
-                                                <label for="notif_choice2">Exact deposit to selected "to currency"</label>
+                                                <label for="amount_to">Amount To</label>
+                                                <input type="number" id="amount_to" value="{{ amount.to }}" step="0.1"
+                                                       class="form-control" readonly>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <label for="amount_wage">Amount of Wage</label>
+                                                <input type="number" id="amount_wage" value="{{ amount.wage }}" step="0.1"
+                                                       class="form-control" readonly>
                                             </div>
                                         </div>
 
                                         <div class="form-group text-center">
-                                            <input type="submit" value="Preview Exchange" class="btn btn-primary"
-                                                   formaction="{% url 'user_exchange_accept' %}">
+                                            <input type="submit" value="Exchange" class="btn btn-primary">
+                                            <input type="submit" value="Cancel" class="btn btn-danger"
+                                                   formaction="{% url 'user_exchange' %}">
                                         </div>
                                     </form>
                                 </div>
