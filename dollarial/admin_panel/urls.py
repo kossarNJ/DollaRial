@@ -11,6 +11,7 @@ urlpatterns = [
     path('costumers/', views.costumer_list, name='admin_costumer_list'),
     path('costumers/<int:costumer_id>', views.costumer_view, name='admin_costumer_view'),
     path('skipped/', views.skipped_transaction_list, name='admin_skipped_transaction_list'),
+    path('reviewed/', views.reviewed_transaction_history, name='admin_reviewed_transaction_history'),
     path('transaction_types/', views.transaction_type_list, name='admin_transaction_type_list'),
     path('transaction_types/add/', views.transaction_type_add, name='admin_transaction_type_add'),
     path('transaction_types/<int:transaction_type_id>', views.transaction_type_view, name='admin_transaction_type_view'),
