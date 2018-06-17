@@ -16,6 +16,10 @@ def history(request):
 def home(request):
     return render(request, 'website/home.html')
 
+def currencies(request):
+    return render(request, 'website/currencies.html')
+
+
 
 
 def services(request):
