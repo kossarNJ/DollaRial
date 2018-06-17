@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} DollaRial Payment Form {% endblock title %}
+
+{% block content %}
+
+	<div id="page">
+        <nav class="colorlib-nav" role="navigation">
+			<div class="top-menu">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-xs-2">
+							<div id="colorlib-logo"><a href="index.html">DollaRial</a></div>
+						</div>
+								<div class="col-xs-10 text-right menu-1">
+						<ul>
+
+								<li><a href="website.html">Home</a></li>
+								<li ><a href="about.html">About</a></li>
+								<li ><a href="history.html">History</a></li>
+								<li><a href="contact.html">Contact</a></li>
+								<li><a href="services.html">Services</a></li>
+								<li><a href="signup.html">Sign up</a></li>
+								<li ><a href="login.html">Login</a></li>
+							    <li ><a href="website.html">Log out</a></li>
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+
+		<div id="colorlib-contact">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1 animate-box">
+						<h2>Payment Form<h2>
+						<br><br>
+						<h3>General Information</h3>
+						<form action="#">
+							<div class="row form-group">
+								<div class="col-md-6 padding-bottom">
+									<label for="fname">First Name</label>
+									<input type="text" id="fname" class="form-control" placeholder="Your first name">
+								</div>
+								<div class="col-md-6">
+									<label for="lname">Last Name</label>
+									<input type="text" id="lname" class="form-control" placeholder="Your last name">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="telephone">Cell Number</label>
+									<input type="tel" id="telephone" class="form-control" placeholder="Your cell number">
+								</div>
+							</div>
+
+							<br><br>
+							<h3>Personal Information</h3>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="security_number">Security Number</label>
+									<input type="number" id="security_number" class="form-control" placeholder="Your security number">
+								</div>
+							</div>
+
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="passport_number">Passport Number</label>
+									<input type="number" id="passport_number" class="form-control" placeholder="Your passport number">
+								</div>
+							</div>
+
+							<br><br>
+							<h3>Exam Information</h3>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="exam_user">Exam Username</label>
+									<input type="text" id="exam_user" class="form-control" placeholder="Your exam username">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="exam_pass">Exam Password</label>
+									<input type="password" id="exam_pass" class="form-control" placeholder="Your exam password">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="exam_date">Exam Date</label>
+									<input type="date" id="exam_date" class="form-control" name="exam_date">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="exam_country">Exam Country</label>
+									<input type="text" id="exam_country" class="form-control" placeholder="Country of your exam">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="exam_city">Exam City</label>
+									<input type="text" id="exam_city" class="form-control" placeholder="City of your exam">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="exam_center">Exam Center</label>
+									<input type="text" id="exam_center" class="form-control" placeholder="Name of center that holds your exam">
+								</div>
+							</div>
+
+
+							<h3>University Information</h3>
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="uni_link">Link</label>
+									<input type="link" id="uni_link" class="form-control" placeholder="Login link">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="uni_user">University Username</label>
+									<input type="text" id="uni_user" class="form-control" placeholder="Your university username">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="uni_pass">University Password</label>
+									<input type="password" id="uni_pass" class="form-control" placeholder="Your university password">
+								</div>
+							</div>
+
+							<h3>Transfer Abroad</h3>
+
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="amount">Amount of Transfer</label>
+									<input type="number" id="amount" class="form-control" placeholder="Amount of Money to be transfered">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label>Unit of transfer</label><br>
+									<input type="radio" id="unit_choice1" name="unit" value="dollar" checked>
+									<label for="unit_choice1">Dollar</label> <br>
+
+									<input type="radio" id="unit_choice2" name="unit" value="euro">
+									<label for="unit_choice2">Euro</label>
+
+  								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="account">Account Number</label>
+									<input type="number" id="account" class="form-control" placeholder="Receiving Account Number">
+								</div>
+							</div>
+
+
+							<h3>Transfer Inside Country</h3>
+
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="amount">Amount of Transfer</label>
+									<input type="number" id="amount_first" class="form-control" placeholder="Amount of Money to be transfered">
+								</div>
+							</div>
+
+							<div class="row form-group">
+								<div class="col-md-12">
+									<label for="account">Account Number</label>
+									<input type="number" id="account_sec" class="form-control" placeholder="Receiving Account Number">
+								</div>
+							</div>
+
+							<div class="form-group text-center">
+								<input type="submit" value="Submit" class="btn btn-primary">
+							</div>
+
+
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+	</div>
+{% endblock content %}
+
+{% block javascript %}
+    {{ block.super }}
+{% endblock javascript %}

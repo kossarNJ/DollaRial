@@ -73,6 +73,11 @@ def edit_profile(request):
     return render(request, 'user_panel/user_edit_profile.html', data)
 
 
+def payment_form(request):
+
+    return render(request, 'user_panel/payment_form.html')
+
+
 def exchange(request):
     data = {
         "wallets": {
