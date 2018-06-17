@@ -6,7 +6,7 @@ class EditTest(StaticLiveServerTestCase):
     def setUp(self):
         self.selenium = WebDriver()
         self.selenium.implicitly_wait(10)
-        self.selenium.get('%s%s' % (self.live_server_url, '/account/edit/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/profile/'))
         self.__create_users()
 
     def tearDown(self):
@@ -34,11 +34,18 @@ class EditTest(StaticLiveServerTestCase):
 
     @staticmethod
     def _fill(page):
-        page.email.send_keys('kossarna@gmail.com')
+
+        page.email.clear()
+        page.password.clear()
+        page.fname.clear()
+        page.lname.clear()
+        page.phone.clear()
+
+        page.email.send_keys('parand1997@gmail.com')
         page.password.send_keys('123')
-        page.fname.send_keys('Kossar')
-        page.lname.send_keys('Najafi')
-        page.phone.send_keys('09147898557')
+        page.fname.send_keys('Parand')
+        page.lname.send_keys('Alizadeh')
+        page.phone.send_keys('0234')
         page.notif.click()
 
     @staticmethod
@@ -56,6 +63,18 @@ class EditTest(StaticLiveServerTestCase):
             error = self.selenium.find_element_by_css_selector('.has-error')
             self.assertEqual(error.text, "Please fill all required fields.")
             field.send_keys(prev_text)
+
+
+
+
+    def test_successful_edit(self):
+        page = self.__get_page()
+        self._fill(page)
+
+        page.button.click()
+        success = self.selenium.find_element_by_css_selector('.success')
+        self.assertEqual(success.text, "Edited Successfully")
+
 
 
 
