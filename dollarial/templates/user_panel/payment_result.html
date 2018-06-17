@@ -1,0 +1,59 @@
+{% extends "user_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Payment Result{% endblock title %}
+
+{% block page_title %}
+Payment Result
+{% endblock page_title %}
+
+
+{% block right_panel %}
+<div class="content mt-3">
+    <div class="animated fadeIn">
+        <div class="row">
+
+            <!-- Transaction View -->
+          <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <strong class="card-title">Payment Result</strong>
+                </div>
+                <div class="card-body">
+                  <!-- Credit Card -->
+                  <div id="transaction-card">
+                      <div class="card-body">
+                          <div class="form-group">
+                              <label for="cc-type" class="control-label mb-1">Type</label>
+                              <input id="cc-type" name="cc-type" type="text" class="form-control"
+                                     value="{{ transaction.transaction_type }}" readonly>
+                          </div>
+                          <div class="form-group">
+                              <label for="cc-amount" class="control-label mb-1">Amount</label>
+                              <input id="cc-amount" name="cc-amount" type="text" class="form-control"
+                                     value="{{ transaction.amount }} {{ transaction.currency }}" readonly>
+                          </div>
+                          <div class="form-group">
+                              <label for="cc-destination" class="control-label mb-1">Destination</label>
+                              <input id="cc-destination" name="cc-destination" type="text" class="form-control"
+                                     value="{{ transaction.destination }}" readonly>
+                          </div>
+
+                          <div class="form-group text-center">
+                              <input type="submit" value="Continue" class="btn btn-primary">
+                              <input type="submit" value="Cancel" class="btn btn-danger" >
+                          </div>
+                      </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+            <!-- End of Transaction View -->
+        </div>
+    </div>
+</div>
+{% endblock right_panel %}
