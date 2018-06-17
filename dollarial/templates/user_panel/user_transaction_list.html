@@ -37,16 +37,16 @@ Transactions
                 </thead>
                 <tbody>
                     {% for transaction in transactions %}
-                      <tr id="transaction_row_{{ forloop.counter }}">
+                      <tr id="transaction_id_{{ transaction.id }}">
                         <td>
                             <a href="{% url 'user_transaction_view' transaction.id %}">{{ transaction.id }}</a>
                         </td>
-                        <td>{{ transaction.transaction_type }}</td>
-                        <td>{{ transaction.amount }}</td>
-                        <td>{{ transaction.currency }}</td>
-                        <td>{{ transaction.owner }}</td>
-                        <td>{{ transaction.destination }}</td>
-                        <td>{{ transaction.status }}</td>
+                       <td id="transaction_type_{{ transaction.id }}">{{ transaction.transaction_type }}</td>
+                        <td id="transaction_amount_{{ transaction.id }}">{{ transaction.amount }}</td>
+                        <td id="transaction_currency_{{ transaction.id }}">{{ transaction.currency }}</td>
+                        <td id="transaction_owner_{{ transaction.id }}">{{ transaction.owner }}</td>
+                        <td id="transaction_destination_{{ transaction.id }}">{{ transaction.destination }}</td>
+                        <td id="transaction_status_{{ transaction.id }}">{{ transaction.status }}</td>
                       </tr>
                     {% endfor %}
                 </tbody>
