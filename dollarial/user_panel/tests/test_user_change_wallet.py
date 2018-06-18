@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 class ChangeWalletTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
+        # TODO add user1 credit = 1000
         super().setUpClass()
         cls.selenium = WebDriver()
         cls.selenium.implicitly_wait(10)
@@ -104,13 +105,24 @@ class ChangeWalletTest(StaticLiveServerTestCase):
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Withdrawal from Wallet Successful")
 
-    def test_withdraw_wallet_cancel(self):
+    def test_withdraw_wallet_more_than_credit(self):
         page = self.__get_page()
         self._login(page)
         self._fill(page)
         page.withdraw_button.click()
+        page.confirm_withdraw.click()
+        success = self.selenium.find_element_by_css_selector('.success')
+        self.assertEqual(success.text, "Withdrawal from Wallet Successful")
+
+    def test_withdraw_wallet_cancel(self):
+        page = self.__get_page()
+        self._login(page)
+        self._fill(page)
+        page.withdraw_amount.send_keys('100000')
+        page.withdraw_button.click()
         page.cancel_withdraw.click()
-        self.assertEqual(self.__get_text(page.withdraw_amount), "")
+        error = self.selenium.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, "Withdrawal can not be more than your credit")
 
     def test_withdraw_wallet_unsuccessful(self):
         page = self.__get_page()

@@ -13,7 +13,6 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
     def tearDown(self):
         # TODO: drop database
         self.selenium.quit()
-        pass
 
     def __create_users(self):
         """
@@ -66,7 +65,7 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
     def _login(page):  # TODO
         pass
 
-    def test_not_loggedin(self):  # TODO
+    def test_not_logged_in(self):  # TODO
         pass
 
     def test_preview_exchange_not_empty(self):
@@ -124,6 +123,19 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
         page2.confirm_exchange.click()
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Exchange Successfully Made")
+
+    def test_preview_fail_unsuccessful(self):
+        page1 = self.__get_page_1()
+        self._login(page1)
+        self._fill_1(page1)
+        page1.amount.send_keys('10000000')
+        page1.preview_button.click()
+        self.selenium.implicitly_wait(10)
+
+        page2 = self.__get_page_2()
+        page2.confirm_exchange.click()
+        error = self.selenium.find_element_by_css_selector('.error')
+        self.assertEqual(error.text, "Exchange unsuccessful. You can not exchange more than ")
 
     def test_preview_accept_unsuccess(self):
         page1 = self.__get_page_1()
