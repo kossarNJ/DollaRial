@@ -41,7 +41,7 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-10 col-md-offset-1 animate-box">
-						<h2>Payment Form<h2>
+						<h2>Payment Form</h2>
 						<br><br>
 						<h3>General Information</h3>
 						<form action="#">
@@ -162,7 +162,7 @@
 							<div class="row form-group">
 								<div class="col-md-12">
 									<label>Unit of transfer</label><br>
-									<input type="radio" id="unit_choice1" name="unit" value="dollar" checked>
+									<input type="radio" id="unit_choice1" name="unit" value="dollar">
 									<label for="unit_choice1">Dollar</label> <br>
 
 									<input type="radio" id="unit_choice2" name="unit" value="euro">
@@ -185,7 +185,7 @@
 							<div class="row form-group">
 								<div class="col-md-12">
 									<label for="amount">Amount of Transfer</label>
-									<input type="number" id="amount_first" class="form-control" placeholder="Amount of Money to be transfered">
+									<input type="number" id="amount_sec" class="form-control" placeholder="Amount of Money to be transfered">
 								</div>
 							</div>
 
@@ -197,7 +197,7 @@
 							</div>
 
 							<div class="form-group text-center">
-								<input type="submit" value="Submit" class="btn btn-primary">
+								<input type="submit" value="Submit" class="btn btn-primary" formaction="{% url 'payment_result' %}">
 							</div>
 
 

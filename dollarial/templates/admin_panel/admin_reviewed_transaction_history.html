@@ -1,0 +1,77 @@
+{% extends "admin_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'assets/css/lib/datatable/dataTables.bootstrap.min.css' %}">
+{% endblock stylesheets %}
+
+{% block title %} Reviewed Transactions {% endblock title %}
+
+{% block page_title %} Reviewed Transactions {% endblock page_title %}
+
+{% block right_panel %}
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Reviewed Transactions Table</strong>
+                        </div>
+                        <div class="card-body">
+                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Reviewer ID</th>
+                                    <th>Reviewer Username</th>
+                                    <th>Transaction ID</th>
+                                    <th>Review Time</th>
+                                    <th>Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in reviewed_items %}
+                                    <tr>
+                                        <td id="item_id_{{ item.id }}">{{ item.id }}</td>
+                                        <td id="item_reviewer_id_{{ item.id }}">{{ item.reviewer_id }}</td>
+                                        <td id="item_reviewer_username_{{ item.id }}">{{ item.reviewer_username }}</td>
+                                        <td id="item_transaction_id_{{ item.id }}">{{ item.transaction_id }}</td>
+                                        <td id="item_time_{{ item.id }}">{{ item.time }}</td>
+                                        <td id="item_time_{{ item.id }}">{{ item.status }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+{% endblock right_panel %}
+
+{% block js_files %}
+    <script src="{% static 'assets/js/lib/data-table/datatables.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/jszip.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/pdfmake.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/vfs_fonts.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.print.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/buttons.colVis.min.js' %}"></script>
+    <script src="{% static 'assets/js/lib/data-table/datatables-init.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#bootstrap-data-table-export').DataTable();
+        });
+    </script>
+{% endblock js_files %}
+

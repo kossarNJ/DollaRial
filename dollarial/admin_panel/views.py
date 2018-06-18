@@ -165,6 +165,31 @@ def skipped_transaction_list(request):
     return render(request, 'admin_panel/admin_skipped_transaction_list.html', data)
 
 
+def reviewed_transaction_history(request):
+    # TODO: read from db
+    data = {
+        "reviewed_items": [
+            {
+                "id": "1",
+                "reviewer_id": "2",
+                "reviewer_username": "soroush",
+                "transaction_id": "10",
+                "time": "01/01/99",
+                "status": "reject"
+            },
+            {
+                "id": "2",
+                "reviewer_id": "1",
+                "reviewer_username": "parand",
+                "transaction_id": "9",
+                "time": "01/01/99",
+                "status": "accept"
+            }
+        ]
+    }
+    return render(request, 'admin_panel/admin_reviewed_transaction_history.html', data)
+
+
 def transaction_type_list(request):
     data = {
         "transaction_types": [

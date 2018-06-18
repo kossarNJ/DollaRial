@@ -78,6 +78,18 @@ def payment_form(request):
     return render(request, 'user_panel/payment_form.html')
 
 
+def payment_result(request):
+    data = {
+        "transaction": {
+            "transaction_type": "University",
+            "amount": "200",
+            "currency": "$",
+            "destination": "Stanford University",
+        }
+    }
+    return render(request, 'user_panel/payment_result.html', data)
+
+
 def exchange(request):
     data = {
         "wallets": {
