@@ -67,13 +67,13 @@
                                                 <label for="from_credit">Exact withdraw from selected "from currency"</label> <br>
 
                                                 <input type="radio" id="to_credit" name="option_credit" value="to">
-                                                <label for="notif_choice2">Exact deposit to selected "to currency"</label>
+                                                <label for="to_credit">Exact deposit to selected "to currency"</label>
                                             </div>
                                         </div>
 
                                         <div class="form-group text-center">
                                             <input type="submit" value="Preview Exchange" class="btn btn-primary"
-                                                   formaction="{% url 'user_exchange_accept' %}">
+                                                   formaction="{% url 'user_exchange_accept' %}" id="preview_exchange">
                                         </div>
                                     </form>
                                 </div>

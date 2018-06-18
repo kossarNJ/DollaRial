@@ -281,15 +281,15 @@ def admin_login(request):
 def index(request):
     data = {
         "wallets": [
-            {   "name": "dollar",
-                "credit": 2200,
-            },
-            {   "name": "rial",
-                "credit": 1000,
-            },
-            {   "name": "euro",
-                "credit": 1020
-            }
+            {"name": "dollar",
+             "credit": 2200,
+             },
+            {"name": "rial",
+             "credit": 1000,
+             },
+            {"name": "euro",
+             "credit": 1020
+             }
         ]
     }
     return render(request, 'admin_panel/admin_index.html', data)

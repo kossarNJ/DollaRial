@@ -1,8 +1,5 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 
 class TransactionViewTest(StaticLiveServerTestCase):
@@ -71,7 +68,6 @@ class TransactionViewTest(StaticLiveServerTestCase):
         self.assertEqual(costumer.owner, self.__get_value(page.owner))
         self.assertEqual(costumer.destination, self.__get_value(page.destination))
         self.assertEqual(costumer.status, self.__get_checked(page.status))
-
 
     def test_logged_in_user_access(self):
         # TODO: implement.  user should be able to access this page.

@@ -27,7 +27,7 @@
                                     </div>
                                     <div class="stat-content dib">
                                         <div class="stat-text">{{ w.name|capfirst }} Wallet</div>
-                                        <div class="stat-digit">10200</div>
+                                        <div class="stat-digit" id="wallet_balance_{{ w.name }}">10200</div>
                                     </div>
                                 </div>
                             </div>
@@ -47,7 +47,7 @@
                                 <input id="charge-price" name="charge-price" type="number" min="0"
                                        class="form-control">
                             </div>
-                            <button type="button" class="btn btn-primary btn-sm">
+                            <button type="button" class="btn btn-primary btn-sm" id="charge-button">
                                 Charge Wallet
                             </button>
                         </div>
@@ -67,7 +67,7 @@
                                        class="form-control">
                             </div>
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                    data-target="#credit-change-modal">
+                                    data-target="#credit-change-modal" id="withdraw-button">
                                 Withdraw from Wallet
                             </button>
                         </div>
