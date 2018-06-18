@@ -17,7 +17,15 @@ def home(request):
     return render(request, 'website/home.html')
 
 def currencies(request):
-    return render(request, 'website/currencies.html')
+    data = {
+        "c":{
+        "name1": "dollar",
+        "name2": "rial",
+        "amount": "1",
+        "result": "42000",
+        }
+    }
+    return render(request, 'website/currencies.html', data)
 
 
 

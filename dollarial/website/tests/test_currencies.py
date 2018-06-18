@@ -33,4 +33,22 @@ class CurrencyTestCase(StaticLiveServerTestCase):
         self.assertIn("7%", self.__get_text(wage))
 
 
+    def test_exchange(self):
+        currency1 = self.selenium.find_element_by_id("currency_1")
+        currency2 = self.selenium.find_element_by_id("currency_2")
+        amount = self.selenium.find_element_by_id("amount")
+        result = self.selenium.find_element_by_id("cc-amount")
+
+        for option in currency1.find_elements_by_tag_name('option'):
+            if option.text == 'dollar':
+                option.click()
+                break
+
+        for option in currency2.find_elements_by_tag_name('option'):
+            if option.text == 'rial':
+                option.click()
+                break
+        amount.send_keys('1')
+
+        self.assertEqual(result.get_attribute("value"), '42000')
 
