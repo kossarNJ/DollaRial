@@ -352,6 +352,112 @@ class PaymentFormTest(StaticLiveServerTestCase):
         self.assertEqual(success.text, "Payment is completed")
 
 
+    def __set_charge(self):
+        #todo
+        pass
+
+    def test_low_charge_exam(self):
+
+        #todo if exam
+
+
+        self.__set_charge()
+        data = self.__add_data()
+        self.__login()
+        page = self.__get_form_page()
+        self._fill_exam(page)
+
+        page.button.click()
+        time.sleep(1)
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_result'))
+        p = self.__get_result_page()
+        self.assertEqual(data["amount"], self.__get_text(p.ramount))
+        self.assertEqual(data["type"], self.__get_text(p.rtype))
+        self.assertEqual(data["destination"], self.__get_text(p.rdestination))
+
+        p.rcontinue.click()
+
+        error = self.selenium.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, "Payment can not be done. Charge your account")
+
+
+    def test_low_charge_university(self):
+
+
+        #todo if university
+
+        self.__set_charge()
+        data = self.__add_data()
+        self.__login()
+        page = self.__get_form_page()
+        self._fill_university(page)
+
+        page.button.click()
+        time.sleep(1)
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_result'))
+        p = self.__get_result_page()
+        self.assertEqual(data["amount"], self.__get_text(p.ramount))
+        self.assertEqual(data["type"], self.__get_text(p.rtype))
+        self.assertEqual(data["destination"], self.__get_text(p.rdestination))
+
+        p.rcontinue.click()
+
+        error = self.selenium.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, "Payment can not be done. Charge your account")
+
+
+    def test_low_charge_transfer(self):
+
+        #todo if transfer
+
+        self.__set_charge()
+        data = self.__add_data()
+        self.__login()
+        page = self.__get_form_page()
+        self._fill_transfer(page)
+
+        page.button.click()
+        time.sleep(1)
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_result'))
+        p = self.__get_result_page()
+        self.assertEqual(data["amount"], self.__get_text(p.ramount))
+        self.assertEqual(data["type"], self.__get_text(p.rtype))
+        self.assertEqual(data["destination"], self.__get_text(p.rdestination))
+
+        p.rcontinue.click()
+
+        error = self.selenium.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, "Payment can not be done. Charge your account")
+
+
+
+
+    def test_low_charge_internal(self):
+
+        #todo if internal
+
+        self.__set_charge()
+        data = self.__add_data()
+        self.__login()
+        page = self.__get_form_page()
+        self._fill_internal(page)
+
+        page.button.click()
+        time.sleep(1)
+
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_result'))
+        p = self.__get_result_page()
+        self.assertEqual(data["amount"], self.__get_text(p.ramount))
+        self.assertEqual(data["type"], self.__get_text(p.rtype))
+        self.assertEqual(data["destination"], self.__get_text(p.rdestination))
+
+        p.rcontinue.click()
+
+        error = self.selenium.find_element_by_css_selector('.has-error')
+        self.assertEqual(error.text, "Payment can not be done. Charge your account")
 
     def test_logged_in_user_access(self):
         # TODO: implement.  user should be able to access this page.
