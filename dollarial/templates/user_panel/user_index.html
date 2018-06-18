@@ -18,7 +18,7 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <strong class="card-title mb-3">{{ w.name|capfirst }} Wallet</strong>
+                                <strong class="card-title mb-3 " id = "name_{{ w.name }}">{{ w.name|capfirst }} Wallet</strong>
                             </div>
                             <div class="card-body">
                                 <div class="stat-widget-one">
@@ -27,7 +27,7 @@
                                     </div>
                                     <div class="stat-content dib">
                                         <div class="stat-text">{{ w.name|capfirst }} Wallet</div>
-                                        <div class="stat-digit" id="wallet_balance_{{ w.name }}">10200</div>
+                                        <div class="stat-digit" id="wallet_balance_{{ w.name }}">{{ w.credit }}</div>
                                     </div>
                                 </div>
                             </div>
