@@ -55,7 +55,7 @@
                                                             <p id = "type_{{ forloop.counter0 }}">{{ t.type }}</p>
 															<p class="price" id = "price_{{ forloop.counter0 }}"><span>{{ t.price }}</span>
 															<p id = "details_{{ forloop.counter0 }}">{{ t.details }}</p>
-															<p><a href="#" class="btn btn-primary">View</a></p>
+															<p><a href="{% url 'payment_form' %}" class="btn btn-primary">View</a></p>
 														</div>
 													</div>
 												</div>
