@@ -1,6 +1,7 @@
 from time import sleep
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.common.exceptions import StaleElementReferenceException
 
 from selenium.webdriver.firefox.webdriver import WebDriver
 
@@ -61,9 +62,10 @@ class TransactionListTest(StaticLiveServerTestCase):
                     self.amount += [self.selenium.find_element_by_id('transaction_amount_' + row.transaction_id)]
                     self.currency += [self.selenium.find_element_by_id('transaction_currency_' + row.transaction_id)]
                     self.owner += [self.selenium.find_element_by_id('transaction_owner_' + row.transaction_id)]
-                    self.destination += [self.selenium.find_element_by_id('transaction_destination_' + row.transaction_id)]
+                    self.destination += [self.selenium.find_element_by_id('transaction_destination_' +
+                                                                          row.transaction_id)]
                     self.status += [self.selenium.find_element_by_id('transaction_status_' + row.transaction_id)]
-                    self.search = self.selenium.find_element_by_xpath("//input[@type='search']")
+                self.search = self.selenium.find_element_by_xpath("//input[@type='search']")
 
         return TransactionListPage(self.selenium, self.__get_transaction())
 
@@ -71,15 +73,16 @@ class TransactionListTest(StaticLiveServerTestCase):
     def __get_text(element):
         return element.get_attribute('textContent')
 
-    def test_filter_by_status(self):
-        page = self.__get_page()
-        page.search.send_keys("reject")
-        sleep(10)
-
     def test_filter_by_user(self):
         page = self.__get_page()
         page.search.send_keys("user1")
         sleep(10)
+        for owner in page.owner:
+            try:
+                self.assertEqual(self.__get_text(owner), "user1")
+                break
+            except StaleElementReferenceException:
+                pass
 
     def test_fields_content(self):
         transactions = self.__get_transaction()

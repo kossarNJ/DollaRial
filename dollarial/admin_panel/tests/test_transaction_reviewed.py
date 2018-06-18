@@ -1,5 +1,9 @@
+from time import sleep
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+
+from selenium.common.exceptions import StaleElementReferenceException
 
 
 class ReviewedTest(StaticLiveServerTestCase):
@@ -54,12 +58,25 @@ class ReviewedTest(StaticLiveServerTestCase):
                     self.transaction_id += [self.selenium.find_element_by_id('item_transaction_id_'+row.item_id)]
                     self.review_time += [self.selenium.find_element_by_id('item_time_'+row.item_id)]
                     self.status += [self.selenium.find_element_by_id('item_status_'+row.item_id)]
+                self.search = self.selenium.find_element_by_xpath("//input[@type='search']")
+
 
         return ReviewedPage(self.selenium, self.__get_reviewed())
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
+
+    def test_filter_by_reviewer(self):
+        page = self.__get_page()
+        page.search.send_keys("parand")
+        sleep(10)
+        for reviewer in page.reviewer_username:
+            try:
+                self.assertEqual(self.__get_text(reviewer), "parand")
+                break
+            except StaleElementReferenceException:
+                pass
 
     def test_fields_content(self):
         skipped_transactions = self.__get_reviewed()
