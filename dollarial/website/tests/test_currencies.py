@@ -52,3 +52,5 @@ class CurrencyTestCase(StaticLiveServerTestCase):
 
         self.assertEqual(result.get_attribute("value"), '42000')
 
+
+

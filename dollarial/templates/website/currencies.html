@@ -6,116 +6,81 @@
 {% endblock stylesheets %}
 
 {% block title %} Currency Prices {% endblock title %}
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 {% block content %}
-	<div id="page">
-		<nav class="colorlib-nav" role="navigation">
-			<div class="top-menu">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col-xs-2">
-							<div id="colorlib-logo"><a href="index.html">Currency Prices</a></div>
-						</div>
-						<div class="col-xs-10 text-right menu-1">
-							<ul>
-								<li><a href="website.html">Home</a></li>
-								<li ><a href="about.html">About</a></li>
-								<li ><a href="history.html">History</a></li>
-								<li ><a href="contact.html">Contact</a></li>
-								<li><a href="services.html">Services</a></li>
-								<li class = "active"><a href="currencies.html">Currencies</a></li>
-								<li ><a href="signup.html">Sign up</a></li>
-								<li ><a href="login.html">Login</a></li>
-							    <li ><a href="website.html">Log out</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</nav>
-		<aside id="colorlib-hero">
-			<div class="flexslider">
-				<ul class="slides">
-			   	<li style="background-image: url(images/cover-img-4.jpg);">
-			   		<div class="overlay"></div>
-			   		<div class="container-fluid">
-			   			<div class="row">
-				   			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
-				   				<div class="slider-text-inner text-center">
+    <aside id="colorlib-hero">
+        <div class="flexslider">
+            <ul class="slides">
+                <li style="background-image: url(images/cover-img-4.jpg);">
+                    <div class="overlay"></div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
+                                <div class="slider-text-inner text-center">
 
-				   					<h1>Currency Prices</h1>
-				   				</div>
-				   			</div>
-				   		</div>
-			   		</div>
-			   	</li>
-			  	</ul>
-		  	</div>
-		</aside>
+                                    <h1>Currency Prices</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </aside>
 
-		<div class="colorlib-wrap">
-			<div class="container">
-				<div class="row">
-					<div class="col-md-9">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="wrap-division">
+    <div class="colorlib-wrap">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="wrap-division">
 
 
+                                <div class="col-md-12 animate-box">
+                                    <div class="room-wrap">
+                                        <div class="row">
 
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="desc">
+                                                    <h2 id="name_dollar">1$</h2>
+                                                    <p class="price" id="price_dollar"><span>42000 IRR</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div class="col-md-12 animate-box">
+                                    <div class="room-wrap">
+                                        <div class="row">
 
-										<div class="col-md-12 animate-box">
-											<div class="room-wrap">
-												<div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="desc">
+                                                    <h2 id="name_euro">1€</h2>
+                                                    <p class="price" id="price_euro"><span>53000 IRR</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-													<div class="col-md-6 col-sm-6" >
-														<div class="desc">
-															<h2 id = "name_dollar">1$</h2>
-															<p class="price" id = "price_dollar"><span>42000 IRR</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
+                                <div class="col-md-12 animate-box">
+                                    <div class="room-wrap">
+                                        <div class="row">
 
-                                    		<div class="col-md-12 animate-box">
-											<div class="room-wrap">
-												<div class="row">
+                                            <div class="col-md-6 col-sm-6">
+                                                <div class="desc">
+                                                    <h2 id="name_wage">Wage</h2>
+                                                    <p class="price" id="price_wage"><span>7%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-													<div class="col-md-6 col-sm-6" >
-														<div class="desc">
-															<h2 id = "name_euro">1€</h2>
-															<p class="price" id = "price_euro"><span>53000 IRR</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-
-                                    		<div class="col-md-12 animate-box">
-											<div class="room-wrap">
-												<div class="row">
-
-													<div class="col-md-6 col-sm-6" >
-														<div class="desc">
-															<h2 id = "name_wage">Wage</h2>
-															<p class="price" id = "price_wage"><span>7%</span>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-
-
-
-
-									</div>
-
-
-
-								<div class="row form-group">
+                                				<div class="row form-group">
 								<div class="col-md-12">
 									<label for="currency_1">First Currency</label>
 
@@ -152,51 +117,54 @@
                                      value="{{ c.result }}" readonly>
                           </div>
 
-								</div>
-							</div>
-						</div>
-					</div>
 
-					<!-- SIDEBAR-->
-					</div>
-				</div>
-			</div>
-		</div>
-	<footer id="colorlib-footer" role="contentinfo">
-			<div class="container">
-				<div class="row row-pb-md">
-						<div class="col-md-10 col-md-offset-1 animate-box">
-						<h3>Contact Information</h3><h3>Contact Information</h3>
-						<div class="row contact-info-wrap">
-							<div class="col-md-3" id="dollarial_address">
-								<p><span><i class="icon-location"></i></span> Room 004, Department of Computer Enginerring, Sharif University of Technology</p>
-							</div>
-							<div class="col-md-3" id="dollarial_phone">
-								<p><span><i class="icon-phone3"></i></span> <a href="tel://1234567920">+ 9821 6600 5616</a></p>
-							</div>
-							<div class="col-md-3" id="dollarial_email">
-								<p><span><i class="icon-mail5"></i></span> <a href="mailto:info@yoursite.com">dollarialsharif@gmail.com</a></p>
-							</div>
-<!-- 							<div class="col-md-3">
-								<p><span><i class="icon-globe"></i></span> <a href="#">yoursite.com</a></p>
-							</div> -->
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12 text-center">
-						<p>
-							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span>
-						</p>
-					</div>
-				</div>
-			</div>
-		</footer>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- SIDEBAR-->
+        </div>
+    </div>
+    </div>
+    </div>
+    <footer id="colorlib-footer" role="contentinfo">
+        <div class="container">
+            <div class="row row-pb-md">
+                <div class="col-md-10 col-md-offset-1 animate-box">
+                    <h3>Contact Information</h3>
+                    <h3>Contact Information</h3>
+                    <div class="row contact-info-wrap">
+                        <div class="col-md-3" id="dollarial_address">
+                            <p><span><i class="icon-location"></i></span> Room 004, Department of Computer Enginerring,
+                                Sharif University of Technology</p>
+                        </div>
+                        <div class="col-md-3" id="dollarial_phone">
+                            <p><span><i class="icon-phone3"></i></span> <a href="tel://1234567920">+ 9821 6600 5616</a>
+                            </p>
+                        </div>
+                        <div class="col-md-3" id="dollarial_email">
+                            <p><span><i class="icon-mail5"></i></span> <a href="mailto:info@yoursite.com">dollarialsharif@gmail.com</a>
+                            </p>
+                        </div>
+                        <!-- 							<div class="col-md-3">
+                                                        <p><span><i class="icon-globe"></i></span> <a href="#">yoursite.com</a></p>
+                                                    </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <p>
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-
-	</div>
 {% endblock content %}
 
 {% block javascript %}
