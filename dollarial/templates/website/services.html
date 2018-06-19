@@ -9,31 +9,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 {% block content %}
-	<div id="page">
-		<nav class="colorlib-nav" role="navigation">
-			<div class="top-menu">
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col-xs-2">
-							<div id="colorlib-logo"><a href="index.html">DollaRial Services</a></div>
-						</div>
-						<div class="col-xs-10 text-right menu-1">
-							<ul>
-								<li><a href="website.html">Home</a></li>
-								<li ><a href="about.html">About</a></li>
-								<li ><a href="history.html">History</a></li>
-								<li ><a href="contact.html">Contact</a></li>
-								<li class = "active"><a href="services.html">Services</a></li>
-								<li><a href="currencies.html">Currencies</a></li>
-								<li ><a href="signup.html">Sign up</a></li>
-								<li ><a href="login.html">Login</a></li>
-							    <li ><a href="website.html">Log out</a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</nav>
 		<aside id="colorlib-hero">
 			<div class="flexslider">
 				<ul class="slides">
@@ -80,7 +55,7 @@
                                                             <p id = "type_{{ forloop.counter0 }}">{{ t.type }}</p>
 															<p class="price" id = "price_{{ forloop.counter0 }}"><span>{{ t.price }}</span>
 															<p id = "details_{{ forloop.counter0 }}">{{ t.details }}</p>
-															<p><a href="#" class="btn btn-primary">View</a></p>
+															<p><a href="{% url 'payment_form' %}" class="btn btn-primary">View</a></p>
 														</div>
 													</div>
 												</div>
@@ -132,10 +107,6 @@
 				</div>
 			</div>
 		</footer>
-
-
-
-	</div>
 {% endblock content %}
 
 {% block javascript %}
