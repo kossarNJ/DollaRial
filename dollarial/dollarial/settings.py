@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # apps
     'admin_panel',
-    'seleniumtest',
     'user_management',
     'website',
     # extensions
