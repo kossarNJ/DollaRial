@@ -1,4 +1,4 @@
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
 from django.views import generic
 
@@ -14,3 +14,7 @@ class Registration(generic.CreateView):
 class Login(LoginView):
     template_name = 'user_management/login.html'
     redirect_field_name = reverse_lazy('user_index')
+
+
+class Logout(LogoutView):
+    next_page = reverse_lazy('home')
