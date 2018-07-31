@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.urls import reverse_lazy
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -42,7 +44,8 @@ INSTALLED_APPS = [
     'user_management',
     'website',
     # extensions
-    'django_extensions'
+    'django_extensions',
+    'bootstrapform'
 ]
 
 MIDDLEWARE = [
@@ -109,6 +112,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = reverse_lazy('user_index')
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
@@ -134,3 +139,7 @@ STATICFILES_DIRS = [
 ]
 
 SHELL_PLUS = "ipython"
+
+# Auth Related
+
+AUTH_USER_MODEL = "user_management.User"
