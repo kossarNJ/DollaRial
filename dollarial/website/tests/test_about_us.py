@@ -20,7 +20,6 @@ class AboutUsTestCase(StaticLiveServerTestCase):
     def __get_text(element):
         return element.get_attribute('textContent')
 
-
     def test_about_text(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/about/'))
         about = self.selenium.find_element_by_id("about_text")
