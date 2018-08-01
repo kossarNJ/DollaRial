@@ -123,6 +123,8 @@ def exchange_accept(request):
     return render(request, 'user_panel/user_exchange_acceptance.html', data)
 
 
+
+
 def index(request):
     data = {
         "wallets": [

@@ -1,0 +1,12 @@
+postgresql installation:
+
+for mac os x:
+- go to https://postgresapp.com/
+- install as said in all 3 instructions
+
+after installation open the command line and enter these commands:
+- sudo -u [YOUR USERNAME] createuser -SRdP modir
+- enter the password in settings.py in databases section
+- sudo -u soroush createdb --owner modir --template template0 -E UTF8 dollarial
+
+no errors should raise in any step

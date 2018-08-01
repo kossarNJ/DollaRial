@@ -3,4 +3,5 @@ pytz==2018.4
 selenium==3.11.0
 django-extensions==2.0.7
 freezegun==0.3.10
+psycopg2-binary
 
