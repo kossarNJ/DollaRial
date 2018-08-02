@@ -10,5 +10,5 @@ urlpatterns = [
     path('payment_form/', views.payment_form, name='payment_form'),
     path('payment_result/', views.payment_result, name='payment_result'),
     path('exchange/accept/', views.exchange_accept, name='user_exchange_accept'),
-    path('', views.index, name='user_index'),
+    path('', views.Index.as_view(), name='user_index'),
 ]

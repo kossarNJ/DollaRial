@@ -116,7 +116,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOGIN_REDIRECT_URL = reverse_lazy('user_index')
-
+LOGIN_URL = reverse_lazy('login')
+LOGOUT_REDIRECT_URL = reverse_lazy('home')
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/

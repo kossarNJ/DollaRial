@@ -1,4 +1,8 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.views import View
+
+from dollarial.currency import Currency
 
 
 def transaction_list(request):
@@ -123,20 +127,13 @@ def exchange_accept(request):
     return render(request, 'user_panel/user_exchange_acceptance.html', data)
 
 
+class Index(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            "wallets": [
+                {"name": currency.sign, "credit": request.user.get_credit(currency.char)}
+                for currency in Currency.get_all_currencies()
+            ]
+        }
+        return render(request, 'user_panel/user_index.html', data)
 
-
-def index(request):
-    data = {
-        "wallets": [
-            {"name": "rial",
-             "credit": 1000,
-             },
-            {"name": "dollar",
-             "credit": 2200,
-             },
-            {"name": "euro",
-             "credit": 1020
-             }
-        ]
-    }
-    return render(request, 'user_panel/user_index.html', data)
