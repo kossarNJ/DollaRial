@@ -1,4 +1,9 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.views import View
+
+from dollarial.constants import DOLLARIAL_COMPANY
+from dollarial.currency import Currency
 
 
 def transaction_list(request):
@@ -303,18 +308,12 @@ def admin_login(request):
     return render(request, 'admin_panel/admin_login.html')
 
 
-def index(request):
-    data = {
-        "wallets": [
-            {"name": "dollar",
-             "credit": 2200,
-             },
-            {"name": "rial",
-             "credit": 1000,
-             },
-            {"name": "euro",
-             "credit": 1020
-             }
-        ]
-    }
-    return render(request, 'admin_panel/admin_index.html', data)
+class Index(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            "wallets": [
+                {"name": currency.sign, "credit": DOLLARIAL_COMPANY.get_credit(currency.char)}
+                for currency in Currency.get_all_currencies()
+            ]
+        }
+        return render(request, 'admin_panel/admin_index.html', data)

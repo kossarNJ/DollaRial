@@ -54,3 +54,16 @@ class Wallet(models.Model):
 class Clerk(models.Model):
     salary = models.PositiveIntegerField(default=0, verbose_name="Salary")
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
+
+class Company(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def get_credit(self, currency):
+        return self.user.get_credit(currency)
+
+    def __str__(self):
+        return self.user.username
