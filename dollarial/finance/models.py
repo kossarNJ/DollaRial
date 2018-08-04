@@ -2,7 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from django.db import models
-from django.db.models import CASCADE
+from django.db.models import CASCADE, Sum
 from polymorphic.models import PolymorphicModel
 
 from dollarial import settings
@@ -18,6 +18,10 @@ class Transaction(PolymorphicModel):
 
     def __str__(self):
         return "%s %s%s" % (self.owner.username, self.amount, self.currency)
+
+    def save(self, *args, **kwargs,):
+        super().save(*args, **kwargs)
+        update_credit(self.owner, self.currency)
 
 
 class BankPayment(Transaction):
@@ -42,3 +46,10 @@ class Exchange(Transaction):
 
     def __str__(self):
         return "%s %s%s->%s%s" % (self.amount, self.currency, self.final_amount, self.final_currency)
+
+
+def update_credit(user, currency):
+    wallet = user.get_wallet(currency)
+    wallet.credit = \
+        Transaction.objects.filter(owner=user, deleted=False).aggregate(Sum('amount'))['amount__sum'] or 0
+    wallet.save()

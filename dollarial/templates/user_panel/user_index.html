@@ -18,7 +18,8 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-header">
-                                <strong class="card-title mb-3 " id = "name_{{ w.name }}">{{ w.name|capfirst }} Wallet</strong>
+                                <strong class="card-title mb-3 " id="name_{{ w.name }}">{{ w.name|capfirst }}
+                                    Wallet</strong>
                             </div>
                             <div class="card-body">
                                 <div class="stat-widget-one">
@@ -34,90 +35,6 @@
                         </div>
                     </div>
                 {% endfor %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title mb-3">Charge Rial Wallet</strong>
-                        </div>
-                        {# Price #}
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="charge-price" class="control-label mb-1">Amount
-                                    (in Rial)</label>
-                                <input id="charge-price" name="charge-price" type="number" min="0"
-                                       class="form-control">
-                            </div>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                    data-target="#credit-charge-modal" id="charge-button">
-                                Charge Wallet
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title mb-3">Withdraw from Rial Wallet</strong>
-                        </div>
-                        {# Price #}
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="withdraw-price" class="control-label mb-1">Amount
-                                    (in Rial)</label>
-                                <input id="withdraw-price" name="charge-price" type="number" min="0"
-                                       class="form-control">
-                            </div>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                    data-target="#credit-change-modal" id="withdraw-button">
-                                Withdraw from Wallet
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="credit-change-modal" tabindex="-1" role="dialog"
-         aria-labelledby="credit-change-modalLabel">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="credit-change-modalLabel">Change Credit</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        Are you sure to Withdraw 1000﷼ from your account?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="confirm-withdraw">Withdraw</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-withdraw">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="credit-charge-modal" tabindex="-1" role="dialog"
-         aria-labelledby="credit-charge-modalLabel">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="credit-charge-modalLabel">Change Credit</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        Are you sure to add 1000﷼ to your account?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="confirm-charge">Charge</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel-charge">Cancel</button>
-                </div>
             </div>
         </div>
     </div>

@@ -1,8 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import FormView
 
 from dollarial.currency import Currency
+from user_panel.forms import BankPaymentForm
 
 
 def transaction_list(request):
@@ -137,3 +140,29 @@ class Index(LoginRequiredMixin, View):
         }
         return render(request, 'user_panel/user_index.html', data)
 
+
+class ChargeCredit(LoginRequiredMixin, FormView):
+    template_name = 'user_panel/user_charge.html'
+    form_class = BankPaymentForm
+    success_url = reverse_lazy('user_index')
+
+    def form_valid(self, form):
+        bank_payment = form.save(commit=False)
+        bank_payment.currency = Currency.rial.char
+        bank_payment.owner = self.request.user
+        bank_payment.save()
+        return super().form_valid(form)
+
+
+class DepositCredit(LoginRequiredMixin, FormView):
+    template_name = 'user_panel/user_deposit.html'
+    form_class = BankPaymentForm
+    success_url = reverse_lazy('user_index')
+
+    def form_valid(self, form):
+        bank_payment = form.save(commit=False)
+        bank_payment.currency = Currency.rial.char
+        bank_payment.owner = self.request.user
+        bank_payment.amount *= -1
+        bank_payment.save()
+        return super().form_valid(form)

@@ -152,8 +152,6 @@
 
             <div class="col-sm-5">
                 <div class="user-area dropdown float-right">
-                    <!-- TODO: add logout with user's name -->
-
                     <div class="user-area dropdown float-right" id="userlogo">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                            aria-expanded="false">
@@ -162,7 +160,7 @@
                         </a>
 
                         <div class="user-menu dropdown-menu">
-                            <a class="nav-link" href="#" id="logout"><i class="fa fa-power -off"></i>Logout</a>
+                            <a class="nav-link" href="{% url 'logout' %}" id="logout"><i class="fa fa-power -off"></i>Logout</a>
                         </div>
                     </div>
                 </div>
