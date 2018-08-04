@@ -1,9 +1,13 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import View
+from django.views.generic import ListView, DetailView, UpdateView
 
 from dollarial.constants import DOLLARIAL_COMPANY
 from dollarial.currency import Currency
+from dollarial.mixins import ClerkRequiredMixin
+
+from user_management.models import User
 
 
 def transaction_list(request):
@@ -66,46 +70,17 @@ def transaction_view(request, transaction_id):
     return render(request, 'admin_panel/admin_transaction_view.html', data)
 
 
-def costumer_list(request):
-    # TODO: read from db
-    data = {
-        "costumers": [
-            {
-                "id": "1",
-                "first_name": "soroush",
-                "last_name": "ebadian",
-                "account_number": "123456789123",
-                "email": "soroushebadian@gmail.com",
-                "phone_number": "0989352543617",
-                "banned": False
-            },
-            {
-                "id": "2",
-                "first_name": "soroush2",
-                "last_name": "ebadian2",
-                "account_number": "1234567891232",
-                "email": "soro2ushebadian@gmail.com",
-                "phone_number": "0989352523617",
-                "banned": True
-            },
-        ]
-    }
-    return render(request, 'admin_panel/admin_costumer_list.html', data)
+class UserList(ClerkRequiredMixin, ListView):
+    model = User
+    template_name = 'admin_panel/admin_costumer_list.html'
 
 
-def costumer_view(request, costumer_id):
-    data = {
-        'costumer': {
-            "id": costumer_id,
-            "first_name": "soroush",
-            "last_name": "ebadian",
-            "account_number": "123456789123",
-            "email": "soroushebadian@gmail.com",
-            "phone_number": "0989352543617",
-            "banned": True
-        }
-    }
-    return render(request, 'admin_panel/admin_costumer_view.html', data)
+class UserUpdate(ClerkRequiredMixin, UpdateView):
+    model = User
+    template_name = 'admin_panel/admin_costumer_view.html'
+    fields = ['username', 'first_name', 'last_name', 'account_number', 'email',  'phone_number',
+              'is_active', 'is_staff']
+    success_url = reverse_lazy('admin_costumer_list')
 
 
 def reviewer_list(request):
@@ -304,11 +279,7 @@ def send_notification(request):
     return render(request, 'admin_panel/admin_send_notification.html')
 
 
-def admin_login(request):
-    return render(request, 'admin_panel/admin_login.html')
-
-
-class Index(LoginRequiredMixin, View):
+class Index(ClerkRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         data = {
             "wallets": [

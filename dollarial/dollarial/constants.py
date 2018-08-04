@@ -10,7 +10,8 @@ def _get_dollarial_company():
     except Company.DoesNotExist:
         dollarial_user = User.objects.create(
             username="dollarial",
-            account_number="1234567890"
+            account_number="1234567890",
+            email="dollarial@sharif.ir"
         )
         dollarial_user.create_wallets()
         dollarial = Company.objects.create(
@@ -20,3 +21,4 @@ def _get_dollarial_company():
 
 
 DOLLARIAL_COMPANY = _get_dollarial_company()
+DOLLARIAL_USER = DOLLARIAL_COMPANY.user

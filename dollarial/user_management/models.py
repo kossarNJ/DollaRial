@@ -34,6 +34,9 @@ class User(AbstractUser):
             if not created:
                 logging.warning("Wallet with currency %s already existed for user %s" % (currency, self))
 
+    def create_relative_clerk(self, salary=0):
+        return Clerk.objects.create(user=self, salary=salary)
+
     def __str__(self):
         return self.username
 

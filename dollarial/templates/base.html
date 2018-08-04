@@ -47,6 +47,13 @@
 
 </head>
 <body>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 <div id="page">
     <nav class="colorlib-nav" role="navigation">
         <div class="top-menu">
