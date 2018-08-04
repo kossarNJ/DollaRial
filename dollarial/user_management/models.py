@@ -55,7 +55,8 @@ class Wallet(models.Model):
 
 class Clerk(models.Model):
     salary = models.PositiveIntegerField(default=0, verbose_name="Salary")
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_employee = models.BooleanField(default=True, verbose_name="is Employee")
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="User")
 
     def __str__(self):
         return self.user.username

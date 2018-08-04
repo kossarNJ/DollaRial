@@ -1,5 +1,6 @@
 {% extends "admin_panel_base.html" %}
 {% load static %}
+{% load bootstrap %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -21,35 +22,27 @@
         <div class="animated fadeIn">
             <div class="row">
 
-                <!-- Add Reviewer -->
                 <div class="col-lg-6">
                     <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">New Reviewer</strong>
-                        </div>
-                        <div class="card-body">
-                            <div id="transaction-card">
-                                <div class="card-body">
-                                    <div class="form-group">
-                                        <label for="cc-username" class="control-label mb-1">Username</label>
-                                        <input id="cc-username" name="cc-username" type="text" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="cc-password" class="control-label mb-1">Password</label>
-                                        <input id="cc-password" name="cc-password" type="password" class="form-control">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="cc-salary" class="control-label mb-1">Salary</label>
-                                        <input id="cc-salary" name="cc-lname" type="number" class="form-control">
+                        <form role="form" method="post">
+                            {% csrf_token %}
+
+                            <div class="card-header">
+                                <strong class="card-title">New Clerk</strong>
+                            </div>
+                            <div class="card-body">
+                                <div id="transaction-card">
+                                    <div class="card-body">
+                                        {{ form|bootstrap }}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-success btn-sm">
-                                <i class="fa fa-dot-circle-o"></i> Save
-                            </button>
-                        </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fa fa-dot-circle-o"></i> Add Clerk
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <!-- Add Reviewer -->

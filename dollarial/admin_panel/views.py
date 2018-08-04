@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, UpdateView
+from django.views.generic import ListView, DetailView, UpdateView, CreateView
 
+from admin_panel.forms import ClerkCreateForm, ClerkUpdateForm
 from dollarial.constants import DOLLARIAL_COMPANY
 from dollarial.currency import Currency
-from dollarial.mixins import ClerkRequiredMixin
+from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
 
-from user_management.models import User
+from user_management.models import User, Clerk
 
 
 def transaction_list(request):
@@ -83,39 +84,23 @@ class UserUpdate(ClerkRequiredMixin, UpdateView):
     success_url = reverse_lazy('admin_costumer_list')
 
 
-def reviewer_list(request):
-    # TODO: read from db
-    data = {
-        "reviewers": [
-            {
-                "id": "1",
-                "username": "soroush",
-                "salary": "200000",
-            },
-            {
-                "id": "2",
-                "username": "parand",
-                "salary": "210000",
-            },
-            {
-                "id": "3",
-                "username": "kosar",
-                "salary": "100000",
-            }
-        ]
-    }
-    return render(request, 'admin_panel/admin_reviewer_list.html', data)
+class ClerkList(StaffRequiredMixin, ListView):
+    model = Clerk
+    template_name = 'admin_panel/admin_reviewer_list.html'
 
 
-def reviewer_view(request, reviewer_id):
-    data = {
-        'reviewer': {
-            "id": reviewer_id,
-            "username": "soroushe",
-            "salary": "20000"
-        }
-    }
-    return render(request, 'admin_panel/admin_reviewer_view.html', data)
+class ClerkAdd(StaffRequiredMixin, CreateView):
+    model = Clerk
+    template_name = 'admin_panel/admin_reviewer_add.html'
+    success_url = reverse_lazy('admin_reviewer_list')
+    form_class = ClerkCreateForm
+
+
+class ClerkUpdate(StaffRequiredMixin, UpdateView):
+    model = Clerk
+    template_name = 'admin_panel/admin_reviewer_view.html'
+    success_url = reverse_lazy('admin_reviewer_list')
+    form_class = ClerkUpdateForm
 
 
 def reviewer_add(request):
