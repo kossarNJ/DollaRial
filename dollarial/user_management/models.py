@@ -2,10 +2,9 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from dollarial import settings
+from dollarial.currency import Currency
 
 import logging
-
-from dollarial.currency import Currency
 
 
 class User(AbstractUser):
@@ -60,7 +59,7 @@ class Clerk(models.Model):
 
 
 class Company(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def get_credit(self, currency):
         return self.user.get_credit(currency)
