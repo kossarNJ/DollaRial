@@ -1,11 +1,10 @@
+import logging
+
 from django.contrib.auth.models import AbstractUser
-from django.db import models
+from django.db import models, transaction
 
 from dollarial import settings
 from dollarial.currency import Currency
-
-import logging
-
 from dollarial.fields import PriceField, CurrencyField
 
 
@@ -71,3 +70,24 @@ class Company(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+@transaction.atomic
+def _get_dollarial_company():
+    try:
+        dollarial = Company.objects.get(user__username="dollarial")
+    except Company.DoesNotExist:
+        dollarial_user = User.objects.create(
+            username="dollarial",
+            account_number="1234567890",
+            email="dollarial@sharif.ir"
+        )
+        dollarial_user.create_wallets()
+        dollarial = Company.objects.create(
+            user=dollarial_user
+        )
+    return dollarial
+
+
+DOLLARIAL_COMPANY = _get_dollarial_company()
+DOLLARIAL_USER = DOLLARIAL_COMPANY.user

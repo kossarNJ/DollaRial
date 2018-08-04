@@ -1,6 +1,6 @@
 from django import forms
 
-from user_management.models import Clerk
+from dollarial.models import Clerk
 
 
 class ClerkCreateForm(forms.ModelForm):

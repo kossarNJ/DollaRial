@@ -4,11 +4,10 @@ from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 
 from admin_panel.forms import ClerkCreateForm, ClerkUpdateForm
-from dollarial.constants import DOLLARIAL_COMPANY
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
 
-from user_management.models import User, Clerk
+from dollarial.models import User, Clerk, DOLLARIAL_COMPANY
 
 
 def transaction_list(request):

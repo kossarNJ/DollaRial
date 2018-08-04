@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from user_management.models import User, Clerk
+from dollarial.models import User, Clerk
 
 
 @admin.register(User)

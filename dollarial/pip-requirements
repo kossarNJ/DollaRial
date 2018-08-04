@@ -5,4 +5,4 @@ django-extensions==2.0.7
 freezegun==0.3.10
 psycopg2-binary
 django-polymorphic
-
+django-bootstrap-form
