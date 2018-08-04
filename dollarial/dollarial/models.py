@@ -89,5 +89,9 @@ def _get_dollarial_company():
     return dollarial
 
 
-DOLLARIAL_COMPANY = _get_dollarial_company()
-DOLLARIAL_USER = DOLLARIAL_COMPANY.user
+def get_dollarial_company():
+    return _get_dollarial_company()
+
+
+def get_dollarial_user():
+    return _get_dollarial_company().user

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # apps
+    'dollarial.apps.DollarialConfig',
     'admin_panel',
     'user_management',
     'website',
@@ -149,6 +150,6 @@ SHELL_PLUS = "ipython"
 
 # Auth Related
 
-AUTH_USER_MODEL = "user_management.User"
+AUTH_USER_MODEL = "dollarial.User"
 
 # MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'

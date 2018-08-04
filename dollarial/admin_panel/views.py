@@ -7,7 +7,7 @@ from admin_panel.forms import ClerkCreateForm, ClerkUpdateForm
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
 
-from dollarial.models import User, Clerk, DOLLARIAL_COMPANY
+from dollarial.models import User, Clerk, get_dollarial_company
 
 
 def transaction_list(request):
@@ -267,7 +267,7 @@ class Index(ClerkRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         data = {
             "wallets": [
-                {"name": currency.sign, "credit": DOLLARIAL_COMPANY.get_credit(currency.char)}
+                {"name": currency.sign, "credit": get_dollarial_company().get_credit(currency.char)}
                 for currency in Currency.get_all_currencies()
             ]
         }
