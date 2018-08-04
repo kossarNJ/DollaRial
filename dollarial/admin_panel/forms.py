@@ -2,6 +2,8 @@ from django import forms
 
 from dollarial.models import Clerk
 
+from finance.models import BankPayment
+
 
 class ClerkCreateForm(forms.ModelForm):
     class Meta:
@@ -17,3 +19,9 @@ class ClerkUpdateForm(forms.ModelForm):
     class Meta:
         model = Clerk
         fields = ("user", "salary", "is_employee")
+
+
+class BankPaymentForm(forms.ModelForm):
+    class Meta:
+        model = BankPayment
+        fields = ('amount', 'currency', )

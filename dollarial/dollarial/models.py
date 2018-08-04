@@ -68,6 +68,18 @@ class Company(models.Model):
     def get_credit(self, currency):
         return self.user.get_credit(currency)
 
+    def get_wallet(self, currency):
+        if currency not in Currency.get_all_currency_chars():
+            logging.error("No such kind of currency %s" % currency)
+            return None
+        return Wallet.objects.get_or_create(user=self.user, currency=currency)[0]
+
+    def create_wallets(self):
+        for currency in Currency.get_all_currency_chars():
+            _, created = Wallet.objects.get_or_create(user=self.user, currency=currency)
+            if not created:
+                logging.warning("Wallet with currency %s already existed for user %s" % (currency, self.user))
+
     def __str__(self):
         return self.user.username
 
