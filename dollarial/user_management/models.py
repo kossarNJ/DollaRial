@@ -6,11 +6,12 @@ from dollarial.currency import Currency
 
 import logging
 
+from dollarial.fields import PriceField, CurrencyField
+
 
 class User(AbstractUser):
     account_number = models.CharField(max_length=64, verbose_name="Account Number", unique=True)
     phone_number = models.CharField(max_length=32, blank=True, verbose_name="Phone Number")
-    banned = models.BooleanField(default=False, verbose_name="Banned")
 
     NOTIFICATION_TYPES = (
         ('S', 'sms'),
@@ -43,8 +44,8 @@ class User(AbstractUser):
 
 class Wallet(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=False, verbose_name="User")
-    credit = models.BigIntegerField(default=0, verbose_name="credit")
-    currency = models.CharField(max_length=1, choices=Currency.choices(), default='R')
+    credit = PriceField(default=0, verbose_name="Credit")
+    currency = CurrencyField(default='R', verbose_name="Currency")
 
     def __str__(self):
         return "%s(%s)" % (self.user.username, self.currency)

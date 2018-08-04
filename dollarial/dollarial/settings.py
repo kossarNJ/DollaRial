@@ -43,9 +43,12 @@ INSTALLED_APPS = [
     'admin_panel',
     'user_management',
     'website',
+    'user_panel',
+    'finance',
     # extensions
     'django_extensions',
-    'bootstrapform'
+    'bootstrapform',
+    'polymorphic'
 ]
 
 MIDDLEWARE = [
