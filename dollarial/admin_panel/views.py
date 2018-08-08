@@ -7,10 +7,11 @@ from admin_panel.forms import ClerkCreateForm, ClerkUpdateForm
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
 
-from dollarial.models import User, Clerk, get_dollarial_company
+from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user
 
 from django.views.generic import FormView
 from admin_panel.forms import BankPaymentForm
+
 
 def transaction_list(request):
     # TODO: read from db
@@ -276,20 +277,17 @@ class Index(ClerkRequiredMixin, View):
         return render(request, 'admin_panel/admin_index.html', data)
 
 
-
-
 class ChargeCredit(FormView):
     template_name = 'admin_panel/admin_charge.html'
     form_class = BankPaymentForm
     success_url = reverse_lazy('admin_index')
 
-    #TODO set html
     #TODO permission
     #TODO change admin index
 
     def form_valid(self, form):
         bank_payment = form.save(commit=False)
-        bank_payment.owner = self.request.user
+        bank_payment.owner = get_dollarial_user()
         bank_payment.save()
         return super().form_valid(form)
 

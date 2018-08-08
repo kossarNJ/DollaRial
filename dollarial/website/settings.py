@@ -1,0 +1,6 @@
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'dollaria'
+EMAIL_HOST_PASSWORD = 'p12345678'
+#EMAIL_HOST_PASSWORD = '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'
