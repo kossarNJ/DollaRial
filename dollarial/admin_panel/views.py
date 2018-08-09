@@ -265,6 +265,7 @@ def reports_list(request):
     return render(request, 'admin_panel/admin_reports_list.html', data)
 
 
+#TODO login required
 def send_notification(request):
     if request.method == 'GET':
         form = SendNotificationForm()
