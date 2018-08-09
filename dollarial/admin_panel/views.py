@@ -10,7 +10,10 @@ from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
 from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user
 
 from django.views.generic import FormView
-from admin_panel.forms import BankPaymentForm
+from admin_panel.forms import BankPaymentForm, SendNotificationForm
+from django.shortcuts import render, redirect
+import sendgrid
+from sendgrid.helpers.mail import *
 
 
 def transaction_list(request):
@@ -263,7 +266,33 @@ def reports_list(request):
 
 
 def send_notification(request):
-    return render(request, 'admin_panel/admin_send_notification.html')
+    if request.method == 'GET':
+        form = SendNotificationForm()
+    else:
+
+        form = SendNotificationForm(request.POST)
+        if "cancel" in request.POST:
+            return redirect('admin_index')
+        else:
+            if form.is_valid():
+
+                recievers = []
+
+                message = form.cleaned_data['notification_text']
+                subject = form.cleaned_data['subject']
+                sg = sendgrid.SendGridAPIClient(apikey='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')
+                from_email = Email("admin@dollarial.com")
+
+                content = Content("text/plain", message)
+
+                for user in User.objects.all():
+                    recievers.append(user.email)
+                    to_email = Email("parand1997@gmail.com")
+                    mail = Mail(from_email, subject, to_email, content)
+                    sg.client.mail.send.post(request_body=mail.get())
+
+                return redirect('admin_index')
+    return render(request, "admin_panel/admin_send_notification.html", {'form': form})
 
 
 class Index(ClerkRequiredMixin, View):
@@ -277,13 +306,12 @@ class Index(ClerkRequiredMixin, View):
         return render(request, 'admin_panel/admin_index.html', data)
 
 
-class ChargeCredit(FormView):
+class ChargeCredit(ClerkRequiredMixin, FormView):
     template_name = 'admin_panel/admin_charge.html'
     form_class = BankPaymentForm
     success_url = reverse_lazy('admin_index')
 
-    #TODO permission
-    #TODO change admin index
+    #TODO permission admin?
 
     def form_valid(self, form):
         bank_payment = form.save(commit=False)

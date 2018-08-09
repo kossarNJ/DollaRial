@@ -1,13 +1,8 @@
-from django.shortcuts import render
-from django.urls import reverse_lazy
-from django.views.generic import FormView
 from website.forms import ContactForm
-from django.core.mail import send_mail, BadHeaderError
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 import sendgrid
-import os
 from sendgrid.helpers.mail import *
+
 
 def contact(request):
     if request.method == 'GET':
@@ -29,11 +24,8 @@ def contact(request):
             mail = Mail(from_email, subject, to_email, content)
             sg.client.mail.send.post(request_body=mail.get())
 
-
             return redirect('home')
     return render(request, "website/contact.html", {'form': form})
-
-
 
 
 def about(request):
@@ -47,6 +39,7 @@ def history(request):
 def home(request):
     return render(request, 'website/home.html')
 
+
 def currencies(request):
     data = {
         "c":{
@@ -57,8 +50,6 @@ def currencies(request):
         }
     }
     return render(request, 'website/currencies.html', data)
-
-
 
 
 def services(request):

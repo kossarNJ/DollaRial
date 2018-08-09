@@ -107,3 +107,7 @@ def get_dollarial_company():
 
 def get_dollarial_user():
     return _get_dollarial_company().user
+
+
+
+

@@ -25,3 +25,8 @@ class BankPaymentForm(forms.ModelForm):
     class Meta:
         model = BankPayment
         fields = ('amount', 'currency', )
+
+
+class SendNotificationForm(forms.Form):
+    subject = forms.CharField(required=True)
+    notification_text = forms.CharField(required=True, widget=forms.Textarea)
