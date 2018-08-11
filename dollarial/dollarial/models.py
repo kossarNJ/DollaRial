@@ -110,12 +110,13 @@ class PaymentGroup(models.Model):
 class PaymentType(models.Model):
     name = models.CharField(max_length=255, verbose_name="Name")
     description = models.TextField(blank=True, verbose_name="Description")
-    min_amount = PriceField(default=min(TransactionConstants.MIN_AMOUNT.values()),
+    min_amount = PriceField(blank=True, default=min(TransactionConstants.MIN_AMOUNT.values()),
                             verbose_name="Minimum Amount")
-    max_amount = PriceField(default=max(TransactionConstants.MAX_AMOUNT.values()),
+    max_amount = PriceField(blank=True, default=max(TransactionConstants.MAX_AMOUNT.values()),
                             verbose_name="Minimum Amount")
-    price = PriceField(default=0, verbose_name="Fixed Price")
-    wage_percentage = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(100)],
+    price = PriceField(blank=True, default=0, verbose_name="Fixed Price")
+    wage_percentage = models.PositiveSmallIntegerField(default=TransactionConstants.NORMAL_WAGE_PERCENTAGE,
+                                                       validators=[MaxValueValidator(100)],
                                                        verbose_name="Wage Percentage")
     currency = CurrencyField(default='R', verbose_name="Currency")
     fixed_price = models.BooleanField(default=True, verbose_name="Fixed Price")
@@ -126,7 +127,7 @@ class PaymentType(models.Model):
         'exam_info',
         'university_info'
     ))
-    transaction_group = models.ForeignKey(PaymentGroup, null=True, on_delete=models.CASCADE,
+    transaction_group = models.ForeignKey(PaymentGroup, blank=True, null=True, on_delete=models.CASCADE,
                                           verbose_name="Group")
 
     def __str__(self):
