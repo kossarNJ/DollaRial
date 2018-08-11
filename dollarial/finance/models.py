@@ -16,8 +16,15 @@ class Transaction(PolymorphicModel):
     date = models.DateTimeField(default=datetime.now, verbose_name="Date")
     deleted = models.BooleanField(default=False, verbose_name="Deleted")
 
+    TRANSACTION_STATUS = (
+        ('I', 'In Review'),
+        ('R', 'Rejected'),
+        ('A', 'Accepted')
+    )
+    status = models.CharField(max_length=1, choices=TRANSACTION_STATUS, default='I', verbose_name="Status")
+
     def __str__(self):
-        return "%s %s%s" % (self.owner.username, self.amount, self.currency)
+        return "%s %s%s (%s)" % (self.owner.username, self.amount, self.currency, self.status)
 
     def save(self, *args, **kwargs,):
         super().save(*args, **kwargs)
@@ -37,7 +44,7 @@ class BankPayment(Transaction):
             return self.PaymentType.CHARGE
 
     def __str__(self):
-        return "%s %s%s (%s)" % (self.owner.username, self.amount, self.currency, self.payment_type)
+        return "%s (%s)" % (super().__str__(), self.payment_type)
 
 
 class Exchange(Transaction):
@@ -51,5 +58,9 @@ class Exchange(Transaction):
 def update_credit(user, currency):
     wallet = user.get_wallet(currency)
     wallet.credit = \
-        Transaction.objects.filter(owner=user, deleted=False).aggregate(Sum('amount'))['amount__sum'] or 0
+        Transaction.objects.filter(
+            owner=user,
+            deleted=False,
+            status='A'
+        ).aggregate(Sum('amount'))['amount__sum'] or 0
     wallet.save()
