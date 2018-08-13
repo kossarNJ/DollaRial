@@ -110,11 +110,11 @@ class PaymentGroup(models.Model):
 class PaymentType(models.Model):
     name = models.CharField(max_length=255, verbose_name="Name")
     description = models.TextField(blank=True, verbose_name="Description")
-    min_amount = PriceField(blank=True, default=min(TransactionConstants.MIN_AMOUNT.values()),
+    min_amount = PriceField(null=True, default=min(TransactionConstants.MIN_AMOUNT.values()),
                             verbose_name="Minimum Amount")
-    max_amount = PriceField(blank=True, default=max(TransactionConstants.MAX_AMOUNT.values()),
+    max_amount = PriceField(null=True, default=max(TransactionConstants.MAX_AMOUNT.values()),
                             verbose_name="Minimum Amount")
-    price = PriceField(blank=True, default=0, verbose_name="Fixed Price")
+    price = PriceField(null=True, default=0, verbose_name="Fixed Price")
     wage_percentage = models.PositiveSmallIntegerField(default=TransactionConstants.NORMAL_WAGE_PERCENTAGE,
                                                        validators=[MaxValueValidator(100)],
                                                        verbose_name="Wage Percentage")
