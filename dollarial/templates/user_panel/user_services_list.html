@@ -1,0 +1,26 @@
+{% extends "user_panel_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'assets/css/lib/datatable/dataTables.bootstrap.min.css' %}">
+{% endblock stylesheets %}
+
+{% block title %} Services {% endblock title %}
+
+{% block page_title %}
+    Services
+{% endblock page_title %}
+
+{% block right_panel %}
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+{% endblock right_panel %}
+
+{% block js_files %}
+{% endblock js_files %}
+

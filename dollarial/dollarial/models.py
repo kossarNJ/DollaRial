@@ -1,9 +1,12 @@
 import logging
 
+from bitfield import BitField
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator
 from django.db import models, transaction
 
 from dollarial import settings
+from dollarial.constants import TransactionConstants
 from dollarial.currency import Currency
 from dollarial.fields import PriceField, CurrencyField
 
@@ -95,3 +98,37 @@ def get_dollarial_company():
 
 def get_dollarial_user():
     return _get_dollarial_company().user
+
+
+class PaymentGroup(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Name")
+
+    def __str__(self):
+        return self.name
+
+
+class PaymentType(models.Model):
+    name = models.CharField(max_length=255, verbose_name="Name")
+    description = models.TextField(blank=True, verbose_name="Description")
+    min_amount = PriceField(null=True, default=min(TransactionConstants.MIN_AMOUNT.values()),
+                            verbose_name="Minimum Amount")
+    max_amount = PriceField(null=True, default=max(TransactionConstants.MAX_AMOUNT.values()),
+                            verbose_name="Minimum Amount")
+    price = PriceField(null=True, default=0, verbose_name="Fixed Price")
+    wage_percentage = models.PositiveSmallIntegerField(default=TransactionConstants.NORMAL_WAGE_PERCENTAGE,
+                                                       validators=[MaxValueValidator(100)],
+                                                       verbose_name="Wage Percentage")
+    currency = CurrencyField(default='R', verbose_name="Currency")
+    fixed_price = models.BooleanField(default=True, verbose_name="Fixed Price")
+    is_active = models.BooleanField(default=True, verbose_name="Active")
+    required_fields = BitField(flags=(
+        'general_info',
+        'personal_info',
+        'exam_info',
+        'university_info'
+    ))
+    transaction_group = models.ForeignKey(PaymentGroup, blank=True, null=True, on_delete=models.CASCADE,
+                                          verbose_name="Group")
+
+    def __str__(self):
+        return self.name

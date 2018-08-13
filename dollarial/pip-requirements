@@ -6,3 +6,4 @@ freezegun==0.3.10
 psycopg2-binary
 django-polymorphic
 django-bootstrap-form
+django-bitfield

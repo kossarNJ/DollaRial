@@ -3,11 +3,11 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 
-from admin_panel.forms import ClerkCreateForm, ClerkUpdateForm
+from . import forms
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
 
-from dollarial.models import User, Clerk, get_dollarial_company
+from dollarial.models import User, Clerk, get_dollarial_company, PaymentType
 
 
 def transaction_list(request):
@@ -92,18 +92,33 @@ class ClerkAdd(StaffRequiredMixin, CreateView):
     model = Clerk
     template_name = 'admin_panel/admin_reviewer_add.html'
     success_url = reverse_lazy('admin_reviewer_list')
-    form_class = ClerkCreateForm
+    form_class = forms.ClerkCreateForm
 
 
 class ClerkUpdate(StaffRequiredMixin, UpdateView):
     model = Clerk
     template_name = 'admin_panel/admin_reviewer_view.html'
     success_url = reverse_lazy('admin_reviewer_list')
-    form_class = ClerkUpdateForm
+    form_class = forms.ClerkUpdateForm
 
 
-def reviewer_add(request):
-    return render(request, 'admin_panel/admin_reviewer_add.html')
+class PaymentTypeAdd(StaffRequiredMixin, CreateView):
+    model = PaymentType
+    template_name = 'admin_panel/admin_transaction_type_add.html'
+    success_url = reverse_lazy('admin_transaction_type_list')
+    form_class = forms.PaymentTypeGeneralForm
+
+
+class PaymentTypeList(StaffRequiredMixin, ListView):
+    model = PaymentType
+    template_name = 'admin_panel/admin_transaction_type_list.html'
+
+
+class PaymentTypeView(StaffRequiredMixin, UpdateView):
+    model = PaymentType
+    template_name = 'admin_panel/admin_transaction_type_view.html'
+    success_url = reverse_lazy('admin_transaction_type_list')
+    form_class = forms.PaymentTypeGeneralForm
 
 
 def skipped_transaction_list(request):
@@ -152,89 +167,6 @@ def reviewed_transaction_history(request):
         ]
     }
     return render(request, 'admin_panel/admin_reviewed_transaction_history.html', data)
-
-
-def transaction_type_list(request):
-    data = {
-        "transaction_types": [
-            {
-                "id": "1",
-                "name": "Toefl",
-                "fixed_price": True,
-                "price": 200,
-                "currency": "$",
-                "minimum": 1000,
-                "maximum": 2000,
-                "wage": 10
-            },
-            {
-                "id": "2",
-                "name": "IELTS",
-                "fixed_price": True,
-                "price": 200,
-                "currency": "$",
-                "minimum": None,
-                "maximum": None,
-                "wage": 10
-            },
-            {
-                "id": "3",
-                "name": "Europe University",
-                "fixed_price": False,
-                "price": None,
-                "currency": "€",
-                "minimum": 1000,
-                "maximum": 2000,
-                "wage": 10
-            },
-            {
-                "id": "4",
-                "name": "America University",
-                "fixed_price": False,
-                "price": None,
-                "currency": "$",
-                "minimum": 1000,
-                "maximum": 2000,
-                "wage": 10
-            },
-        ]
-    }
-    return render(request, 'admin_panel/admin_transaction_type_list.html', data)
-
-
-def transaction_type_add(request):
-    data = {
-        "currencies": [
-            "dollar", "euro", "rial"
-        ]
-    }
-    return render(request, 'admin_panel/admin_transaction_type_add.html', data)
-
-
-def transaction_type_view(request, transaction_type_id):
-    data = {
-        "transaction_type": {
-            "id": transaction_type_id,
-            "name": "Toefl",
-            "description": "Toefl kheili khube!\nNice :))\n\n\nSo what?",
-            "fixed_price": True,
-            "price": None,
-            "minimum": 1000,
-            "maximum": 2000,
-            "wage": 10,
-            "currency": "rial",
-            "required_information": {
-                "personal": True,
-                "public": True,
-                "university": True,
-                "quiz": False
-            }
-        },
-        "currencies": [
-            "dollar", "euro", "rial"
-        ]
-    }
-    return render(request, 'admin_panel/admin_transaction_type_view.html', data)
 
 
 def reports_list(request):

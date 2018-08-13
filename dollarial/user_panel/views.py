@@ -1,10 +1,14 @@
+from collections import defaultdict
+
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView
 
 from dollarial.currency import Currency
+from dollarial.models import PaymentType
 from user_panel.forms import BankPaymentForm
 
 
@@ -166,3 +170,16 @@ class DepositCredit(LoginRequiredMixin, FormView):
         bank_payment.amount *= -1
         bank_payment.save()
         return super().form_valid(form)
+
+
+class Services(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        available_services = PaymentType.objects\
+            .filter(is_active=True)\
+            .values('transaction_group', 'id')\
+            .annotate(group_name=F('transaction_group__name'))\
+            .values_list('group_name', 'id', 'name', 'description', named=True)
+        data = {"services": defaultdict(list)}
+        for row in available_services:
+            data["services"][row.group_name].append(row)
+        return render(request, 'user_panel/user_services_list.html', data)

@@ -1,19 +1,20 @@
 {% extends "admin_panel_base.html" %}
 {% load static %}
+{% load bootstrap %}
 
 {% block stylesheets %}
     {{ block.super }}
 {% endblock stylesheets %}
 
-{% block title %} Transaction Type View {% endblock title %}
+{% block title %} Payment Type View {% endblock title %}
 
 {% block page_title %}
-    Transaction Type View
+    Payment Type View
 {% endblock page_title %}
 
 {% block right_breadcrumb %}
-    <li><a href="{% url 'admin_transaction_type_list' %}">Transaction Types</a></li>
-    <li class="active"> Transaction Type View</li>
+    <li><a href="{% url 'admin_transaction_type_list' %}">Payment Types</a></li>
+    <li class="active"> Payment Type View</li>
 {% endblock right_breadcrumb %}
 
 {% block right_panel %}
@@ -24,129 +25,25 @@
                 <!-- Add Reviewer -->
                 <div class="col-lg-6">
                     <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Transaction Type {{ transaction_type.id }}</strong>
-                        </div>
-                        <div class="card-body">
-                            <div id="transaction-type-card">
-                                <div class="card-body">
-                                    {# id #}
-                                    <div class="form-group">
-                                        <label for="cc-id" class="control-label mb-1">ID</label>
-                                        <input id="cc-id" name="cc-id" type="number" class="form-control"
-                                               value="{{ transaction_type.id }}">
-                                    </div>
-                                    {# Name #}
-                                    <div class="form-group">
-                                        <label for="cc-name" class="control-label mb-1">Name</label>
-                                        <input id="cc-name" name="cc-name" type="text" class="form-control"
-                                               value="{{ transaction_type.name }}">
-                                    </div>
-                                    {# Description #}
-                                    <div class="form-group">
-                                        <label for="cc-description" class="control-label mb-1">Description</label>
-                                        <textarea name="cc-description" id="cc-description" rows="6"
-                                                  placeholder="Description ..."
-                                                  class="form-control">{{ transaction_type.description }}</textarea>
-                                    </div>
-                                    {# Fixed price #}
-                                    <div class="form-check">
-                                        <div class="checkbox">
-                                            <label for="cc-fixed-price" class="form-check-label ">
-                                                <input type="checkbox" id="cc-fixed-price" name="cc-fixed-price"
-                                                       class="form-check-input"
-                                                       checked="{{ transaction_type.fixed_price }}">
-                                                Fixed Price
-                                            </label>
-                                        </div>
-                                    </div>
-                                    {# Price #}
-                                    <div class="form-group">
-                                        <label for="cc-price" class="control-label mb-1">Price</label>
-                                        <input id="cc-price" name="cc-price" type="number" min="0" class="form-control"
-                                               value="{{ transaction_type.price }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <select data-placeholder="Choose a Country..." class="standardSelect"
-                                                tabindex="1" id="currency-select">
-                                            <option value=""></option>
-                                            {% for c in currencies %}
-                                                <option value="{{ c }}"
-                                                        {% if c == transaction_type.currency %}selected="selected"{% endif %}>
-                                                    {{ c|capfirst }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    {# min #}
-                                    <div class="form-group">
-                                        <label for="cc-min-price" class="control-label mb-1">Minimum</label>
-                                        <input id="cc-min-price" name="cc-min-price" type="number" min="0"
-                                               class="form-control" value="{{ transaction_type.minimum }}">
-                                    </div>
-                                    {# max #}
-                                    <div class="form-group">
-                                        <label for="cc-max-price" class="control-label mb-1">Maximum</label>
-                                        <input id="cc-max-price" name="cc-max-price" type="number" min="0"
-                                               class="form-control" value="{{ transaction_type.maximum }}">
-                                    </div>
-                                    {# wage = کارمزد #}
-                                    <div class="form-group">
-                                        <label for="cc-wage" class="control-label mb-1">Wage Percentage</label>
-                                        <input id="cc-wage" name="cc-wage" type="number" min="0" max="100"
-                                               class="form-control" value="{{ transaction_type.wage }}">
-                                    </div>
-                                    {# requered forms #}
-                                    <div class="form-group">
-                                        <label for="information-checkboxes" class="control-label mb-1">Required
-                                            Information</label>
-                                        <div class="form-check" id="information-checkboxes">
-                                            <div class="checkbox">
-                                                <label for="personal-info" class="form-check-label ">
-                                                    <input type="checkbox" id="personal-info" name="personal-info"
-                                                           class="form-check-input"
-                                                            {% if transaction_type.required_information.personal %}
-                                                           checked {% endif %}>
-                                                    Personal Info
-                                                </label>
-                                            </div>
-                                            <div class="checkbox">
-                                                <label for="public-info" class="form-check-label ">
-                                                    <input type="checkbox" id="public-info" name="public-info"
-                                                           class="form-check-input"
-                                                            {% if transaction_type.required_information.public %}
-                                                           checked {% endif %}>
-                                                    Public Info
-                                                </label>
-                                            </div>
-                                            <div class="checkbox">
-                                                <label for="university-info" class="form-check-label ">
-                                                    <input type="checkbox" id="university-info" name="university-info"
-                                                           class="form-check-input"
-                                                            {% if transaction_type.required_information.university %}
-                                                           checked {% endif %}>
-                                                    University Info
-                                                </label>
-                                            </div>
-                                            <div class="checkbox">
-                                                <label for="Quiz-info" class="form-check-label ">
-                                                    <input type="checkbox" id="Quiz-info" name="Quiz-info"
-                                                           class="form-check-input"
-                                                            {% if transaction_type.required_information.quiz %}
-                                                           checked {% endif %}>
-                                                    Quiz Info
-                                                </label>
-                                            </div>
-                                        </div>
+                        <form role="form" method="post">
+                            {% csrf_token %}
+
+                            <div class="card-header">
+                                <strong class="card-title">Payment Type {{ paymenttype.id }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <div id="transaction-card">
+                                    <div class="card-body">
+                                        {{ form|bootstrap }}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="card-footer">
-                            <button type="submit" class="btn btn-success btn-sm" id="save_button">
-                                <i class="fa fa-dot-circle-o"></i> Save
-                            </button>
-                        </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fa fa-dot-circle-o"></i> Update Payment Type
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <!-- Add Reviewer -->

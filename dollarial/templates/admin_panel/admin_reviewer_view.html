@@ -6,15 +6,15 @@
     {{ block.super }}
 {% endblock stylesheets %}
 
-{% block title %} Reviewer View {% endblock title %}
+{% block title %} Clerk View {% endblock title %}
 
 {% block page_title %}
-    Reviewer View
+    Clerk View
 {% endblock page_title %}
 
 {% block right_breadcrumb %}
-    <li><a href="{% url 'admin_reviewer_list' %}">Reviewers</a></li>
-    <li class="active">Reviewer View</li>
+    <li><a href="{% url 'admin_reviewer_list' %}">Clerks</a></li>
+    <li class="active">Clerk View</li>
 {% endblock right_breadcrumb %}
 
 {% block right_panel %}
@@ -45,7 +45,7 @@
                             </div>
                             <div class="card-footer">
                                 <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="fa fa-dot-circle-o"></i> Add Clerk
+                                    <i class="fa fa-dot-circle-o"></i> Update Clerk
                                 </button>
                             </div>
                         </form>
