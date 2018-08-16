@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
@@ -12,11 +11,9 @@ from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_u
 from django.views.generic import FormView
 from admin_panel.forms import BankPaymentForm, SendNotificationForm
 from django.shortcuts import render, redirect
-import sendgrid
-from sendgrid.helpers.mail import *
-#TODO
 import requests
-import json
+
+
 
 def transaction_list(request):
     # TODO: read from db

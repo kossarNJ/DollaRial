@@ -6,7 +6,7 @@ from django.db import models, transaction
 from dollarial import settings
 from dollarial.currency import Currency
 from dollarial.fields import PriceField, CurrencyField
-
+from kavenegar import *
 
 class User(AbstractUser):
     account_number = models.CharField(max_length=64, verbose_name="Account Number", unique=True)
@@ -109,5 +109,17 @@ def get_dollarial_user():
     return _get_dollarial_company().user
 
 
-
-
+def send_sms_to_all_users(message):
+    try:
+        api = KavenegarAPI('457A5A6564762B35696C334E6D3957765672713035673D3D')
+        params = {
+            'sender': '',  # optinal
+            'receptor': '',  # multiple mobile number, split by comma
+            'message': message,
+        }
+        response = api.sms_send(params)
+        print(response)
+    except APIException as e:
+        print(e)
+    except HTTPException as e:
+        print(e)

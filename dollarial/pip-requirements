@@ -7,3 +7,5 @@ psycopg2-binary
 django-polymorphic
 django-bootstrap-form
 sendgrid
+kavenegar
+requests
