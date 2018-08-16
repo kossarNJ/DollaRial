@@ -14,7 +14,9 @@ from admin_panel.forms import BankPaymentForm, SendNotificationForm
 from django.shortcuts import render, redirect
 import sendgrid
 from sendgrid.helpers.mail import *
-
+#TODO
+import requests
+import json
 
 def transaction_list(request):
     # TODO: read from db
@@ -277,20 +279,19 @@ def send_notification(request):
         else:
             if form.is_valid():
 
-                recievers = []
-
                 message = form.cleaned_data['notification_text']
                 subject = form.cleaned_data['subject']
-                sg = sendgrid.SendGridAPIClient(apikey='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')
-                from_email = Email("admin@dollarial.com")
 
-                content = Content("text/plain", message)
-
-                for user in User.objects.all():
-                    recievers.append(user.email)
-                    to_email = Email("parand1997@gmail.com")
-                    mail = Mail(from_email, subject, to_email, content)
-                    sg.client.mail.send.post(request_body=mail.get())
+                data = {
+                    "app_id": "c414492c-f6ce-4c68-8691-d9192102118a",
+                    "included_segments": ["All"],
+                    "contents": {"en": subject + ":  " + message}
+                }
+                requests.post(
+                    "https://onesignal.com/api/v1/notifications",
+                    headers={"Authorization": "Basic MWJjY2FkZDMtNzc0Mi00MDBhLTlkYzQtMjIzZGY2MDVmZjZj"},
+                    json=data
+                )
 
                 return redirect('admin_index')
     return render(request, "admin_panel/admin_send_notification.html", {'form': form})
