@@ -269,7 +269,6 @@ def send_notification(request):
     if request.method == 'GET':
         form = SendNotificationForm()
     else:
-
         form = SendNotificationForm(request.POST)
         if "cancel" in request.POST:
             return redirect('admin_index')
