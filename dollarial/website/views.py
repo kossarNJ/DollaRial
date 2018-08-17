@@ -1,8 +1,31 @@
-from django.shortcuts import render
+from website.forms import ContactForm
+from django.shortcuts import render, redirect
+import sendgrid
+from sendgrid.helpers.mail import *
 
 
 def contact(request):
-    return render(request, 'website/contact.html')
+    if request.method == 'GET':
+        form = ContactForm()
+    else:
+        form = ContactForm(request.POST)
+        if form.is_valid():
+
+            subject = form.cleaned_data['subject']
+            email = form.cleaned_data['email']
+            message = form.cleaned_data['message']
+            name = form.cleaned_data['name']
+
+            sg = sendgrid.SendGridAPIClient(apikey='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')
+            from_email = Email(email)
+            to_email = Email("parand1997@gmail.com")
+            subject = subject
+            content = Content("text/plain", name + ":\n" + message)
+            mail = Mail(from_email, subject, to_email, content)
+            sg.client.mail.send.post(request_body=mail.get())
+
+            return redirect('home')
+    return render(request, "website/contact.html", {'form': form})
 
 
 def about(request):
@@ -16,6 +39,7 @@ def history(request):
 def home(request):
     return render(request, 'website/home.html')
 
+
 def currencies(request):
     data = {
         "c":{
@@ -26,8 +50,6 @@ def currencies(request):
         }
     }
     return render(request, 'website/currencies.html', data)
-
-
 
 
 def services(request):

@@ -10,7 +10,7 @@
     {% if messages %}
         <ul class="messages">
             {% for message in messages %}
-                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
             {% endfor %}
         </ul>
     {% endif %}
@@ -131,6 +131,12 @@
                             Notification </a>
                     </li>
                 {% endif %}
+
+
+                <li>
+                    <a href="{% url 'admin_charge' %}"> <i class="menu-icon fa fa-money"></i> Charge
+                        Wallet </a>
+                </li>
 
             </ul>
         </div><!-- /.navbar-collapse -->

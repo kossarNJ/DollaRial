@@ -10,6 +10,7 @@ from dollarial.fields import PriceField, CurrencyField
 
 
 class Transaction(PolymorphicModel):
+    #TODO wage
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=CASCADE, verbose_name="Owner")
     amount = PriceField(verbose_name="Amount")
     currency = CurrencyField(verbose_name="Currency")
@@ -61,6 +62,7 @@ def update_credit(user, currency):
         Transaction.objects.filter(
             owner=user,
             deleted=False,
-            status='A'
+            status='A',
+            currency=wallet.currency
         ).aggregate(Sum('amount'))['amount__sum'] or 0
     wallet.save()

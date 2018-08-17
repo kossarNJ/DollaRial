@@ -4,6 +4,8 @@ from django import forms
 
 from dollarial.models import Clerk, PaymentType
 
+from finance.models import BankPayment
+
 
 class ClerkCreateForm(forms.ModelForm):
     class Meta:
@@ -30,3 +32,14 @@ class PaymentTypeGeneralForm(forms.ModelForm):
         model = PaymentType
         fields = ("name", "description", "fixed_price", "currency", "price", "max_amount", "min_amount",
                   "wage_percentage", "transaction_group", "required_fields")
+
+
+class BankPaymentForm(forms.ModelForm):
+    class Meta:
+        model = BankPayment
+        fields = ('amount', 'currency', )
+
+
+class SendNotificationForm(forms.Form):
+    subject = forms.CharField(required=True)
+    notification_text = forms.CharField(required=True, widget=forms.Textarea)

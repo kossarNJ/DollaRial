@@ -7,3 +7,6 @@ psycopg2-binary
 django-polymorphic
 django-bootstrap-form
 django-bitfield
+sendgrid
+kavenegar
+requests

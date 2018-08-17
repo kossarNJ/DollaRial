@@ -9,6 +9,7 @@ from dollarial import settings
 from dollarial.constants import TransactionConstants
 from dollarial.currency import Currency
 from dollarial.fields import PriceField, CurrencyField
+from kavenegar import *
 
 
 class User(AbstractUser):
@@ -71,6 +72,12 @@ class Company(models.Model):
     def get_credit(self, currency):
         return self.user.get_credit(currency)
 
+    def get_wallet(self, currency):
+        return self.user.get_wallet(currency)
+
+    def create_wallets(self):
+        self.user.create_wallets()
+
     def __str__(self):
         return self.user.username
 
@@ -132,3 +139,19 @@ class PaymentType(models.Model):
 
     def __str__(self):
         return self.name
+
+
+def send_sms_to_all_users(message):
+    try:
+        api = KavenegarAPI('457A5A6564762B35696C334E6D3957765672713035673D3D')
+        params = {
+            'sender': '',  # optinal
+            'receptor': '',  # multiple mobile number, split by comma
+            'message': message,
+        }
+        response = api.sms_send(params)
+        print(response)
+    except APIException as e:
+        print(e)
+    except HTTPException as e:
+        print(e)
