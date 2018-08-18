@@ -23,3 +23,10 @@ class Currency(Enum):
     @classmethod
     def get_all_currency_chars(cls):
         return [currency.char for currency in cls]
+
+    @classmethod
+    def get_by_char(cls, char):
+        for c in cls:
+            if char == c.char:
+                return c
+        return None

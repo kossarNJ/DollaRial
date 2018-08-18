@@ -1,0 +1,90 @@
+{% extends "user_panel_base.html" %}
+{% load static %}
+{% load bootstrap %}
+
+{% block stylesheets %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'assets/css/lib/datatable/dataTables.bootstrap.min.css' %}">
+{% endblock stylesheets %}
+
+{% block title %} Payment Form '{{ payment_type.name }}' {% endblock title %}
+
+{% block page_title %}
+    {{ payment_type.name }}
+{% endblock page_title %}
+
+{% block right_panel %}
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <form role="form" method="post">
+                            {% csrf_token %}
+                            <div class="card-header">
+                                <strong class="card-title">Information</strong>
+                            </div>
+                            <div class="card-body">
+                                <div>
+                                    <h3>
+                                        {{ payment_type.name }}
+                                        <h5>
+                                            {{ payment_type.payment_group.name }}
+                                        </h5>
+                                    </h3>
+                                </div>
+                                <div>
+                                    <p>
+                                        {{ payment_type.description }}
+                                    </p>
+                                </div>
+                                <div>
+                                    <h4>
+                                        Price:
+                                    </h4>
+                                    {% if payment_type.fixed_price == True %}
+                                        <p>
+                                            Fixed: {{ payment_type.price }} {{ payment_type.currency_sign }}
+                                        </p>
+                                    {% else %}
+                                        <p>
+                                            Minimum Amount: {{ payment_type.min_amount }} {{ payment_type.currency_sign }}
+                                            <br>
+                                            Maximum Amount: {{ payment_type.max_amount }} {{ payment_type.currency_sign }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card">
+                        <form role="form" method="post">
+                            {% csrf_token %}
+                            <div class="card-header">
+                                <strong class="card-title">{{ 'Payment Form' }}</strong>
+                            </div>
+                            <div class="card-body">
+                                <div id="transaction-card">
+                                    {{ form|bootstrap }}
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fa fa-dot-circle-o"></i> Preview Payment Form
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+{% endblock right_panel %}
+
+{% block js_files %}
+{% endblock js_files %}
+
