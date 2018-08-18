@@ -153,3 +153,5 @@ SHELL_PLUS = "ipython"
 AUTH_USER_MODEL = "dollarial.User"
 
 # MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
+
+

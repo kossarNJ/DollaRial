@@ -1,13 +1,18 @@
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView
 
-from . import forms
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
+from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType
 
-from dollarial.models import User, Clerk, get_dollarial_company, PaymentType
+from django.views.generic import FormView
+from django.shortcuts import render, redirect
+
+from . import forms
+from admin_panel.forms import BankPaymentForm, SendNotificationForm
+
+import requests
 
 
 def transaction_list(request):
@@ -78,7 +83,7 @@ class UserList(ClerkRequiredMixin, ListView):
 class UserUpdate(ClerkRequiredMixin, UpdateView):
     model = User
     template_name = 'admin_panel/admin_costumer_view.html'
-    fields = ['username', 'first_name', 'last_name', 'account_number', 'email',  'phone_number',
+    fields = ['username', 'first_name', 'last_name', 'account_number', 'email', 'phone_number',
               'is_active', 'is_staff']
     success_url = reverse_lazy('admin_costumer_list')
 
@@ -191,8 +196,32 @@ def reports_list(request):
     return render(request, 'admin_panel/admin_reports_list.html', data)
 
 
+# TODO login required
 def send_notification(request):
-    return render(request, 'admin_panel/admin_send_notification.html')
+    if request.method == 'GET':
+        form = SendNotificationForm()
+    else:
+        form = SendNotificationForm(request.POST)
+        if "cancel" in request.POST:
+            return redirect('admin_index')
+        else:
+            if form.is_valid():
+                message = form.cleaned_data['notification_text']
+                subject = form.cleaned_data['subject']
+
+                data = {
+                    "app_id": "c414492c-f6ce-4c68-8691-d9192102118a",
+                    "included_segments": ["All"],
+                    "contents": {"en": subject + ":  " + message}
+                }
+                requests.post(
+                    "https://onesignal.com/api/v1/notifications",
+                    headers={"Authorization": "Basic MWJjY2FkZDMtNzc0Mi00MDBhLTlkYzQtMjIzZGY2MDVmZjZj"},
+                    json=data
+                )
+
+                return redirect('admin_index')
+    return render(request, "admin_panel/admin_send_notification.html", {'form': form})
 
 
 class Index(ClerkRequiredMixin, View):
@@ -204,3 +233,17 @@ class Index(ClerkRequiredMixin, View):
             ]
         }
         return render(request, 'admin_panel/admin_index.html', data)
+
+
+class ChargeCredit(ClerkRequiredMixin, FormView):
+    template_name = 'admin_panel/admin_charge.html'
+    form_class = BankPaymentForm
+    success_url = reverse_lazy('admin_index')
+
+    # TODO permission admin?
+
+    def form_valid(self, form):
+        bank_payment = form.save(commit=False)
+        bank_payment.owner = get_dollarial_user()
+        bank_payment.save()
+        return super().form_valid(form)

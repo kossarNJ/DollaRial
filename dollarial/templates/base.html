@@ -45,6 +45,19 @@
 	<![endif]-->
     {% endblock stylesheets %}
 
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script>
+  var OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "c414492c-f6ce-4c68-8691-d9192102118a",
+    });
+  });
+</script>
+
+    <div class='onesignal-customlink-container'></div>
+
+</head>
 </head>
 <body>
 {% if messages %}

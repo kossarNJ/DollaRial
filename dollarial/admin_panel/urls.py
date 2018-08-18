@@ -19,4 +19,5 @@ urlpatterns = [
     path('reports/', views.reports_list, name='admin_report_list'),
     path('send_notification/', views.send_notification, name='admin_send_notification'),
     path('', views.Index.as_view(), name='admin_index'),
+    path('charge/', views.ChargeCredit.as_view(), name='admin_charge'),
 ]

@@ -1,5 +1,6 @@
 {% extends "admin_panel_base.html" %}
 {% load static %}
+{% load bootstrap %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -21,32 +22,35 @@ Transaction View
         <div class="row">
             <!-- Report -->
             <div class="col-lg-6">
+                <form role = "form" method="post">
                 <div class="card">
                     <div class="card-header">
                         <strong>Notification Panel</strong>
                     </div>
-                    <div class="card-body">
-                      <!-- Credit Card -->
-                      <div id="report-card">
-                          <div class="card-body">
-                              <div class="form-group">
-                                  <label for="notification-text" class="control-label mb-1">Notification Text</label>
-                                  <textarea name="notification-text" id="notification-text" rows="9"
-                                            placeholder="Notification text goes here ..." class="form-control"></textarea>
-                              </div>
-                          </div>
-                      </div>
-                    </div>
+
+                        {% csrf_token %}
+
+
+                        <div class="card-body">
+                            <div id="notification-text">
+                                <div class="card-body">
+                                    {{ form|bootstrap }}
+                                </div>
+                            </div>
+                        </div>
+                      <button type="submit" class="btn btn-primary btn-sm">
+                                Send
+                      </button>
+                      <button type="submit" name = "cancel" formnovalidate class="btn btn-danger btn-sm">
+                                Cancel
+                      </button>
+
 
                     <div class="card-footer">
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                Send
-                            </button>
-                            <button type="submit" class="btn btn-danger btn-sm">
-                                Cancel
-                            </button>
+
                     </div>
                 </div>
+                </form>
             </div>
             <!-- End of Report -->
 
