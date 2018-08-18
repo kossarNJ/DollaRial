@@ -8,6 +8,10 @@ from finance.models import BankPayment, FormPayment
 
 
 class BankPaymentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].validators.append(MinValueValidator(Decimal('0.01')))
+
     class Meta:
         model = BankPayment
         fields = ('amount', )

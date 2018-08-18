@@ -117,7 +117,7 @@ def update_credit(user, currency):
         Transaction.objects.filter(
             owner=user,
             deleted=False,
-            status='A',
+            status__in=['A', 'I'],
             currency=wallet.currency
         ).aggregate(models.Sum('amount'))['amount__sum'] or 0
     wallet.save()

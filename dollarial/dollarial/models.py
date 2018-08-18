@@ -162,7 +162,7 @@ class PaymentType(models.Model):
     min_amount = PriceField(null=True, default=min(TransactionConstants.MIN_AMOUNT.values()),
                             verbose_name="Minimum Amount")
     max_amount = PriceField(null=True, default=max(TransactionConstants.MAX_AMOUNT.values()),
-                            verbose_name="Minimum Amount")
+                            verbose_name="Maximum Amount")
     price = PriceField(null=True, default=0, verbose_name="Fixed Price")
     wage_percentage = models.PositiveSmallIntegerField(default=TransactionConstants.NORMAL_WAGE_PERCENTAGE,
                                                        validators=[MaxValueValidator(100)],

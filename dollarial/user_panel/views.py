@@ -104,7 +104,7 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
             return redirect_respond
 
         form_data = request.session.get(form_data_key)
-        # del request.session[form_data_key]
+        del request.session[form_data_key]
         form = self.form_class(payment_type, form_data)
         if not form.is_valid():
             return redirect_respond
