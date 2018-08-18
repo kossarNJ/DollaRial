@@ -71,8 +71,7 @@ class User(AbstractUser):
             )
             return user
         elif users.count() > 1:
-            user = users.get(automatic_user=False)
-            user.delete_relative_automatic()
+            return users.get(automatic_user=False)
         else:
             return users.get()
 

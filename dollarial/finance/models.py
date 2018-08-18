@@ -18,16 +18,16 @@ class Transaction(PolymorphicModel):
     deleted = models.BooleanField(default=False, verbose_name="Deleted")
     wage = PriceField(default=0, verbose_name="Wage")
 
+    @property
+    def sent_amount(self):
+        return -self.amount - self.wage
+
     TRANSACTION_STATUS = (
         ('I', 'In Review'),
         ('R', 'Rejected'),
         ('A', 'Accepted')
     )
     status = models.CharField(max_length=1, choices=TRANSACTION_STATUS, default='I', verbose_name="Status")
-
-    @property
-    def final_amount(self):
-        return self.amount - self.wage
 
     def __str__(self):
         return "%s %s%s (%s)" % (self.owner.username, self.amount, self.currency, self.status)

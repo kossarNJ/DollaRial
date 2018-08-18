@@ -14,6 +14,8 @@ urlpatterns = [
          name='payment_form_confirmation'),
     path('internal_payment/', views.InternalPayment.as_view(), name='internal_payment'),
     path('external_payment/', views.ExternalPayment.as_view(), name='external_payment'),
+    path('external_payment/confirmation/', views.ExternalPaymentConfirmation.as_view(),
+         name='external_payment_confirmation'),
     path('exchange/accept/', views.exchange_accept, name='user_exchange_accept'),
     path('services/', views.Services.as_view(), name='user_services'),
     path('', views.Index.as_view(), name='user_index'),

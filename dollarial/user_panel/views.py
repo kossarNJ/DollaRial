@@ -1,5 +1,4 @@
 from collections import defaultdict
-from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
@@ -8,10 +7,11 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView
 
+from dollarial.constants import TransactionConstants
 from dollarial.currency import Currency
 from dollarial.models import PaymentType
 from finance import credit_manager
-from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm
+from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm, ExternalPaymentForm
 
 
 def transaction_list(request):
@@ -93,7 +93,7 @@ def payment_form(request):
 class ServicePaymentConfirmation(LoginRequiredMixin, View):
     template_name = 'user_panel/service_payment_form_confirmation.html'
     form_class = ServicePaymentForm
-    success_url = 'user_transaction_list'
+    success_url = reverse_lazy('user_transaction_list')
 
     def get(self, request, payment_type_id, *args, **kwargs):
         payment_type = PaymentType.objects.get(pk=payment_type_id)
@@ -112,7 +112,7 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
         form.make_read_only()
 
         final_amount = form.cleaned_data.get('amount', payment_type.price)
-        required_amount = final_amount / (1 - payment_type.wage_percentage / Decimal(100.0))
+        required_amount = final_amount / (1 - payment_type.wage_percentage / 100.0)
         final_amount = round(final_amount, 2)
         required_amount = round(required_amount, 2)
         wage = required_amount - final_amount
@@ -142,7 +142,7 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
         if payment_type.fixed_price:
             final_amount = payment_type.price
         final_amount = round(final_amount, 2)
-        required_amount = final_amount / (1 - payment_type.wage_percentage / Decimal(100.0))
+        required_amount = final_amount / (1 - payment_type.wage_percentage / 100.0)
         required_amount = round(required_amount, 2)
         payment_object.wage = required_amount - final_amount
         payment_object.amount = required_amount
@@ -182,7 +182,7 @@ class ServicePayment(LoginRequiredMixin, View):
 class InternalPayment(LoginRequiredMixin, View):
     form_class = InternalPaymentForm
     template_name = 'user_panel/user_internal_payment.html'
-    success_url = 'user_transaction_list'
+    success_url = reverse_lazy('user_transaction_list')
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
@@ -200,9 +200,74 @@ class InternalPayment(LoginRequiredMixin, View):
         return render(request, self.template_name, {'form': form})
 
 
-class ExternalPayment(LoginRequiredMixin, View):
+class ExternalPaymentConfirmation(LoginRequiredMixin, View):
+    form_class = ExternalPaymentForm
+    template_name = 'user_panel/user_external_payment_confirmation.html'
+    success_url = reverse_lazy('user_transaction_list')
+
+    @staticmethod
+    def get_wage_percentage():
+        return TransactionConstants.NORMAL_WAGE_PERCENTAGE
+
     def get(self, request, *args, **kwargs):
-        return redirect('user_index')
+        redirect_respond = redirect('external_payment')
+
+        form_data_key = 'external_payment_form'
+        if form_data_key not in request.session:
+            return redirect_respond
+
+        form_data = request.session.get(form_data_key)
+        del request.session[form_data_key]
+        form = self.form_class(form_data)
+        if not form.is_valid():
+            return redirect_respond
+
+        form.make_read_only()
+        final_amount = form.cleaned_data.get('amount')
+        required_amount = final_amount / (1 - self.get_wage_percentage() / 100.0)
+        final_amount = round(final_amount, 2)
+        required_amount = round(required_amount, 2)
+        wage = required_amount - final_amount
+
+        data = {
+            'form': form,
+            'currency_sign': Currency.get_by_char(form.cleaned_data['currency']).sign,
+            'final_amount': final_amount,
+            'required_amount': required_amount,
+            'wage': wage,
+        }
+        return render(request, self.template_name, data)
+
+    def post(self, request, *args, **kwargs):
+        redirect_respond = redirect('external_payment')
+
+        form = self.form_class(request.POST)
+        if not form.is_valid():
+            return redirect_respond
+
+        payment_object = form.save(commit=False)
+        payment_object.owner = request.user
+        final_amount = payment_object.amount
+        final_amount = round(final_amount, 2)
+        required_amount = final_amount / (1 - self.get_wage_percentage() / 100.0)
+        required_amount = round(required_amount, 2)
+        payment_object.wage = required_amount - final_amount
+        payment_object.amount = -required_amount
+        payment_object.owner = request.user
+        payment_object.status = 'I'
+        payment_object.save()
+
+        return redirect(self.success_url)
+
+
+class ExternalPayment(LoginRequiredMixin, FormView):
+    template_name = 'user_panel/user_external_payment.html'
+    form_class = ExternalPaymentForm
+    success_url = reverse_lazy('external_payment_confirmation')
+
+    def form_valid(self, form):
+        self.request.session['external_payment_form'] = form.cleaned_data
+        return super().form_valid(form)
 
 
 def exchange(request):
