@@ -1,6 +1,6 @@
 from django.shortcuts import render
-import urllib.request
-import json as simplejson
+from dollarial.currency import get_dollar_rial_value
+from dollarial.currency import get_euro_rial_value
 
 
 def contact(request):
@@ -20,34 +20,30 @@ def home(request):
 
 
 def currencies(request):
-    response = urllib.request.urlopen("http://call.tgju.org/ajax.json")
-    response_data = simplejson.load(response)
-    euro = response_data['current']['price_eur']['p']
-    euro = euro.replace(",", "")
-    dollar = response_data['current']['price_dollar']['p']
-    dollar = dollar.replace(",", "")
-    rial_to_euro = 1 / float(euro)
-    rial_to_dollar = 1 / float(dollar)
-    euro_to_dollar = float(euro) / float(dollar)
-    dollar_to_euro = float(dollar) / float(euro)
+    euro = get_euro_rial_value()
+    dollar = get_dollar_rial_value()
+    rial_to_euro = 1 / euro
+    rial_to_dollar = 1 / dollar
+    euro_to_dollar = euro / dollar
+    dollar_to_euro = dollar / euro
     currency_data = {
         "currencies": [
             {
                 "name": "rial",
                 "rial_value": "1",
-                "dollar_value": rial_to_dollar,
-                "euro_value": rial_to_euro,
+                "dollar_value": str(rial_to_dollar),
+                "euro_value": str(rial_to_euro),
             },
             {
                 "name": "dollar",
-                "rial_value": dollar,
+                "rial_value": str(dollar),
                 "dollar_value": "1",
-                "euro_value": dollar_to_euro,
+                "euro_value": str(dollar_to_euro),
             },
             {
                 "name": "euro",
-                "rial_value": euro,
-                "dollar_value": euro_to_dollar,
+                "rial_value": str(euro),
+                "dollar_value": str(euro_to_dollar),
                 "euro_value": "1",
             },
         ]
