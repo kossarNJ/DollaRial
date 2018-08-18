@@ -130,5 +130,9 @@ class PaymentType(models.Model):
     transaction_group = models.ForeignKey(PaymentGroup, blank=True, null=True, on_delete=models.CASCADE,
                                           verbose_name="Group")
 
+    @property
+    def currency_sign(self):
+        return Currency.get_by_char(self.currency).sign
+
     def __str__(self):
         return self.name
