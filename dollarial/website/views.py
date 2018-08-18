@@ -1,3 +1,8 @@
+from website.forms import ContactForm
+from django.shortcuts import redirect
+import sendgrid
+from sendgrid.helpers.mail import *
+
 from django.shortcuts import render
 from dollarial.currency import get_dollar_rial_value
 from dollarial.currency import get_euro_rial_value
