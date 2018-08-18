@@ -10,7 +10,8 @@ from django.views.generic import FormView
 
 from dollarial.currency import Currency
 from dollarial.models import PaymentType
-from user_panel.forms import BankPaymentForm, ServicePaymentForm
+from finance import credit_manager
+from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm
 
 
 def transaction_list(request):
@@ -178,16 +179,30 @@ class ServicePayment(LoginRequiredMixin, View):
         return render(request, self.template_name, data)
 
 
-def payment_result(request):
-    data = {
-        "transaction": {
-            "transaction_type": "University",
-            "amount": "200",
-            "currency": "$",
-            "destination": "Stanford University",
-        }
-    }
-    return render(request, 'user_panel/payment_result.html', data)
+class InternalPayment(LoginRequiredMixin, View):
+    form_class = InternalPaymentForm
+    template_name = 'user_panel/user_internal_payment.html'
+    success_url = 'user_transaction_list'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            credit_manager.create_internal_payment(
+                request.user,
+                amount=form.cleaned_data['amount'],
+                destination=form.cleaned_data['destination_account_number']
+            )
+            return redirect(self.success_url)
+        return render(request, self.template_name, {'form': form})
+
+
+class ExternalPayment(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return redirect('user_index')
 
 
 def exchange(request):

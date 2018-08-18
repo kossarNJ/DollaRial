@@ -1,5 +1,9 @@
-from django import forms
+from decimal import Decimal
 
+from django import forms
+from django.core.validators import MinValueValidator
+
+from dollarial.fields import PriceFormField
 from finance.models import BankPayment, FormPayment
 
 
@@ -7,6 +11,15 @@ class BankPaymentForm(forms.ModelForm):
     class Meta:
         model = BankPayment
         fields = ('amount', )
+
+
+class InternalPaymentForm(forms.Form):
+    amount = PriceFormField(label="Amount (in ﷼)")
+    destination_account_number = forms.CharField(max_length=32, label="Destination Account Number")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].validators.append(MinValueValidator(Decimal('0.01')))
 
 
 class ServicePaymentForm(forms.ModelForm):
