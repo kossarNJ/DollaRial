@@ -1,4 +1,6 @@
 from django.shortcuts import render
+import urllib.request
+import json as simplejson
 
 
 def contact(request):
@@ -16,18 +18,41 @@ def history(request):
 def home(request):
     return render(request, 'website/home.html')
 
+
 def currencies(request):
-    data = {
-        "c":{
-        "name1": "dollar",
-        "name2": "rial",
-        "amount": "1",
-        "result": "42000",
-        }
+    response = urllib.request.urlopen("http://call.tgju.org/ajax.json")
+    response_data = simplejson.load(response)
+    euro = response_data['current']['price_eur']['p']
+    euro = euro.replace(",", "")
+    dollar = response_data['current']['price_dollar']['p']
+    dollar = dollar.replace(",", "")
+    rial_to_euro = 1 / float(euro)
+    rial_to_dollar = 1 / float(dollar)
+    euro_to_dollar = float(euro) / float(dollar)
+    dollar_to_euro = float(dollar) / float(euro)
+    currency_data = {
+        "currencies": [
+            {
+                "name": "rial",
+                "rial_value": "1",
+                "dollar_value": rial_to_dollar,
+                "euro_value": rial_to_euro,
+            },
+            {
+                "name": "dollar",
+                "rial_value": dollar,
+                "dollar_value": "1",
+                "euro_value": dollar_to_euro,
+            },
+            {
+                "name": "euro",
+                "rial_value": euro,
+                "dollar_value": euro_to_dollar,
+                "euro_value": "1",
+            },
+        ]
     }
-    return render(request, 'website/currencies.html', data)
-
-
+    return render(request, 'website/currencies.html', currency_data)
 
 
 def services(request):
@@ -66,4 +91,3 @@ def services(request):
         ]
     }
     return render(request, 'website/services.html', data)
-
