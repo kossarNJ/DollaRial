@@ -15,8 +15,7 @@ class CurrencyField(models.CharField):
 
 
 class PriceFormField(forms.FloatField):
-    def __init__(self, max_digits=None, decimal_places=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    pass
 
 
 class CurrencyFormField(forms.CharField):

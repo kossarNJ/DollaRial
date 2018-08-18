@@ -1,10 +1,11 @@
-from datetime import datetime
 from enum import Enum
 
 from django.db import models
+from django.utils import timezone
 from polymorphic.models import PolymorphicModel
 
 from dollarial import settings
+from dollarial.currency import Currency
 from dollarial.fields import PriceField, CurrencyField
 from dollarial.models import PaymentType
 
@@ -13,9 +14,13 @@ class Transaction(PolymorphicModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Owner")
     amount = PriceField(verbose_name="Amount")
     currency = CurrencyField(verbose_name="Currency")
-    date = models.DateTimeField(default=datetime.now, verbose_name="Date")
+    date = models.DateTimeField(default=timezone.now, verbose_name="Date")
     deleted = models.BooleanField(default=False, verbose_name="Deleted")
     wage = PriceField(default=0, verbose_name="Wage")
+
+    @property
+    def sent_amount(self):
+        return -self.amount - self.wage
 
     TRANSACTION_STATUS = (
         ('I', 'In Review'),
@@ -56,6 +61,22 @@ class Exchange(Transaction):
         return "%s %s%s->%s%s" % (self.amount, self.currency, self.final_amount, self.final_currency)
 
 
+class ExternalPayment(Transaction):
+    destination_number = models.CharField(max_length=63, verbose_name="Destination Account Number")
+
+    def __str__(self):
+        return "%s to %s" % (super().__str__(), self.destination_number)
+
+
+class ReverseInternalPayment(Transaction):
+    pass
+
+
+class InternalPayment(Transaction):
+    reverse_payment = models.OneToOneField(ReverseInternalPayment, on_delete=models.CASCADE,
+                                           null=False, verbose_name="Reverse Payment")
+
+
 class FormPayment(Transaction):
     payment_type = models.ForeignKey(PaymentType, on_delete=models.CASCADE, verbose_name="Payment Type")
 
@@ -81,10 +102,6 @@ class FormPayment(Transaction):
     university_username = models.CharField(max_length=63, blank=True, verbose_name="University Username")
     university_password = models.CharField(max_length=63, blank=True, verbose_name="University Password")
 
-    @property
-    def final_amount(self):
-        return self.amount - self.wage
-
     flag_related_fields = {
         'general_info': ('first_name', 'last_name', 'phone_number'),
         'personal_info': ('security_number', 'passport_number'),
@@ -100,7 +117,12 @@ def update_credit(user, currency):
         Transaction.objects.filter(
             owner=user,
             deleted=False,
-            status='A',
+            status__in=['A', 'I'],
             currency=wallet.currency
         ).aggregate(models.Sum('amount'))['amount__sum'] or 0
     wallet.save()
+
+
+def update_credit_all(user):
+    for c in Currency.get_all_currency_chars():
+        update_credit(user, c)

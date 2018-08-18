@@ -1,5 +1,4 @@
 from collections import defaultdict
-from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
@@ -8,11 +7,11 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView
 
-from dollarial.currency import Currency
-from dollarial.models import PaymentType, get_dollarial_user
-from finance.models import Exchange, BankPayment
-from user_panel.forms import BankPaymentForm, ServicePaymentForm, ExchangeForm
 from dollarial.constants import TransactionConstants
+from dollarial.models import PaymentType, get_dollarial_user
+from finance import credit_manager
+from finance.models import Exchange, BankPayment
+from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm, ExternalPaymentForm, ExchangeForm
 from dollarial.currency import *
 
 def transaction_list(request):
@@ -94,7 +93,7 @@ def payment_form(request):
 class ServicePaymentConfirmation(LoginRequiredMixin, View):
     template_name = 'user_panel/service_payment_form_confirmation.html'
     form_class = ServicePaymentForm
-    success_url = 'user_transaction_list'
+    success_url = reverse_lazy('user_transaction_list')
 
     def get(self, request, payment_type_id, *args, **kwargs):
         payment_type = PaymentType.objects.get(pk=payment_type_id)
@@ -105,7 +104,7 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
             return redirect_respond
 
         form_data = request.session.get(form_data_key)
-        # del request.session[form_data_key]
+        del request.session[form_data_key]
         form = self.form_class(payment_type, form_data)
         if not form.is_valid():
             return redirect_respond
@@ -113,7 +112,7 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
         form.make_read_only()
 
         final_amount = form.cleaned_data.get('amount', payment_type.price)
-        required_amount = final_amount / (1 - payment_type.wage_percentage / Decimal(100.0))
+        required_amount = final_amount / (1 - payment_type.wage_percentage / 100.0)
         final_amount = round(final_amount, 2)
         required_amount = round(required_amount, 2)
         wage = required_amount - final_amount
@@ -143,7 +142,7 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
         if payment_type.fixed_price:
             final_amount = payment_type.price
         final_amount = round(final_amount, 2)
-        required_amount = final_amount / (1 - payment_type.wage_percentage / Decimal(100.0))
+        required_amount = final_amount / (1 - payment_type.wage_percentage / 100.0)
         required_amount = round(required_amount, 2)
         payment_object.wage = required_amount - final_amount
         payment_object.amount = required_amount
@@ -178,6 +177,156 @@ class ServicePayment(LoginRequiredMixin, View):
             'payment_type': payment_type
         }
         return render(request, self.template_name, data)
+
+
+class InternalPayment(LoginRequiredMixin, View):
+    form_class = InternalPaymentForm
+    template_name = 'user_panel/user_internal_payment.html'
+    success_url = reverse_lazy('user_transaction_list')
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            credit_manager.create_internal_payment(
+                request.user,
+                amount=form.cleaned_data['amount'],
+                destination=form.cleaned_data['destination_account_number']
+            )
+            return redirect(self.success_url)
+        return render(request, self.template_name, {'form': form})
+
+
+class ExternalPaymentConfirmation(LoginRequiredMixin, View):
+    form_class = ExternalPaymentForm
+    template_name = 'user_panel/user_external_payment_confirmation.html'
+    success_url = reverse_lazy('user_transaction_list')
+
+    @staticmethod
+    def get_wage_percentage():
+        return TransactionConstants.NORMAL_WAGE_PERCENTAGE
+
+    def get(self, request, *args, **kwargs):
+        redirect_respond = redirect('external_payment')
+
+        form_data_key = 'external_payment_form'
+        if form_data_key not in request.session:
+            return redirect_respond
+
+        form_data = request.session.get(form_data_key)
+        del request.session[form_data_key]
+        form = self.form_class(form_data)
+        if not form.is_valid():
+            return redirect_respond
+
+        form.make_read_only()
+        final_amount = form.cleaned_data.get('amount')
+        required_amount = final_amount / (1 - self.get_wage_percentage() / 100.0)
+        final_amount = round(final_amount, 2)
+        required_amount = round(required_amount, 2)
+        wage = required_amount - final_amount
+
+        data = {
+            'form': form,
+            'currency_sign': Currency.get_by_char(form.cleaned_data['currency']).sign,
+            'final_amount': final_amount,
+            'required_amount': required_amount,
+            'wage': wage,
+        }
+        return render(request, self.template_name, data)
+
+    def post(self, request, *args, **kwargs):
+        redirect_respond = redirect('external_payment')
+
+        form = self.form_class(request.POST)
+        if not form.is_valid():
+            return redirect_respond
+
+        payment_object = form.save(commit=False)
+        payment_object.owner = request.user
+        final_amount = payment_object.amount
+        final_amount = round(final_amount, 2)
+        required_amount = final_amount / (1 - self.get_wage_percentage() / 100.0)
+        required_amount = round(required_amount, 2)
+        payment_object.wage = required_amount - final_amount
+        payment_object.amount = -required_amount
+        payment_object.owner = request.user
+        payment_object.status = 'I'
+        payment_object.save()
+
+        return redirect(self.success_url)
+
+
+class ExternalPayment(LoginRequiredMixin, FormView):
+    template_name = 'user_panel/user_external_payment.html'
+    form_class = ExternalPaymentForm
+    success_url = reverse_lazy('external_payment_confirmation')
+
+    def form_valid(self, form):
+        self.request.session['external_payment_form'] = form.cleaned_data
+        return super().form_valid(form)
+
+
+class Index(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        data = {
+            "wallets": [
+                {"name": currency.sign, "credit": request.user.get_credit(currency.char)}
+                for currency in Currency.get_all_currencies()
+            ]
+        }
+        return render(request, 'user_panel/user_index.html', data)
+
+
+class ChargeCredit(LoginRequiredMixin, FormView):
+    template_name = 'user_panel/user_charge.html'
+    form_class = BankPaymentForm
+    success_url = reverse_lazy('user_index')
+
+    def form_valid(self, form):
+        bank_payment = form.save(commit=False)
+        bank_payment.currency = Currency.rial.char
+        bank_payment.owner = self.request.user
+        bank_payment.status = 'A'
+        bank_payment.save()
+        return super().form_valid(form)
+
+
+class DepositCredit(LoginRequiredMixin, FormView):
+    template_name = 'user_panel/user_deposit.html'
+    form_class = BankPaymentForm
+    success_url = reverse_lazy('user_index')
+
+    def form_valid(self, form):
+        bank_payment = form.save(commit=False)
+        bank_payment.currency = Currency.rial.char
+        bank_payment.owner = self.request.user
+        bank_payment.amount *= -1
+        bank_payment.status = 'A'
+        bank_payment.save()
+        return super().form_valid(form)
+
+
+class Services(LoginRequiredMixin, View):
+    template_name = 'user_panel/user_services_list.html'
+
+    def get(self, request, *args, **kwargs):
+        available_services = PaymentType.objects\
+            .filter(is_active=True)\
+            .values('transaction_group', 'id')\
+            .annotate(group_name=F('transaction_group__name'))\
+            .values_list('group_name', 'id', 'name', 'description', named=True)
+        services = defaultdict(list)
+        for row in available_services:
+            services[row.group_name].append(row)
+        data = {
+            "service_groups": dict(services)
+        }
+        return render(request, self.template_name, data)
+
 
 
 class ExchangeConfirmation(LoginRequiredMixin, View):
@@ -319,108 +468,5 @@ class Exchange(LoginRequiredMixin, View):
         data = {
             'form': form,
             'is_error': 0
-        }
-        return render(request, self.template_name, data)
-
-
-def payment_result(request):
-    data = {
-        "transaction": {
-            "transaction_type": "University",
-            "amount": "200",
-            "currency": "$",
-            "destination": "Stanford University",
-        }
-    }
-    return render(request, 'user_panel/payment_result.html', data)
-
-
-def exchange(request):
-    data = {
-        "wallets": {
-            "rial": {
-                "credit": 1000,
-            },
-            "dollar": {
-                "credit": 2200,
-            },
-            "euro": {
-                "credit": 1020
-            }
-        }
-    }
-    return render(request, 'user_panel/user_exchange_credit.html', data)
-
-
-def exchange_accept(request):
-    data = {
-        "currencies": [
-            "rial", "dollar", "euro"
-        ],
-        "from": "dollar",
-        "to": "rial",
-        "amount": {
-            "from": 1,
-            "to": 75000 * 0.93,
-            "wage": 75000 * 0.07,
-        }
-    }
-    return render(request, 'user_panel/user_exchange_acceptance.html', data)
-
-
-class Index(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        data = {
-            "wallets": [
-                {"name": currency.sign, "credit": request.user.get_credit(currency.char)}
-                for currency in Currency.get_all_currencies()
-            ]
-        }
-        return render(request, 'user_panel/user_index.html', data)
-
-
-class ChargeCredit(LoginRequiredMixin, FormView):
-    template_name = 'user_panel/user_charge.html'
-    form_class = BankPaymentForm
-    success_url = reverse_lazy('user_index')
-
-    def form_valid(self, form):
-        bank_payment = form.save(commit=False)
-        bank_payment.currency = Currency.rial.char
-        bank_payment.owner = self.request.user
-        bank_payment.status = 'A'
-        bank_payment.save()
-        return super().form_valid(form)
-
-
-class DepositCredit(LoginRequiredMixin, FormView):
-    template_name = 'user_panel/user_deposit.html'
-    form_class = BankPaymentForm
-    success_url = reverse_lazy('user_index')
-
-    def form_valid(self, form):
-        bank_payment = form.save(commit=False)
-        bank_payment.currency = Currency.rial.char
-        bank_payment.owner = self.request.user
-        bank_payment.amount *= -1
-        bank_payment.status = 'A'
-        bank_payment.save()
-        return super().form_valid(form)
-
-
-class Services(LoginRequiredMixin, View):
-    template_name = 'user_panel/user_services_list.html'
-
-    def get(self, request, *args, **kwargs):
-        available_services = PaymentType.objects\
-            .filter(is_active=True)\
-            .values('transaction_group', 'id')\
-            .annotate(group_name=F('transaction_group__name'))\
-            .values_list('group_name', 'id', 'name', 'description', named=True)
-        services = defaultdict(list)
-        for row in available_services:
-            services[row.group_name].append(row)
-        data = {
-            "service_groups": dict(services)
         }
         return render(request, self.template_name, data)

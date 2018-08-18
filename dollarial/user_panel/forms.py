@@ -1,6 +1,7 @@
 from django import forms
-
-from finance.models import BankPayment, FormPayment, Exchange
+from django.core.validators import MinValueValidator
+from dollarial.fields import PriceFormField
+from finance.models import BankPayment, FormPayment, Exchange,ExternalPayment
 
 
 class ExchangeForm(forms.ModelForm):
@@ -14,9 +15,36 @@ class ExchangeForm(forms.ModelForm):
 
 
 class BankPaymentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].validators.append(MinValueValidator(1))
+
     class Meta:
         model = BankPayment
         fields = ('amount', )
+
+
+class ExternalPaymentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].validators.append(MinValueValidator(1))
+
+    def make_read_only(self):
+        for field in self.fields:
+            self.fields[field].widget.attrs['readonly'] = True
+
+    class Meta:
+        model = ExternalPayment
+        fields = ('amount', 'destination_number', 'currency',)
+
+
+class InternalPaymentForm(forms.Form):
+    amount = PriceFormField(label="Amount (in ﷼)")
+    destination_account_number = forms.CharField(max_length=32, label="Destination Account Number")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].validators.append(MinValueValidator(1))
 
 
 class ServicePaymentForm(forms.ModelForm):
