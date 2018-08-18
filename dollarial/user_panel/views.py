@@ -9,9 +9,11 @@ from django.views import View
 from django.views.generic import FormView
 
 from dollarial.currency import Currency
-from dollarial.models import PaymentType
-from user_panel.forms import BankPaymentForm, ServicePaymentForm
-
+from dollarial.models import PaymentType, get_dollarial_user
+from finance.models import Exchange, BankPayment
+from user_panel.forms import BankPaymentForm, ServicePaymentForm, ExchangeForm
+from dollarial.constants import TransactionConstants
+from dollarial.currency import *
 
 def transaction_list(request):
     # TODO: read from db
@@ -174,6 +176,149 @@ class ServicePayment(LoginRequiredMixin, View):
         data = {
             'form': form,
             'payment_type': payment_type
+        }
+        return render(request, self.template_name, data)
+
+
+class ExchangeConfirmation(LoginRequiredMixin, View):
+    template_name = 'user_panel/user_exchange_acceptance.html'
+    form_class = ExchangeForm
+    success_url = 'user_index'
+
+    def get(self, request, *args, **kwargs):
+        redirect_respond = redirect('user_exchange')
+
+        form_data_key = 'exchange_data'
+        if form_data_key not in request.session:
+            return redirect_respond
+
+        form_data = request.session.get(form_data_key)
+        form = self.form_class(form_data)
+        if not form.is_valid():
+            return redirect_respond
+
+        form.make_read_only()
+
+        fcur = form.cleaned_data.get('currency')
+        scur = form.cleaned_data.get('final_currency')
+        fprice = 1
+        sprice = 1
+
+        if fcur == 'D':
+            fprice = get_dollar_rial_value()
+        if fcur == 'E':
+            fprice = get_euro_rial_value()
+        if scur == 'D':
+            sprice = get_dollar_rial_value()
+        if scur == 'E':
+            sprice = get_euro_rial_value()
+
+        final_amount = form.cleaned_data.get('final_amount')
+        print(final_amount)
+        required_amount = final_amount * (1 + TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
+        final_amount = round(final_amount, 2)
+        required_amount = round(required_amount, 2)
+        wage = final_amount * (TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
+        wage = round(wage, 2)
+
+        if self.request.user.get_credit(fcur) < required_amount:
+            print("error")
+            exform = ExchangeForm()
+            exdata = {
+                'form': exform,
+                'is_error': 1
+            }
+            return render(request, 'user_panel/user_exchange_credit.html', exdata)
+
+        data = {
+            'form': form,
+            'final_amount':   final_amount,
+            'required_amount': required_amount,
+            'wage': wage,
+        }
+        return render(request, self.template_name, data)
+
+    def post(self, request,*args, **kwargs):
+
+        redirect_respond = redirect('user_exchange')
+
+        form = self.form_class(request.POST)
+
+        if not form.is_valid():
+            return redirect_respond
+
+        exchange_object = form.save(commit=False)
+
+        fcur = exchange_object.currency
+        scur = exchange_object.final_currency
+        fprice = 1
+        sprice = 1
+
+        if fcur == 'D':
+            fprice = get_dollar_rial_value()
+        if fcur == 'E':
+            fprice = get_euro_rial_value()
+        if scur == 'D':
+            sprice = get_dollar_rial_value()
+        if scur == 'E':
+            sprice = get_euro_rial_value()
+
+        final_amount = exchange_object.final_amount
+        required_amount = final_amount * (1 + TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
+        final_amount = round(final_amount, 2)
+        required_amount = round(required_amount, 2)
+        wage = final_amount * (TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
+        wage = round(wage, 2)
+
+        bank_payment = BankPayment()
+        bank_payment.currency = exchange_object.currency
+        bank_payment.owner = self.request.user
+        bank_payment.amount = -1 * required_amount
+        bank_payment.status = 'A'
+        bank_payment.save()
+
+        bank_payment2 = BankPayment()
+        bank_payment2.currency = exchange_object.currency
+        bank_payment2.owner = get_dollarial_user()
+        bank_payment2.amount = wage
+        bank_payment2.status = 'A'
+        bank_payment2.save()
+
+        bank_payment3 = BankPayment()
+        bank_payment3.currency = exchange_object.final_currency
+        bank_payment3.owner = self.request.user
+        bank_payment3.amount = final_amount
+        bank_payment3.status = 'A'
+        bank_payment3.save()
+
+        return redirect(self.success_url)
+
+
+class Exchange(LoginRequiredMixin, View):
+
+    model = Exchange
+    template_name = 'user_panel/user_exchange_credit.html'
+    success_url = reverse_lazy('user_panel/user_index.html')
+    form_class = ExchangeForm
+    success_url = 'user_index'
+
+    def get(self, request, *args, **kwargs):
+        form = self.form_class()
+        data = {
+            'form': form,
+            'is_error': 0
+        }
+        return render(request, self.template_name, data)
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            request.session['exchange_data'] = form.cleaned_data
+            return redirect('user_exchange_accept')
+
+        data = {
+            'form': form,
+            'is_error': 0
         }
         return render(request, self.template_name, data)
 

@@ -235,15 +235,14 @@ class Index(ClerkRequiredMixin, View):
         return render(request, 'admin_panel/admin_index.html', data)
 
 
-class ChargeCredit(ClerkRequiredMixin, FormView):
+class ChargeCredit(StaffRequiredMixin, FormView):
     template_name = 'admin_panel/admin_charge.html'
     form_class = BankPaymentForm
     success_url = reverse_lazy('admin_index')
 
-    # TODO permission admin?
-
     def form_valid(self, form):
         bank_payment = form.save(commit=False)
         bank_payment.owner = get_dollarial_user()
+        bank_payment.status = 'A'
         bank_payment.save()
         return super().form_valid(form)

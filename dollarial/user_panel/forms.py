@@ -1,6 +1,16 @@
 from django import forms
 
-from finance.models import BankPayment, FormPayment
+from finance.models import BankPayment, FormPayment, Exchange
+
+
+class ExchangeForm(forms.ModelForm):
+    def make_read_only(self):
+        for field in self.fields:
+            self.fields[field].widget.attrs['readonly'] = True
+
+    class Meta:
+        model = Exchange
+        fields = ('currency', 'final_currency', 'final_amount',)
 
 
 class BankPaymentForm(forms.ModelForm):

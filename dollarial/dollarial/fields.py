@@ -4,9 +4,9 @@ from django import forms
 from dollarial.currency import Currency
 
 
-class PriceField(models.DecimalField):
+class PriceField(models.FloatField):
     def __init__(self, max_digits=None, decimal_places=None, *args, **kwargs):
-        super().__init__(max_digits=12, decimal_places=2, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class CurrencyField(models.CharField):
@@ -14,9 +14,9 @@ class CurrencyField(models.CharField):
         super().__init__(max_length=1, choices=Currency.choices(), *args, **kwargs)
 
 
-class PriceFormField(forms.DecimalField):
+class PriceFormField(forms.FloatField):
     def __init__(self, max_digits=None, decimal_places=None, *args, **kwargs):
-        super().__init__(max_digits=12, decimal_places=2, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class CurrencyFormField(forms.CharField):
