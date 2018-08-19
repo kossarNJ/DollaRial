@@ -345,7 +345,7 @@ class Services(LoginRequiredMixin, View):
 class ExchangeConfirmation(LoginRequiredMixin, View):
     template_name = 'user_panel/user_exchange_acceptance.html'
     form_class = ExchangeForm
-    success_url = 'user_index'
+    success_url = reverse_lazy('user_transaction_list')
 
     def get(self, request, *args, **kwargs):
         redirect_respond = redirect('user_exchange')
@@ -448,7 +448,6 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
             }
             return render(request, 'user_panel/user_exchange_credit.html', exdata)
 
-
         bank_payment = BankPayment()
         bank_payment.currency = exchange_object.currency
         bank_payment.owner = self.request.user
@@ -473,12 +472,11 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
         return redirect(self.success_url)
 
 
-class Exchange(LoginRequiredMixin, View):
-
+class ExchangeView(LoginRequiredMixin, View):
     model = Exchange
     template_name = 'user_panel/user_exchange_credit.html'
     form_class = ExchangeForm
-    success_url = 'user_index'
+    success_url = reverse_lazy('user_transaction_list')
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
@@ -504,7 +502,7 @@ class Exchange(LoginRequiredMixin, View):
 class ProfileUpdate(LoginRequiredMixin, UpdateView):
     model = User
     template_name = 'user_panel/user_edit_profile.html'
-    success_url = 'user_panel/user_index.html'
+    success_url = reverse_lazy('user_edit_profile')
     form_class = UserUpdateForm
 
     def get_object(self, queryset=None):

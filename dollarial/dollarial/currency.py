@@ -16,7 +16,7 @@ class Currency(Enum):
 
     @classmethod
     def choices(cls):
-        return tuple((i.char, i.display_name) for i in cls)
+        return tuple((i.char, i.sign) for i in cls)
 
     @classmethod
     def get_all_currencies(cls):

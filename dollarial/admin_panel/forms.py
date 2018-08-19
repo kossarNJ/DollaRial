@@ -43,3 +43,7 @@ class BankPaymentForm(forms.ModelForm):
 class SendNotificationForm(forms.Form):
     subject = forms.CharField(required=True)
     notification_text = forms.CharField(required=True, widget=forms.Textarea)
+
+
+class ReportForm(forms.Form):
+    comment = forms.CharField(widget=forms.Textarea, required=True, label="Comment")

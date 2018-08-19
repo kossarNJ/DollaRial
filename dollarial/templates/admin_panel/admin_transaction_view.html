@@ -1,5 +1,6 @@
 {% extends "admin_panel_base.html" %}
 {% load static %}
+{% load bootstrap %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -8,113 +9,79 @@
 {% block title %} Transaction View{% endblock title %}
 
 {% block page_title %}
-Transaction View
+    Transaction View
 {% endblock page_title %}
 
 {% block right_breadcrumb %}
-    <li> <a href="{% url 'admin_transaction_list' %}">Transactions</a></li>
+    <li><a href="{% url 'admin_transaction_list' %}">Transactions</a></li>
     <li class="active">Transaction View</li>
 {% endblock right_breadcrumb %}
 
 {% block right_panel %}
-<div class="content mt-3">
-    <div class="animated fadeIn">
-        <div class="row">
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
 
-            <!-- Transaction View -->
-          <div class="col-lg-6">
-            <div class="card">
-                <div class="card-header">
-                    <strong class="card-title">Transaction {{ transaction.id }}</strong>
+                <!-- Transaction View -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Transaction {{ transaction.id }}</strong>
+                        </div>
+                        <div class="card-body">
+                            <!-- Credit Card -->
+                            <div id="transaction-card">
+                                <div class="card-body">
+                                    {% for key, value in display_fields.items %}
+                                        <div class="list-group">
+                                            <label for="cc-{{ key }}" class="control-label mb-1">{{ key }}</label>
+                                            <input id="cc-{{ key }}" name="cc-{{ key }}" type="text"
+                                                   class="form-control"
+                                                   value="{{ value }}" readonly>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <form role="form" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm" name="accept" id="transaction_accept">
+                                    <i class="fa fa-dot-circle-o"></i> Accept
+                                </button>
+                                <button type="submit" class="btn btn-danger btn-sm" name="reject" id="transaction_reject">
+                                    <i class="fa fa-ban"></i> Reject
+                                </button>
+                                <button type="submit" class="btn btn-secondary btn-sm" name="skip" id="transaction_skip">
+                                    <i class="fa fa-angle-double-right"></i> Skip
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                  <!-- Credit Card -->
-                  <div id="transaction-card">
-                      <div class="card-body">
-                          <div class="form-group">
-                              <label for="cc-id" class="control-label mb-1">ID</label>
-                              <input id="cc-id" name="cc-id" type="number" class="form-control"
-                                     value="{{ transaction.id }}" readonly>
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-type" class="control-label mb-1">Type</label>
-                              <input id="cc-type" name="cc-type" type="text" class="form-control"
-                                     value="{{ transaction.transaction_type }}" readonly>
-                              <small class="help-block form-text" id="link_of_type">
-                                  <!-- TODO: add correct link -->
-                                  <a href="{% url 'admin_transaction_list' %}">(link)</a>
-                              </small>
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-amount" class="control-label mb-1">Amount</label>
-                              <input id="cc-amount" name="cc-amount" type="text" class="form-control"
-                                     value="{{ transaction.amount }} {{ transaction.currency }}" readonly>
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-owner" class="control-label mb-1">Owner</label>
-                              <input id="cc-owner" name="cc-owner" type="text" class="form-control"
-                                     value="{{ transaction.owner }}" readonly>
-                              <small class="help-block form-text">
-                                  <!-- TODO: add correct link -->
-                                  <a href="{% url 'admin_transaction_list' %}">(link)</a>
-                              </small>
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-destination" class="control-label mb-1">Destination</label>
-                              <input id="cc-destination" name="cc-destination" type="text" class="form-control"
-                                     value="{{ transaction.destination }}" readonly>
-                          </div>
-                          <div class="form-group">
-                              <label for="cc-status" class="control-label mb-1">Status</label>
-                              <input id="cc-status" name="cc-status" type="text" class="form-control"
-                                     value="{{ transaction.status }}" readonly>
-                          </div>
-                      </div>
-                  </div>
+                <!-- End of Transaction View -->
+                <!-- Report -->
+                <div class="col-lg-6">
+                    <div class="card">
+                        <form role="form" method="post">
+                            <div class="card-header">
+                                <strong>Report</strong>
+                            </div>
+                            <div class="card-body">
+                                {% csrf_token %}
+                                {{ report_form|bootstrap }}
+                            </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-warning btn-sm">
+                                    <i class="fa fa-warning"></i> Report
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div class="card-footer">
-                        <button type="submit" class="btn btn-success btn-sm" id="transaction_accept">
-                            <i class="fa fa-dot-circle-o"></i> Accept
-                        </button>
-                        <button type="submit" class="btn btn-danger btn-sm" id="transaction_reject">
-                            <i class="fa fa-ban"></i> Reject
-                        </button>
-                        <button type="reset" class="btn btn-secondary btn-sm" id="transaction_skip">
-                            <i class="fa fa-angle-double-right"></i> Skip
-                        </button>
-                  </div>
+                <!-- End of Report -->
+
             </div>
-          </div>
-            <!-- End of Transaction View -->
-            <!-- Report -->
-            <div class="col-lg-6">
-                <div class="card">
-                    <div class="card-header">
-                        <strong>Report</strong>
-                    </div>
-                    <div class="card-body">
-                      <!-- Credit Card -->
-                      <div id="report-card">
-                          <div class="card-body">
-                              <div class="form-group">
-                                  <label for="report-comment" class="control-label mb-1">Comment</label>
-                                  <textarea name="report-comment" id="report-comment" rows="9"
-                                            placeholder="Comment ..." class="form-control"></textarea>
-                              </div>
-                          </div>
-                      </div>
-                    </div>
-
-                    <div class="card-footer">
-                            <button type="submit" class="btn btn-warning btn-sm">
-                                <i class="fa fa-warning"></i> Report
-                            </button>
-                    </div>
-                </div>
-            </div>
-            <!-- End of Report -->
-
         </div>
     </div>
-</div>
 {% endblock right_panel %}

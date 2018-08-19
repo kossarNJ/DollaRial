@@ -14,13 +14,23 @@ class Transaction(PolymorphicModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Owner")
     amount = PriceField(verbose_name="Amount")
     currency = CurrencyField(verbose_name="Currency")
-    date = models.DateTimeField(default=timezone.now, verbose_name="Date")
+    time = models.DateTimeField(default=timezone.now, verbose_name="Time")
     deleted = models.BooleanField(default=False, verbose_name="Deleted")
     wage = PriceField(default=0, verbose_name="Wage")
 
     @property
     def sent_amount(self):
         return -self.amount - self.wage
+
+    def get_display_data(self):
+        return [
+            ('Owner', self.owner.username),
+            ('Time', self.time),
+            ('Amount', "%s%s" % (self.amount, self.get_currency_display())),
+            ('Wage', "%s%s" % (self.wage, self.get_currency_display())),
+            ('Deleted', self.deleted),
+            ('Status', self.get_status_display())
+        ]
 
     TRANSACTION_STATUS = (
         ('I', 'In Review'),
@@ -41,6 +51,13 @@ class BankPayment(Transaction):
     class BankPaymentType(Enum):
         DEPOSIT = 1
         CHARGE = 2
+
+    def get_display_data(self):
+        data = super().get_display_data()
+        data.extend([
+            ('Type', 'Charge' if self.payment_type is self.BankPaymentType.CHARGE else 'Deposit'),
+        ])
+        return data
 
     @property
     def payment_type(self):
@@ -64,17 +81,38 @@ class Exchange(Transaction):
 class ExternalPayment(Transaction):
     destination_number = models.CharField(max_length=63, verbose_name="Destination Account Number")
 
+    def get_display_data(self):
+        data = super().get_display_data()
+        data.extend([
+            ('Destination', self.destination_number),
+            ('Sent Amount', self.sent_amount)
+        ])
+        return data
+
     def __str__(self):
         return "%s to %s" % (super().__str__(), self.destination_number)
 
 
 class ReverseInternalPayment(Transaction):
-    pass
+    def get_display_data(self):
+        data = super().get_display_data()
+        data.extend([
+            ('Sender', self.internalpayment.owner.account_number),
+        ])
+        return data
 
 
 class InternalPayment(Transaction):
     reverse_payment = models.OneToOneField(ReverseInternalPayment, on_delete=models.CASCADE,
                                            null=False, verbose_name="Reverse Payment")
+
+    def get_display_data(self):
+        data = super().get_display_data()
+        data.extend([
+            ('Destination', self.reverse_payment.owner.account_number),
+            ('Sent Amount', self.sent_amount)
+        ])
+        return data
 
 
 class FormPayment(Transaction):
@@ -109,6 +147,19 @@ class FormPayment(Transaction):
                       'exam_center'),
         'university_info': ('university_link', 'university_username', 'university_password')
     }
+
+    def get_display_data(self):
+        data = super().get_display_data()
+        data.extend([
+            ('Payment Type', "%s (%s)" % (self.payment_type.name, self.payment_type.id)),
+        ])
+        for flag, value in self.payment_type.required_fields:
+            if value:
+                for field in FormPayment.flag_related_fields[flag]:
+                    data.append(
+                        (self._meta.get_field(field).verbose_name, getattr(self, field))
+                    )
+        return data
 
 
 def update_credit(user, currency):

@@ -1,7 +1,12 @@
+from collections import OrderedDict
+
+from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import ListView, DetailView, UpdateView, CreateView
+from django.views.generic import ListView, UpdateView, CreateView
 
+from admin_panel.models import ReportTransaction
+from admin_panel.review import review_transaction
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
 from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType
@@ -9,70 +14,52 @@ from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_u
 from django.views.generic import FormView
 from django.shortcuts import render, redirect
 
+from finance.models import Transaction
 from . import forms
 from admin_panel.forms import BankPaymentForm, SendNotificationForm
 
 import requests
 
 
-def transaction_list(request):
-    # TODO: read from db
-    data = {
-        "transactions": [
-            {
-                "id": "1",
-                "transaction_type": "Toefl",
-                "amount": "200",
-                "currency": "$",
-                "owner": "user1",
-                "destination": "Toefl Co.",
-                "status": "reject"
-            },
-            {
-                "id": "2",
-                "transaction_type": "Gaj",
-                "amount": "20000000000",
-                "currency": "﷼",
-                "owner": "user2",
-                "destination": "Gaj Co.",
-                "status": "unknown"
-            },
-            {
-                "id": "3",
-                "transaction_type": "IELTS",
-                "amount": "100",
-                "currency": "€",
-                "owner": "user1",
-                "destination": "Soroush Co.",
-                "status": "accept"
-            },
-            {
-                "id": "4",
-                "transaction_type": "Toefl",
-                "amount": "200",
-                "currency": "$",
-                "owner": "user2",
-                "destination": "Toefl Co.",
-                "status": "reject"
-            },
-        ]
-    }
-    return render(request, 'admin_panel/admin_transaction_list.html', data)
+class TransactionList(ClerkRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'admin_panel/admin_transaction_list.html'
+    ordering = ['-id']
 
 
-def transaction_view(request, transaction_id):
-    data = {
-        "transaction": {
-            "id": transaction_id,
-            "transaction_type": "Toefl",
-            "amount": "200",
-            "currency": "$",
-            "owner": "user1",
-            "destination": "Toefl Co.",
-            "status": "reject"
+class TransactionView(ClerkRequiredMixin, View):
+    report_form_class = forms.ReportForm
+
+    def get(self, request, transaction_id, *args, **kwargs):
+        transaction = Transaction.objects.get(id=transaction_id)
+        report_form = self.report_form_class()
+        data = {
+            "transaction": transaction,
+            "display_fields": OrderedDict(transaction.get_display_data()),
+            "report_form": report_form,
         }
-    }
-    return render(request, 'admin_panel/admin_transaction_view.html', data)
+        return render(request, 'admin_panel/admin_transaction_view.html', data)
+
+    def post(self, request, transaction_id, *args, **kwargs):
+        success_redirect = redirect('admin_transaction_view', transaction_id)
+
+        transaction = Transaction.objects.get(id=transaction_id)
+        if 'comment' in request.POST:
+            report_form = self.report_form_class(request.POST)
+            if report_form.is_valid():
+                report_object = ReportTransaction(
+                    reviewer=request.user,
+                    comment=report_form.comment,
+                    transaction=transaction
+                )
+                report_object.save()
+        else:
+            try:
+                review_transaction(request, transaction)
+            except ValueError as err:
+                print("Error: %s" % err)
+
+        return success_redirect
 
 
 class UserList(ClerkRequiredMixin, ListView):
@@ -196,7 +183,7 @@ def reports_list(request):
     return render(request, 'admin_panel/admin_reports_list.html', data)
 
 
-# TODO login required
+@staff_member_required
 def send_notification(request):
     if request.method == 'GET':
         form = SendNotificationForm()
