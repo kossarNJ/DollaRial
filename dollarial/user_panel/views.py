@@ -73,6 +73,7 @@ def transaction_view(request, transaction_id):
     }
     return render(request, 'user_panel/user_transaction_view.html', data)
 
+
 def payment_form(request):
     return render(request, 'user_panel/payment_form.html')
 
