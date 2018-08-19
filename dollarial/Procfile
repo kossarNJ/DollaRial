@@ -1,0 +1,1 @@
+webL gunicorn dollarial.wsgi --log-file -
