@@ -19,6 +19,13 @@
                     <form role="form" method="post">
                         {% csrf_token %}
 
+
+                            {% if is_error == 1 %}
+                                        <p>
+                                            Your charge is not enough to do this transaction.
+                                        </p>
+                                    {% endif %}
+
                         <div class="card">
                             <div class="card-header">
                                 <strong class="card-title mb-3">Deposit from ﷼ Wallet</strong>

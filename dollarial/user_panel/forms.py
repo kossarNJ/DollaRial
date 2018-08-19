@@ -1,8 +1,17 @@
 from django import forms
 from django.core.validators import MinValueValidator
-
 from dollarial.fields import PriceFormField
-from finance.models import BankPayment, FormPayment, ExternalPayment
+from finance.models import BankPayment, FormPayment, Exchange,ExternalPayment
+
+
+class ExchangeForm(forms.ModelForm):
+    def make_read_only(self):
+        for field in self.fields:
+            self.fields[field].widget.attrs['readonly'] = True
+
+    class Meta:
+        model = Exchange
+        fields = ('currency', 'final_currency', 'final_amount',)
 
 
 class BankPaymentForm(forms.ModelForm):

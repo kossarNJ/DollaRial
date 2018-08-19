@@ -1,5 +1,6 @@
 {% extends "user_panel_base.html" %}
 {% load static %}
+{% load bootstrap %}
 
 {% block stylesheets %}
     {{ block.super }}
@@ -21,65 +22,28 @@
 
                 <!-- Transaction View -->
                 <div class="col-lg-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Profile</strong>
-                        </div>
-                        <div class="card-body">
-                            <div id="profile-card">
-                                <div class="card-body">
-                                    <form action="#">
-                                        <div class="row form-group">
-                                            <div class="col-md-6 padding-bottom">
-                                                <label for="from-currency-select"
-                                                       class="control-label mb-1">From</label>
-                                                <select data-placeholder="Choose currency ..." class="standardSelect"
-                                                        id="from-currency-select" tabindex="1">
-                                                    <option value=""></option>
-                                                    {% for c in wallets %}
-                                                        <option value="{{ c }}">{{ c|capfirst }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6 padding-bottom">
-                                                <label for="to-currency-select" class="control-label mb-1">To</label>
-                                                <select data-placeholder="Choose currency ..." class="standardSelect"
-                                                        id="to-currency-select" tabindex="1">
-                                                    <option value=""></option>
-                                                    {% for c in wallets %}
-                                                        <option value="{{ c }}">{{ c|capfirst }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
+                    <form role="form" method="post">
+                            {% csrf_token %}
 
-                                        <div class="row form-group">
-                                            <div class="col-md-12">
-                                                <label for="amount">Amount</label>
-                                                <input type="number" id="amount" class="form-control">
-                                            </div>
-                                        </div>
+                            {% if is_error == 1 %}
+                                        <p>
+                                            Your charge is not enough to do this transaction.
+                                        </p>
+                                    {% endif %}
 
-                                        <div class="row form-group">
-                                            <div class="col-md-12">
-                                                <label>Transaction amount should be calculated:</label><br>
-                                                <input type="radio" id="from_credit" name="option_credit" value="from">
-                                                <label for="from_credit">Exact withdraw from selected "from currency"</label> <br>
-
-                                                <input type="radio" id="to_credit" name="option_credit" value="to">
-                                                <label for="to_credit">Exact deposit to selected "to currency"</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="form-group text-center">
-                                            <input type="submit" value="Preview Exchange" class="btn btn-primary"
-                                                   formaction="{% url 'user_exchange_accept' %}" id="preview_exchange">
-                                        </div>
-                                    </form>
+                            <div class="card-body">
+                                <div id="exchange-card">
+                                    <div class="card-body">
+                                        {{ form|bootstrap }}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
+                            <div class="card-footer">
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="fa fa-dot-circle-o"></i> Exchange
+                                </button>
+                            </div>
+                        </form>
                 </div>
 
             </div>

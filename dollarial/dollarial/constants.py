@@ -12,5 +12,7 @@ class TransactionConstants(object):
         Currency.dollar: 10000,
         Currency.euro: 10000
     }
+
     NORMAL_WAGE_PERCENTAGE = 9
     EXTERNAL_TRANSACTION_WAGE = 9
+
