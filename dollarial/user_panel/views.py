@@ -300,14 +300,40 @@ class DepositCredit(LoginRequiredMixin, FormView):
     form_class = BankPaymentForm
     success_url = reverse_lazy('user_index')
 
-    def form_valid(self, form):
-        bank_payment = form.save(commit=False)
-        bank_payment.currency = Currency.rial.char
-        bank_payment.owner = self.request.user
-        bank_payment.amount *= -1
-        bank_payment.status = 'A'
-        bank_payment.save()
-        return super().form_valid(form)
+    def get(self, request, *args, **kwargs):
+        print("there")
+        form = self.form_class()
+        data = {
+            'form': form,
+        }
+        return render(request, self.template_name, data)
+
+    def post(self, request, *args, **kwargs):
+        print("post")
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            bank_payment = form.save(commit=False)
+            bank_payment.currency = Currency.rial.char
+            bank_payment.owner = self.request.user
+            bank_payment.amount *= -1
+            bank_payment.status = 'A'
+
+            print(self.request.user.get_credit(Currency.rial.char))
+            print(-1*bank_payment.amount)
+
+            if self.request.user.get_credit(Currency.rial.char) < (-1*bank_payment.amount):
+                print("here")
+                data = {
+                    'form': form,
+                    'is_error': 1
+                }
+                return render(request, self.template_name , data)
+
+            bank_payment.save()
+            data = {
+                'form': form,
+            }
+            return render(request, 'user_panel/user_index.html', data)
 
 
 class Services(LoginRequiredMixin, View):
@@ -326,7 +352,6 @@ class Services(LoginRequiredMixin, View):
             "service_groups": dict(services)
         }
         return render(request, self.template_name, data)
-
 
 
 class ExchangeConfirmation(LoginRequiredMixin, View):
@@ -372,6 +397,9 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
 
         if self.request.user.get_credit(fcur) < required_amount:
             print("error")
+            print(required_amount)
+            print(self.request.user.get_credit(fcur))
+            print(fcur)
             exform = ExchangeForm()
             exdata = {
                 'form': exform,
@@ -379,6 +407,7 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
             }
             return render(request, 'user_panel/user_exchange_credit.html', exdata)
 
+        print("here")
         data = {
             'form': form,
             'final_amount':   final_amount,
@@ -418,6 +447,19 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
         required_amount = round(required_amount, 2)
         wage = final_amount * (TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
         wage = round(wage, 2)
+
+        if self.request.user.get_credit(fcur) < required_amount:
+            print("error")
+            print(required_amount)
+            print(self.request.user.get_credit(fcur))
+            print(fcur)
+            exform = ExchangeForm()
+            exdata = {
+                'form': exform,
+                'is_error': 1
+            }
+            return render(request, 'user_panel/user_exchange_credit.html', exdata)
+
 
         bank_payment = BankPayment()
         bank_payment.currency = exchange_object.currency
