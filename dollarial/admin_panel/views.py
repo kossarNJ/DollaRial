@@ -49,7 +49,7 @@ class TransactionView(ClerkRequiredMixin, View):
             if report_form.is_valid():
                 report_object = ReportTransaction(
                     reviewer=request.user,
-                    comment=report_form.comment,
+                    comment=report_form.cleaned_data['comment'],
                     transaction=transaction
                 )
                 report_object.save()

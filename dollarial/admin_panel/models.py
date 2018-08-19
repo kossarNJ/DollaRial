@@ -9,6 +9,7 @@ class ReportTransaction(models.Model):
     comment = models.TextField(verbose_name="Comment")
     reviewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Reviewer")
     transaction = models.ForeignKey(Transaction, on_delete=models.CASCADE, verbose_name="Transaction")
+    time = models.DateTimeField(default=timezone.now, verbose_name="Time")
 
     def __str__(self):
         return "Report %s by %s" % (self.transaction_id, self.reviewer_id)
