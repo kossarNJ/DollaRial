@@ -14,9 +14,19 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from django.urls import reverse_lazy
+import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -27,7 +37,7 @@ SECRET_KEY = '*u2$39g0ng^flzp&(%zml3m=r)=)p7g0by+9c#1jrs&jnvpexk'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -60,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'dollarial.urls'
@@ -90,15 +101,19 @@ WSGI_APPLICATION = 'dollarial.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+#DATABASES = {
+#   "default": {
+#        "ENGINE": "django.db.backends.postgresql_psycopg2",
+#        "NAME": "dollarial",
+#        "USER": "modir",
+#        "PASSWORD": "qwerty123456",
+#        "HOST": "localhost",
+ #       "PORT": "",
+   # }
+#}
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "dollarial",
-        "USER": "modir",
-        "PASSWORD": "qwerty123456",
-        "HOST": "localhost",
-        "PORT": "",
-    }
+    'default': dj_database_url.config()
 }
 
 # Password validation
