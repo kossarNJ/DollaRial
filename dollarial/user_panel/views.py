@@ -2,13 +2,13 @@ from collections import defaultdict
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import FormView
-
+from django.views.generic import FormView, UpdateView
+from user_panel.forms import UserUpdateForm
 from dollarial.constants import TransactionConstants
-from dollarial.models import PaymentType, get_dollarial_user
+from dollarial.models import PaymentType, get_dollarial_user, User
 from finance import credit_manager
 from finance.models import Exchange, BankPayment
 from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm, ExternalPaymentForm, ExchangeForm
@@ -72,18 +72,6 @@ def transaction_view(request, transaction_id):
         }
     }
     return render(request, 'user_panel/user_transaction_view.html', data)
-
-
-def edit_profile(request):
-    data = {
-        "user": {
-            "fname": "kossar",
-            "lname": "najafi",
-            "email": "kossar.najafi@gmail.com",
-            "phone": "09351234567"
-        }
-    }
-    return render(request, 'user_panel/user_edit_profile.html', data)
 
 
 def payment_form(request):
@@ -489,7 +477,6 @@ class Exchange(LoginRequiredMixin, View):
 
     model = Exchange
     template_name = 'user_panel/user_exchange_credit.html'
-    success_url = reverse_lazy('user_panel/user_index.html')
     form_class = ExchangeForm
     success_url = 'user_index'
 
@@ -512,3 +499,16 @@ class Exchange(LoginRequiredMixin, View):
             'is_error': 0
         }
         return render(request, self.template_name, data)
+
+
+class ProfileUpdate(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'user_panel/user_edit_profile.html'
+    success_url = 'user_panel/user_index.html'
+    form_class = UserUpdateForm
+
+    def get_object(self, queryset=None):
+        obj = User.objects.get(id=self.request.user.id)
+        return obj
+
+
