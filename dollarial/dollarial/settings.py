@@ -18,15 +18,6 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.9/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATIC_URL = '/static/'
-
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -34,8 +25,26 @@ STATICFILES_DIRS = (
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '*u2$39g0ng^flzp&(%zml3m=r)=)p7g0by+9c#1jrs&jnvpexk'
 
+# environment settings
+PRODUCTION = False
+DEVELOPMENT = False
+
+on_heroku = False
+# TODO: update with a proper environment variable
+if 'ENV_VAR' in os.environ:
+    on_heroku = True
+
+if on_heroku:
+    PRODUCTION = True
+else:
+    DEVELOPMENT = True
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if DEVELOPMENT:
+    DEBUG = True
+else:
+    DEBUG = False
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -101,20 +110,21 @@ WSGI_APPLICATION = 'dollarial.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-#DATABASES = {
-#   "default": {
-#        "ENGINE": "django.db.backends.postgresql_psycopg2",
-#        "NAME": "dollarial",
-#        "USER": "modir",
-#        "PASSWORD": "qwerty123456",
-#        "HOST": "localhost",
- #       "PORT": "",
-   # }
-#}
-
-DATABASES = {
-    'default': dj_database_url.config()
-}
+if PRODUCTION:
+    DATABASES = {
+        'default': dj_database_url.config()
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": "dollarial",
+            "USER": "modir",
+            "PASSWORD": "qwerty123456",
+            "HOST": "localhost",
+            "PORT": "",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -156,6 +166,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
