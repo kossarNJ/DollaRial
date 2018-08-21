@@ -31,28 +31,32 @@
                         <div class="card-body">
                             <!-- Credit Card -->
                             <div id="transaction-card">
-                                <div class="card-body">
-                                    {% for key, value in display_fields.items %}
-                                        <div class="list-group">
-                                            <label for="cc-{{ key }}" class="control-label mb-1">{{ key }}</label>
-                                            <input id="cc-{{ key }}" name="cc-{{ key }}" type="text"
-                                                   class="form-control"
-                                                   value="{{ value }}" readonly>
-                                        </div>
-                                    {% endfor %}
-                                </div>
+                                {% for key, value in display_fields.items %}
+                                    <div class="form-group">
+                                        <label for="cc-{{ key }}" class="control-label mb-1">{{ key }}</label>
+                                        <input id="cc-{{ key }}" name="cc-{{ key }}" type="text"
+                                               class="form-control"
+                                               value="{{ value }}" readonly>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="card-footer">
                             <form role="form" method="post">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-success btn-sm" name="accept" id="transaction_accept">
+                                <button type="submit" class="btn btn-success btn-sm" name="accept"
+                                        id="transaction_accept"
+                                        {% if reviewable %}  disabled {% endif %}>
                                     <i class="fa fa-dot-circle-o"></i> Accept
                                 </button>
-                                <button type="submit" class="btn btn-danger btn-sm" name="reject" id="transaction_reject">
+                                <button type="submit" class="btn btn-danger btn-sm" name="reject"
+                                        id="transaction_reject"
+                                        {% if reviewable %}  disabled {% endif %}>
                                     <i class="fa fa-ban"></i> Reject
                                 </button>
-                                <button type="submit" class="btn btn-secondary btn-sm" name="skip" id="transaction_skip">
+                                <button type="submit" class="btn btn-secondary btn-sm" name="skip"
+                                        id="transaction_skip"
+                                        {% if reviewable %}  disabled {% endif %}>
                                     <i class="fa fa-angle-double-right"></i> Skip
                                 </button>
                             </form>
@@ -65,9 +69,17 @@
                     <div class="card">
                         <form role="form" method="post">
                             <div class="card-header">
-                                <strong>Report</strong>
+                                <strong>Reports</strong>
                             </div>
                             <div class="card-body">
+                                {% for report in reports %}
+                                    <p><i>{{ report.time }}</i></p>
+                                    <div>
+                                        {{ report.comment }}
+                                    </div>
+                                    <hr>
+                                {% endfor %}
+                                <h4> New Report</h4>
                                 {% csrf_token %}
                                 {{ report_form|bootstrap }}
                             </div>

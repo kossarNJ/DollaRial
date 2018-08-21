@@ -37,6 +37,8 @@ class TransactionView(ClerkRequiredMixin, View):
             "transaction": transaction,
             "display_fields": OrderedDict(transaction.get_display_data()),
             "report_form": report_form,
+            "reports": ReportTransaction.objects.filter(transaction_id=transaction_id).order_by('-time'),
+            "reviewable": transaction.status == 'I' or request.user.is_staff
         }
         return render(request, 'admin_panel/admin_transaction_view.html', data)
 

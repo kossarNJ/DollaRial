@@ -1,81 +1,45 @@
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponseForbidden
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import FormView, UpdateView
+from django.views.generic import FormView, UpdateView, ListView
+
 from user_panel.forms import UserUpdateForm
 from dollarial.constants import TransactionConstants
 from dollarial.models import PaymentType, get_dollarial_user, User
 from finance import credit_manager
-from finance.models import Exchange, BankPayment
+from finance.models import Exchange, BankPayment, Transaction
 from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm, ExternalPaymentForm, ExchangeForm
 from dollarial.currency import *
 
-def transaction_list(request):
-    # TODO: read from db
-    data = {
-        "transactions": [
-            {
-                "id": "1",
-                "transaction_type": "Toefl",
-                "amount": "200",
-                "currency": "$",
-                "owner": "user1",
-                "destination": "Toefl Co.",
-                "status": "reject"
-            },
-            {
-                "id": "2",
-                "transaction_type": "Gaj",
-                "amount": "20000000000",
-                "currency": "﷼",
-                "owner": "user1",
-                "destination": "Gaj Co.",
-                "status": "unknown"
-            },
-            {
-                "id": "3",
-                "transaction_type": "IELTS",
-                "amount": "100",
-                "currency": "€",
-                "owner": "user1",
-                "destination": "Soroush Co.",
-                "status": "accept"
-            },
-            {
-                "id": "4",
-                "transaction_type": "Toefl",
-                "amount": "200",
-                "currency": "$",
-                "owner": "user1",
-                "destination": "Toefl Co.",
-                "status": "reject"
-            },
-        ]
-    }
-    return render(request, 'user_panel/user_transaction_list.html', data)
+
+class TransactionList(LoginRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'user_panel/user_transaction_list.html'
+
+    def get_queryset(self):
+        return Transaction.objects.filter(owner=self.request.user).order_by('-time')
 
 
-def transaction_view(request, transaction_id):
-    data = {
-        "transaction": {
-            "id": transaction_id,
-            "transaction_type": "Toefl",
-            "amount": "200",
-            "currency": "$",
-            "owner": "user1",
-            "destination": "Toefl Co.",
-            "status": "reject"
+class TransactionView(LoginRequiredMixin, View):
+    template_name = 'user_panel/user_transaction_view.html'
+
+    def get(self, request, transaction_id, *args, **kwargs):
+        transaction = Transaction.objects.get(id=transaction_id)
+        if transaction.owner != request.user:
+            return HttpResponseForbidden()
+
+        display_fields = OrderedDict(transaction.get_display_data())
+
+        data = {
+            "transaction": transaction,
+            "display_fields": display_fields,
         }
-    }
-    return render(request, 'user_panel/user_transaction_view.html', data)
-
-
-def payment_form(request):
-    return render(request, 'user_panel/payment_form.html')
+        return render(request, self.template_name, data)
 
 
 class ServicePaymentConfirmation(LoginRequiredMixin, View):

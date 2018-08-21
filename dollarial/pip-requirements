@@ -12,3 +12,4 @@ kavenegar
 requests
 django-bitfield
 dj_database_url
+whitenoise

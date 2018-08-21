@@ -47,8 +47,8 @@
 </head>
 <body>
 <!-- Left Panel -->
-<aside id="left-panel" class="left-panel">
-    <nav class="navbar navbar-expand-sm navbar-default">
+<aside id="left-panel" class="left-panel" style="background: #172538;">
+    <nav class="navbar navbar-expand-sm navbar-default" style="background: #172538;">
 
         <div class="navbar-header">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#main-menu"
@@ -71,7 +71,7 @@
                        aria-expanded="false">
                         <i class="menu-icon fa fa-usd"></i>Transactions
                     </a>
-                    <ul class="sub-menu children dropdown-menu">
+                    <ul class="sub-menu children dropdown-menu" style="background: #172538;">
                         <li><i class="menu-icon fa fa-table"></i>
                             <a href="{% url 'admin_transaction_list' %}">Transactions</a>
                         </li>
@@ -91,7 +91,7 @@
                        aria-expanded="false">
                         <i class="menu-icon fa fa-users"></i>Users
                     </a>
-                    <ul class="sub-menu children dropdown-menu">
+                    <ul class="sub-menu children dropdown-menu" style="background: #172538;">
                         <li><i class="menu-icon fa fa-user"></i>
                             <a href="{% url 'admin_costumer_list' %}">Costumers</a>
                         </li>
@@ -111,7 +111,7 @@
                            aria-expanded="false">
                             <i class="menu-icon fa fa-plus-square-o"></i>Add
                         </a>
-                        <ul class="sub-menu children dropdown-menu">
+                        <ul class="sub-menu children dropdown-menu" style="background: #172538;">
 
                             <li>
                                 <i class="menu-icon fa fa-plus-square-o"></i> <a href="{% url 'admin_reviewer_add' %}">
