@@ -42,7 +42,7 @@
                                         <td id="transaction_date_{{ transaction.id }}">{{ transaction.time }}</td>
                                         <td id="transaction_amount_{{ transaction.id }}">{{ transaction.amount }}</td>
                                         <td id="transaction_currency_{{ transaction.id }}">{{ transaction.get_currency_display }}</td>
-                                        <td id="transaction_status_{{ transaction.id }}">{{ transaction.status }}</td>
+                                        <td id="transaction_status_{{ transaction.id }}">{{ transaction.get_status_display }}</td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

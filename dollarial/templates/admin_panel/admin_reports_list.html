@@ -31,16 +31,16 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {% for report in reports %}
+                                {% for report in reporttransaction_list %}
                                     <tr>
                                         <td id="report_id_{{ report.id }}">{{ report.id }}</td>
                                         <td id="reviewer_id_{{ report.id }}">
-                                            <a href="{% url 'admin_reviewer_view' report.reporter_id %}">{{ report.reporter_id }}</a>
+                                            <a href="{% url 'admin_reviewer_view' report.reviewer_id %}">{{ report.reviewer_id }}</a>
                                         </td>
                                         <td id="transaction_id_{{ report.id }}">
                                             <a href="{% url 'admin_transaction_view' report.transaction_id %}">{{ report.transaction_id }}</a>
                                         </td>
-                                        <td id="report_message_{{ report.id }}">{{ report.message }}</td>
+                                        <td id="report_message_{{ report.id }}">{{ report.comment }}</td>
                                     </tr>
                                 {% endfor %}
 

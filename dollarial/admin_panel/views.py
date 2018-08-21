@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView
 
-from admin_panel.models import ReportTransaction
+from admin_panel.models import ReportTransaction, ReviewHistory
 from admin_panel.review import review_transaction
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
@@ -115,27 +115,12 @@ class PaymentTypeView(StaffRequiredMixin, UpdateView):
     form_class = forms.PaymentTypeGeneralForm
 
 
-def skipped_transaction_list(request):
-    # TODO: read from db
-    data = {
-        "skipped_items": [
-            {
-                "id": "1",
-                "reviewer_id": "2",
-                "reviewer_username": "soroush",
-                "transaction_id": "10",
-                "time": "01/01/99"
-            },
-            {
-                "id": "2",
-                "reviewer_id": "1",
-                "reviewer_username": "parand",
-                "transaction_id": "9",
-                "time": "01/01/99"
-            }
-        ]
-    }
-    return render(request, 'admin_panel/admin_skipped_transaction_list.html', data)
+class SkippedTransactionsHistory(StaffRequiredMixin, ListView):
+    model = ReviewHistory
+    template_name = 'admin_panel/admin_skipped_transaction_list.html'
+
+    def get_queryset(self):
+        return self.model.objects.filter(action='S')
 
 
 def reviewed_transaction_history(request):
@@ -163,26 +148,9 @@ def reviewed_transaction_history(request):
     return render(request, 'admin_panel/admin_reviewed_transaction_history.html', data)
 
 
-def reports_list(request):
-    data = {
-        "reports": [
-            {
-                "id": 1,
-                "transaction_id": 10,
-                "reporter_id": 100,
-                "message": "salam modir\n khubi?\nchakeram\nin yaru ekhtelas karde 3000 milion dollar\n"
-                           "bebandesh damet garm\n"
-            },
-            {
-                "id": 2,
-                "transaction_id": 11,
-                "reporter_id": 101,
-                "message": "salam modir\nkhubi?\nchakeram\nin yaru ekhtelas karde 3000 milion dollar\n"
-                           "bebandesh damet garm\n"
-            }
-        ]
-    }
-    return render(request, 'admin_panel/admin_reports_list.html', data)
+class ReportList(StaffRequiredMixin, ListView):
+    template_name = 'admin_panel/admin_reports_list.html'
+    model = ReportTransaction
 
 
 @staff_member_required

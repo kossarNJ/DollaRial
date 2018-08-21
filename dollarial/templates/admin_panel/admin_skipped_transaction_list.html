@@ -11,9 +11,9 @@
 {% block page_title %} Skipped Transactions {% endblock page_title %}
 
 {% block right_panel %}
-        <div class="content mt-3">
-            <div class="animated fadeIn">
-                <div class="row">
+    <div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
 
                 <div class="col-md-12">
                     <div class="card">
@@ -21,36 +21,42 @@
                             <strong class="card-title">Skipped Transactions Table</strong>
                         </div>
                         <div class="card-body">
-                  <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Reviewer ID</th>
-                        <th>Reviewer Username</th>
-                        <th>Transaction ID</th>
-                        <th>Review Time</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                        {% for skipped_item in skipped_items %}
-                          <tr>
-                            <td id="item_id_{{ skipped_item.id }}">{{ skipped_item.id }}</td>
-                            <td id="item_reviewer_id_{{ skipped_item.id }}">{{ skipped_item.reviewer_id }}</td>
-                            <td id="item_reviewer_username_{{ skipped_item.id }}">{{ skipped_item.reviewer_username }}</td>
-                            <td id="item_transaction_id_{{ skipped_item.id }}">{{ skipped_item.transaction_id }}</td>
-                            <td id="item_time_{{ skipped_item.id }}">{{ skipped_item.time }}</td>
-                          </tr>
-                        {% endfor %}
-                    </tbody>
-                  </table>
+                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Reviewer ID</th>
+                                    <th>Transaction ID</th>
+                                    <th>Time</th>
+                                    <th>Status Before</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for skipped_item in reviewhistory_list %}
+                                    <tr>
+                                        <td id="item_id_{{ skipped_item.id }}">{{ skipped_item.id }}</td>
+                                        <td id="item_reviewer_id_{{ skipped_item.id }}">
+                                            <a href="{% url 'admin_reviewer_view' skipped_item.reviewer_id %}">Reviewer {{ skipped_item.reviewer_id }}</a>
+                                        </td>
+                                        <td id="item_transaction_id_{{ skipped_item.id }}">
+                                            <a href="{% url 'admin_transaction_view' skipped_item.transaction_id %}">Transaction {{ skipped_item.transaction_id }}</a>
+                                        </td>
+                                        <td id="item_time_{{ skipped_item.id }}">{{ skipped_item.time }}</td>
+                                        <td id="item_status_before_{{ skipped_item.id }}">{{ skipped_item.get_status_before_display }}</td>
+                                        <td id="item_status_before_{{ skipped_item.id }}">{{ skipped_item.get_action_display }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
 
 
-                </div>
-            </div><!-- .animated -->
-        </div><!-- .content -->
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
 {% endblock right_panel %}
 
 {% block js_files %}
@@ -67,9 +73,9 @@
     <script src="{% static 'assets/js/lib/data-table/datatables-init.js' %}"></script>
 
     <script type="text/javascript">
-        $(document).ready(function() {
-          $('#bootstrap-data-table-export').DataTable();
-        } );
+        $(document).ready(function () {
+            $('#bootstrap-data-table-export').DataTable();
+        });
     </script>
 {% endblock js_files %}
 
