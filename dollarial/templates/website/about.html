@@ -2,104 +2,126 @@
 {% load static %}
 
 {% block stylesheets %}
-    {{ block.super }}
+{{ block.super }}
 {% endblock stylesheets %}
 
 {% block title %} DollaRial About us {% endblock title %}
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 {% block content %}
-    <aside id="colorlib-hero">
-        <div class="flexslider">
-            <ul class="slides">
-                <li style="background-image: url({{ STATIC_DIR }}/images/contact-us.png);">
-                    <div class="overlay"></div>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
-                                <div class="slider-text-inner text-center">
-                                    <h1>About us</h1>
-                                </div>
+<aside id="colorlib-hero">
+    <div class="flexslider">
+        <ul class="slides">
+            <li style="background-image: url({% static 'images/about.jpg' %});">
+                <div class="overlay"></div>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
+                            <div class="slider-text-inner text-center">
+                                <h1>About us</h1>
                             </div>
                         </div>
                     </div>
-                </li>
-            </ul>
-        </div>
-    </aside>
-    <div id="colorlib-about">
-        <div class="container">
-            <div class="row">
-                <div class="about-flex">
-                    <div class="col-one-forth aside-stretch animate-box">
-                        <div class="row">
-                            <div class="col-md-12 about">
-                                <h2>About</h2>
-                            </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</aside>
+<div id="colorlib-about">
+    <div class="container">
+        <div class="row">
+            <div class="about-flex">
+                <div class="col-one-forth aside-stretch animate-box">
+                    <div class="row">
+                        <div class="col-md-12 about">
+                            <h2>The Bug Finders </h2>
                         </div>
                     </div>
-                    <div class="col-three-forth animate-box">
-                        <div class="row">
-                            <div class="col-md-12" id="about_text">
-                                <p> Something about us.</p>
-
-
-                            </div>
+                </div>
+                <div class="col-three-forth animate-box">
+                    <div class="row">
+                        <div class="col-md-12" id="about_text">
+                            <p> Our team brings together some of the brightest Computer Engineering students of Sharif University of Technology.
+                            The team is a perfect system seeing as it is a combination of people whose skills fit together like pieces of a puzzle.
+                            Their youth and creativity brings innovation to their work.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div id="colorlib-testimony" class="colorlib-light-grey">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 col-md-offset-3 text-center colorlib-heading animate-box" id="people">
-                    <h2>Our People </h2>
-                    Soroush Ebadian, Parand Alizade, Kosar Najafi
-                </div>
-            </div>
-
+</div>
+<div id="colorlib-testimony" class="colorlib-light-grey">
+    <div class="container">
+        <div class="row text-center">
+            <h1 class="heading-title"> Our Team </h1>
         </div>
-    </div>
-    </div>
-    <footer id="colorlib-footer" role="contentinfo">
-        <div class="container">
-            <div class="row row-pb-md">
-                <div class="col-md-10 col-md-offset-1 animate-box">
-                    <h3>Contact Information</h3>
-                    <h3>Contact Information</h3>
-                    <div class="row contact-info-wrap">
-                        <div class="col-md-3" id="dollarial_address">
-                            <p><span><i class="icon-location"></i></span> Room 004, Department of Computer Enginerring,
-                                Sharif University of Technology</p>
-                        </div>
-                        <div class="col-md-3" id="dollarial_phone">
-                            <p><span><i class="icon-phone3"></i></span> <a href="tel://1234567920">+ 9821 6600 5616</a>
-                            </p>
-                        </div>
-                        <div class="col-md-3" id="dollarial_email">
-                            <p><span><i class="icon-mail5"></i></span> <a href="mailto:info@yoursite.com">dollarialsharif@gmail.com</a>
-                            </p>
-                        </div>
-                        <!-- 							<div class="col-md-3">
-                                                        <p><span><i class="icon-globe"></i></span> <a href="#">yoursite.com</a></p>
-                                                    </div> -->
+        <div class="row">
+            <div class="col-md-4 col-sm-6">
+                <div class="our-team">
+                    <img src="/static/images/soroush.jpg" alt=""/>
+                    <div class="team-content">
+                        <h3 class="title">Soroush Ebadian</h3>
+                        <span class="post">Project Manager</span>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <p>
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span>
-                    </p>
+
+            <div class="col-md-4 col-sm-6">
+                <div class="our-team">
+                    <img src="/static/images/parand.jpg" alt=""/>
+                    <div class="team-content">
+                        <h3 class="title">Parand Alizade</h3>
+                        <span class="post">Web Developer</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+                <div class="our-team">
+                    <img src="/static/images/kossar.jpg" alt=""/>
+                    <div class="team-content">
+                        <h3 class="title">Kossar Najafiaghdam</h3>
+                        <span class="post">Database Manager</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </footer>
+    </div>
+</div>
+<footer id="colorlib-footer" role="contentinfo">
+    <div class="container">
+        <div class="row row-pb-md">
+            <div class="col-md-10 col-md-offset-1 animate-box">
+                <h3>Contact Information</h3>
+                <div class="row contact-info-wrap">
+                    <div class="col-md-3" id="dollarial_address">
+                        <p><span><i class="icon-location"></i></span> Room 004, Department of Computer Enginerring,
+                            Sharif University of Technology</p>
+                    </div>
+                    <div class="col-md-3" id="dollarial_phone">
+                        <p><span><i class="icon-phone3"></i></span> <a href="tel://1234567920">+ 9821 6600 5616</a>
+                        </p>
+                    </div>
+                    <div class="col-md-3" id="dollarial_email">
+                        <p><span><i class="icon-mail5"></i></span> <a href="mailto:info@yoursite.com">dollarialsharif@gmail.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <p>
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
 {% endblock content %}
 
 {% block javascript %}
-    {{ block.super }}
+{{ block.super }}
 {% endblock javascript %}
