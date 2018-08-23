@@ -34,8 +34,7 @@ class ContactUsTestCase(StaticLiveServerTestCase):
         class ContactPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.fname = self.selenium.find_element_by_id('id_name')
-                # self.lname = self.selenium.find_element_by_id('lname')
+                self.name = self.selenium.find_element_by_id('id_name')
                 self.email = self.selenium.find_element_by_id('id_email')
                 self.subject = self.selenium.find_element_by_id('id_subject')
                 self.message = self.selenium.find_element_by_id('id_message')
@@ -55,22 +54,18 @@ class ContactUsTestCase(StaticLiveServerTestCase):
     def test_posting_message(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/contact/'))
         contact_page = self.__get_page()
-        contact_page.fname.send_keys('Soroush Ebadian')
-        # contact_page.lname.send_keys('Ebadian')
-        contact_page.email.send_keys('soroush@divar.ir')
+        contact_page.name.send_keys('Kossar Najafi')
+        contact_page.email.send_keys('k_najafiaghdam@yahoo.com')
         self.__send_keys_scrolling(contact_page.subject, 'Thank You')
         self.__send_keys_scrolling(contact_page.message, 'Your website is the best! Thanks')
         contact_page.submit()
-        success = self.selenium.find_element_by_css_selector('.success')
-    #     self.assertEqual(success.text, "Thank you! Your message is sent to DollaRial.")
+        _ = self.selenium.find_element_by_id('colorlib-hero')
 
-    # def test_posting_empty_message(self):
-    #     self.selenium.get('%s%s' % (self.live_server_url, '/contact/'))
-    #     contact_page = self.__get_page()
-    #     contact_page.fname.send_keys('Soroush')
-    #     contact_page.lname.send_keys('Ebadian')
-    #     contact_page.email.send_keys('soroush@divar.ir')
-    #     self.__send_keys_scrolling(contact_page.subject, 'Thank You')
-    #     contact_page.submit()
-    #     error = self.selenium.find_element_by_css_selector('.has-error')
-    #     self.assertEqual(error.text, "Please enter your message.")
+    def test_posting_empty_message(self):
+        self.selenium.get('%s%s' % (self.live_server_url, '/contact/'))
+        contact_page = self.__get_page()
+        contact_page.name.send_keys('Kossar Najafi')
+        contact_page.email.send_keys('k_najafiaghdam@yahoo.com')
+        self.__send_keys_scrolling(contact_page.subject, 'Thank You')
+        contact_page.submit()
+        _ = self.selenium.find_element_by_id('colorlib-contact')
