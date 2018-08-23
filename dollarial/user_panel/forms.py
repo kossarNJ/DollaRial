@@ -1,7 +1,7 @@
 from django import forms
 from django.core.validators import MinValueValidator
 from dollarial.fields import PriceFormField
-from finance.models import BankPayment, FormPayment, Exchange,ExternalPayment
+from finance.models import BankPayment, FormPayment, Exchange, ExternalPayment
 from dollarial.models import User
 
 
@@ -22,7 +22,7 @@ class BankPaymentForm(forms.ModelForm):
 
     class Meta:
         model = BankPayment
-        fields = ('amount', )
+        fields = ('amount',)
 
 
 class ExternalPaymentForm(forms.ModelForm):
@@ -78,9 +78,8 @@ class ServicePaymentForm(forms.ModelForm):
 class UserUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        #self.fields['user'].disabled = True
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number','account_number', 'notification_preference']
-
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'account_number',
+                  'notification_preference']
