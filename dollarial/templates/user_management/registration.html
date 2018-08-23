@@ -11,11 +11,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 {% block content %}
-    <div id="colorlib-contact">
+    <aside id="colorlib-hero">
+        <div class="flexslider">
+            <ul class="slides">
+                <li style="background: #2C2E3E;">
+                    <div class="overlay"></div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
+                                <div class="slider-text-inner text-center">
+                                    <h1>Sign Up</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <div id="colorlib-registration">
         <div class="container">
             <div class="row">
                 <div class="col-md-10 col-md-offset-1 animate-box">
+                    <br><br><br>
                     <h3>Sign Up</h3>
+                    <br>
                     <form role="form" method="post">
                         {% csrf_token %}
                         {{ form|bootstrap }}
@@ -23,6 +44,7 @@
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>
+                    <br><br><br>
                 </div>
             </div>
         </div>
