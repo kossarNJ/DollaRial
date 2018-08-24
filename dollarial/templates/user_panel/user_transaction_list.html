@@ -13,48 +13,41 @@
 {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
 
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Transaction Table</strong>
-                        </div>
-                        <div class="card-body">
-                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Time</th>
-                                    <th>Amount</th>
-                                    <th>Currency</th>
-                                    <th>Status</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for transaction in transaction_list %}
-                                    <tr id="transaction_row_{{ transaction.id }}">
-                                        <td id="transaction_id_{{ transaction.id }}">
-                                            <a href="{% url 'user_transaction_view' transaction.id %}">{{ transaction.id }}</a>
-                                        </td>
-                                        <td id="transaction_date_{{ transaction.id }}">{{ transaction.time }}</td>
-                                        <td id="transaction_amount_{{ transaction.id }}">{{ transaction.amount }}</td>
-                                        <td id="transaction_currency_{{ transaction.id }}">{{ transaction.get_currency_display }}</td>
-                                        <td id="transaction_status_{{ transaction.id }}">{{ transaction.get_status_display }}</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Transaction Table</strong>
             </div>
-        </div><!-- .animated -->
-    </div><!-- .content -->
+            <div class="card-body">
+                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Time</th>
+                        <th>Amount</th>
+                        <th>Currency</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for transaction in transaction_list %}
+                        <tr id="transaction_row_{{ transaction.id }}">
+                            <td id="transaction_id_{{ transaction.id }}">
+                                <a href="{% url 'user_transaction_view' transaction.id %}">{{ transaction.id }}</a>
+                            </td>
+                            <td id="transaction_date_{{ transaction.id }}">{{ transaction.time }}</td>
+                            <td id="transaction_amount_{{ transaction.id }}">{{ transaction.amount }}</td>
+                            <td id="transaction_currency_{{ transaction.id }}">{{ transaction.get_currency_display }}</td>
+                            <td id="transaction_status_{{ transaction.id }}">{{ transaction.get_status_display }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 {% endblock right_panel %}
 
 {% block js_files %}

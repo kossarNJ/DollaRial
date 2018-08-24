@@ -11,33 +11,27 @@
 {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
-                {% for w in wallets %}
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">
-                                <strong class="card-title mb-3 " id="name_{{ w.name }}">{{ w.name|capfirst }}
-                                    Wallet</strong>
-                            </div>
-                            <div class="card-body">
-                                <div class="stat-widget-one">
-                                    <div class="stat-icon dib"><i
-                                            class="ti-money text-success border-success"></i>
-                                    </div>
-                                    <div class="stat-content dib">
-                                        <div class="stat-text">{{ w.name|capfirst }} Wallet</div>
-                                        <div class="stat-digit" id="wallet_balance_{{ w.name }}">{{ w.credit }}</div>
-                                    </div>
-                                </div>
-                            </div>
+    {% for w in wallets %}
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <strong class="card-title mb-3 " id="name_{{ w.name }}">{{ w.name|capfirst }}
+                        Wallet</strong>
+                </div>
+                <div class="card-body">
+                    <div class="stat-widget-one">
+                        <div class="stat-icon dib"><i
+                                class="ti-money text-success border-success"></i>
+                        </div>
+                        <div class="stat-content dib">
+                            <div class="stat-text">{{ w.name|capfirst }} Wallet</div>
+                            <div class="stat-digit" id="wallet_balance_{{ w.name }}">{{ w.credit }}</div>
                         </div>
                     </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
-    </div>
+    {% endfor %}
 {% endblock right_panel %}
 
 {% block title %} User Panel Index {% endblock title %}

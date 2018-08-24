@@ -6,13 +6,19 @@ from dollarial.models import User
 
 
 class ExchangeForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['currency'].label = "First Wallet"
+        self.fields['final_amount'].label = "Amount to Target Wallet"
+        self.fields['final_currency'].label = "Target Wallet"
+
     def make_read_only(self):
         for field in self.fields:
             self.fields[field].widget.attrs['readonly'] = True
 
     class Meta:
         model = Exchange
-        fields = ('currency', 'final_currency', 'final_amount',)
+        fields = ('final_currency', 'final_amount', 'currency',)
 
 
 class BankPaymentForm(forms.ModelForm):
@@ -81,5 +87,4 @@ class UserUpdateForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'account_number',
-                  'notification_preference']
+        fields = ['username', 'first_name', 'last_name', 'email', 'phone_number', 'notification_preference']

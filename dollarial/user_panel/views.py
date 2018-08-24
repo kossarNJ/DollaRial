@@ -1,6 +1,9 @@
 from collections import defaultdict, OrderedDict
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib import messages
+from django.db import transaction
 from django.db.models import F
 from django.http import HttpResponseForbidden
 from django.shortcuts import render, redirect
@@ -135,6 +138,7 @@ class InternalPayment(LoginRequiredMixin, View):
     form_class = InternalPaymentForm
     template_name = 'user_panel/user_internal_payment.html'
     success_url = reverse_lazy('user_transaction_list')
+    success_message = "Internal payment submitted successfully."
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
@@ -148,6 +152,8 @@ class InternalPayment(LoginRequiredMixin, View):
                 amount=form.cleaned_data['amount'],
                 destination=form.cleaned_data['destination_account_number']
             )
+
+            messages.add_message(request, level=messages.SUCCESS, message=self.success_message)
             return redirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 
@@ -156,6 +162,7 @@ class ExternalPaymentConfirmation(LoginRequiredMixin, View):
     form_class = ExternalPaymentForm
     template_name = 'user_panel/user_external_payment_confirmation.html'
     success_url = reverse_lazy('user_transaction_list')
+    success_message = "External payment submitted successfully.\nPlease wait till we review your request."
 
     @staticmethod
     def get_wage_percentage():
@@ -209,6 +216,7 @@ class ExternalPaymentConfirmation(LoginRequiredMixin, View):
         payment_object.status = 'I'
         payment_object.save()
 
+        messages.add_message(request, level=messages.SUCCESS, message=self.success_message)
         return redirect(self.success_url)
 
 
@@ -233,10 +241,11 @@ class Index(LoginRequiredMixin, View):
         return render(request, 'user_panel/user_index.html', data)
 
 
-class ChargeCredit(LoginRequiredMixin, FormView):
+class ChargeCredit(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'user_panel/user_charge.html'
     form_class = BankPaymentForm
     success_url = reverse_lazy('user_index')
+    success_message = "Wallet is charged successfully."
 
     def form_valid(self, form):
         bank_payment = form.save(commit=False)
@@ -247,45 +256,27 @@ class ChargeCredit(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class DepositCredit(LoginRequiredMixin, FormView):
+class DepositCredit(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'user_panel/user_deposit.html'
     form_class = BankPaymentForm
     success_url = reverse_lazy('user_index')
+    success_message = "You deposited from ﷼-wallet successfully!"
 
-    def get(self, request, *args, **kwargs):
-        print("there")
-        form = self.form_class()
-        data = {
-            'form': form,
-        }
-        return render(request, self.template_name, data)
+    def form_valid(self, form):
+        bank_payment = form.save(commit=False)
+        bank_payment.currency = Currency.rial.char
+        bank_payment.owner = self.request.user
+        bank_payment.amount *= -1
+        bank_payment.status = 'A'
 
-    def post(self, request, *args, **kwargs):
-        print("post")
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            bank_payment = form.save(commit=False)
-            bank_payment.currency = Currency.rial.char
-            bank_payment.owner = self.request.user
-            bank_payment.amount *= -1
-            bank_payment.status = 'A'
+        with transaction.atomic():
+            if credit_manager.check_validity_of_new_transaction(bank_payment):
+                bank_payment.save()
+            else:
+                messages.add_message(self.request, messages.WARNING, "Not enough credit.")
+                return render(self.request, self.template_name, {'form': form})
 
-            print(self.request.user.get_credit(Currency.rial.char))
-            print(-1*bank_payment.amount)
-
-            if self.request.user.get_credit(Currency.rial.char) < (-1*bank_payment.amount):
-                print("here")
-                data = {
-                    'form': form,
-                    'is_error': 1
-                }
-                return render(request, self.template_name , data)
-
-            bank_payment.save()
-            data = {
-                'form': form,
-            }
-            return render(request, 'user_panel/user_index.html', data)
+        return super().form_valid(form)
 
 
 class Services(LoginRequiredMixin, View):
@@ -309,7 +300,7 @@ class Services(LoginRequiredMixin, View):
 class ExchangeConfirmation(LoginRequiredMixin, View):
     template_name = 'user_panel/user_exchange_acceptance.html'
     form_class = ExchangeForm
-    success_url = reverse_lazy('user_transaction_list')
+    success_url = reverse_lazy('user_index')
 
     def get(self, request, *args, **kwargs):
         redirect_respond = redirect('user_exchange')
@@ -407,8 +398,7 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
             print(fcur)
             exform = ExchangeForm()
             exdata = {
-                'form': exform,
-                'is_error': 1
+                'form': exform
             }
             return render(request, 'user_panel/user_exchange_credit.html', exdata)
 
@@ -440,13 +430,11 @@ class ExchangeView(LoginRequiredMixin, View):
     model = Exchange
     template_name = 'user_panel/user_exchange_credit.html'
     form_class = ExchangeForm
-    success_url = reverse_lazy('user_transaction_list')
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
         data = {
             'form': form,
-            'is_error': 0
         }
         return render(request, self.template_name, data)
 
@@ -458,19 +446,17 @@ class ExchangeView(LoginRequiredMixin, View):
 
         data = {
             'form': form,
-            'is_error': 0
         }
         return render(request, self.template_name, data)
 
 
-class ProfileUpdate(LoginRequiredMixin, UpdateView):
+class ProfileUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     template_name = 'user_panel/user_edit_profile.html'
     success_url = reverse_lazy('user_edit_profile')
+    success_message = "Profile successfully updated!"
     form_class = UserUpdateForm
 
     def get_object(self, queryset=None):
         obj = User.objects.get(id=self.request.user.id)
         return obj
-
-

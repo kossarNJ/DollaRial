@@ -13,47 +13,42 @@
 {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-
-            {% for group, service_list in service_groups.items %}
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <strong class="card-title">
-                                    {% if group == None %}
-                                        {{ 'Other Services' }}
-                                    {% else %}
-                                        {{ group }}
-                                    {% endif %}
-                                </strong>
-                            </div>
-                            <div class="card-body">
-                            <div class="row">
-                                {% for service in service_list %}
-                                    <div class="col-md-6">
-                                        <a href={% url 'payment_form' service.id %} decoration=>
-                                            <h3 class="card-title" id=name_{{ forloop.counter0 }}>
-                                                {{ service.name }}
-                                            </h3>
-                                        </a>
-                                        <hr>
-                                        <p>
-                                            {{ service.description }}
-                                        </p>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                            </div>
-                        </div>
-
+    {% for group, service_list in service_groups.items %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <strong class="card-title">
+                            {% if group == None %}
+                                {{ 'Other Services' }}
+                            {% else %}
+                                {{ group }}
+                            {% endif %}
+                        </strong>
                     </div>
-
+                    <div class="card-body">
+                        <div class="row">
+                            {% for service in service_list %}
+                                <div class="col-md-6">
+                                    <a href={% url 'payment_form' service.id %} decoration=>
+                                        <h3 class="card-title" id=name_{{ forloop.counter0 }}>
+                                            {{ service.name }}
+                                        </h3>
+                                    </a>
+                                    <hr>
+                                    <p>
+                                        {{ service.description }}
+                                    </p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
-            {% endfor %}
-        </div><!-- .animated -->
-    </div><!-- .content -->
+
+            </div>
+
+        </div>
+    {% endfor %}
 {% endblock right_panel %}
 
 {% block js_files %}

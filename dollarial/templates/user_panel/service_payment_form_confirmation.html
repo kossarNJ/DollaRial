@@ -14,73 +14,66 @@
 {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
-                <div class="col-lg-6">
-                    <div class="card">
-                        <form role="form" method="post">
-                            {% csrf_token %}
-                            <div class="card-header">
-                                <strong class="card-title">Information</strong>
-                            </div>
-                            <div class="card-body">
-                                <div>
-                                    <h3>
-                                        {{ payment_type.name }}
-                                        <h5>
-                                            {{ payment_type.payment_group.name }}
-                                        </h5>
-                                    </h3>
-                                </div>
-                                <div>
-                                    <p>
-                                        {{ payment_type.description }}
-                                    </p>
-                                </div>
-                            </div>
-                        </form>
+    <div class="col-lg-6">
+        <div class="card">
+            <form role="form" method="post">
+                {% csrf_token %}
+                <div class="card-header">
+                    <strong class="card-title">Information</strong>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <h3>
+                            {{ payment_type.name }}
+                            <h5>
+                                {{ payment_type.payment_group.name }}
+                            </h5>
+                        </h3>
+                    </div>
+                    <div>
+                        <p>
+                            {{ payment_type.description }}
+                        </p>
                     </div>
                 </div>
+            </form>
+        </div>
+    </div>
 
-                <div class="col-lg-6">
-                    <div class="card">
-                        <form role="form" method="post">
-                            {% csrf_token %}
-                            <div class="card-header">
-                                <strong class="card-title">{{ 'Payment Form' }}</strong>
-                            </div>
-                            <div class="card-body">
-                                <div id="transaction-card">
-                                    {{ form|bootstrap }}
-                                </div>
-                                <hr>
-                                <div id="price">
-                                    <div>
-                                        Price:
-                                        <strong>{{ required_amount }} {{ payment_type.currency_sign }}</strong>
-                                    </div>
-                                    <div>
-                                        Destination
-                                        Receives:<strong> {{ final_amount }} {{ payment_type.currency_sign }}</strong>
-                                    </div>
-                                    <div>
-                                        Wage: <strong>{{ wage }} {{ payment_type.currency_sign }}</strong>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="fa fa-dot-circle-o"></i> Create Payment Form
-                                </button>
-                            </div>
-                        </form>
+    <div class="col-lg-6">
+        <div class="card">
+            <form role="form" method="post">
+                {% csrf_token %}
+                <div class="card-header">
+                    <strong class="card-title">{{ 'Payment Form' }}</strong>
+                </div>
+                <div class="card-body">
+                    <div id="transaction-card">
+                        {{ form|bootstrap }}
+                    </div>
+                    <hr>
+                    <div id="price">
+                        <div>
+                            Price:
+                            <strong>{{ required_amount }} {{ payment_type.currency_sign }}</strong>
+                        </div>
+                        <div>
+                            Destination
+                            Receives:<strong> {{ final_amount }} {{ payment_type.currency_sign }}</strong>
+                        </div>
+                        <div>
+                            Wage: <strong>{{ wage }} {{ payment_type.currency_sign }}</strong>
+                        </div>
                     </div>
                 </div>
-
-            </div>
-        </div><!-- .animated -->
-    </div><!-- .content -->
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Create Payment Form
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock right_panel %}
 
 {% block js_files %}
