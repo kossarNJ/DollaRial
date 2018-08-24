@@ -17,41 +17,36 @@
 {% endblock right_breadcrumb %}
 
 {% block right_panel %}
-    <div class="col-lg-6">
-
+    <div class="col-md-4">
         <form role="form" method="post">
             {% csrf_token %}
-            <div class="card-header">
-                <strong class="card-title">Exchange Information</strong>
-            </div>
-            <div class="card-body">
-                <div id="exchange-card">
-                    {{ form|bootstrap }}
+            <div class="card">
+                <div class="card-header">
+                    <strong class="card-title">Exchange Information</strong>
                 </div>
-                <hr>
-
-                <div id="price">
-                    <div>
-                        Price in first currency:
-                        <strong>{{ required_amount }}  </strong>
+                <div class="card-body">
+                    <div id="exchange-card">
+                        {{ form|bootstrap }}
                     </div>
+                    <hr>
+                    <div id="price">
+                        <div>
+                            Price in first currency:
+                            <strong>{{ required_amount }}  </strong>
+                        </div>
 
-                    <div>
-                        Wage in first currency: <strong>{{ wage }} </strong>
+                        <div>
+                            Wage in first currency: <strong>{{ wage }} </strong>
+                        </div>
                     </div>
                 </div>
-
-            </div>
-
-
-            <div class="card-footer">
-                <button type="submit" class="btn btn-success btn-sm">
-                    <i class="fa fa-dot-circle-o"></i> Confirm
-                </button>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Confirm
+                    </button>
+                </div>
             </div>
         </form>
-
-
     </div>
 
 {% endblock right_panel %}

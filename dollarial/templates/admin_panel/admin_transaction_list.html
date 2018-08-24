@@ -47,7 +47,7 @@
                                         <td id="transaction_currency_{{ transaction.id }}">{{ transaction.get_currency_display }}</td>
                                         <td id="transaction_wage_{{ transaction.id }}">{{ transaction.wage }}</td>
                                         <td id="transaction_owner_{{ transaction.id }}">{{ transaction.owner.username }}</td>
-                                        <td id="transaction_status_{{ transaction.id }}">{{ transaction.status }}</td>
+                                        <td id="transaction_status_{{ transaction.id }}">{{ transaction.get_status_display }}</td>
                                         <td id="transaction_deleted_{{ transaction.id }}">{{ transaction.deleted }}</td>
                                     </tr>
                                 {% endfor %}

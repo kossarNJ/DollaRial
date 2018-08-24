@@ -9,7 +9,7 @@ from admin_panel.models import ReportTransaction, ReviewHistory
 from admin_panel.review import review_transaction
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
-from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType
+from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType, PaymentGroup
 
 from django.views.generic import FormView
 from django.shortcuts import render, redirect
