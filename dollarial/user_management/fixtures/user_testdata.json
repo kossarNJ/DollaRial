@@ -1,0 +1,16 @@
+[
+  {
+    "model": "dollarial.user",
+    "pk": 1,
+    "fields": {
+      "username": "test",
+      "first_name": "kossar",
+      "last_name": "najafi",
+      "email": "kossarna@gmail.com",
+      "phone_number": "09147898557",
+      "account_number": "1234567812345678",
+      "password": "kossarnajafi1",
+      "notification_preference": "S"
+    }
+  }
+]

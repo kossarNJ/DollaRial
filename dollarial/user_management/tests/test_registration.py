@@ -1,61 +1,63 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
+
+from dollarial.models import User
 
 
 class RegistrationTest(StaticLiveServerTestCase):
+    fixtures = ['user_testdata.json']
+
     def setUp(self):
         self.selenium = WebDriver()
         self.selenium.implicitly_wait(10)
         self.selenium.get('%s%s' % (self.live_server_url, '/account/registration/'))
-        self.__create_users()
 
     def tearDown(self):
-        # TODO: drop database
         self.selenium.quit()
-        pass
-
-    def __create_users(self):
-        """
-         TODO: add user to database
-         Insert users:
-            user1: email: dollarial.sharif@gmail.com
-            user2: email: soroushebadian@gmail.com
-            ...
-        """
         pass
 
     def __get_page(self):
         class RegistrationPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.email = self.selenium.find_element_by_id('email')
-                self.password = self.selenium.find_element_by_id('pass')
-                self.fname = self.selenium.find_element_by_id('fname')
-                self.lname = self.selenium.find_element_by_id('lname')
-                self.phone = self.selenium.find_element_by_id('telephone')
-                self.button = self.selenium.find_element_by_xpath("//input[@class='btn btn-primary']")
+                self.username = self.selenium.find_element_by_id('id_username')
+                self.first_name = self.selenium.find_element_by_id('id_first_name')
+                self.last_name = self.selenium.find_element_by_id('id_last_name')
+                self.email = self.selenium.find_element_by_id('id_email')
+                self.phone_number = self.selenium.find_element_by_id('id_phone_number')
+                self.password1 = self.selenium.find_element_by_id('id_password1')
+                self.password2 = self.selenium.find_element_by_id('id_password2')
+                self.account_number = self.selenium.find_element_by_id('id_account_number')
+                self.notification = Select(self.selenium.find_element_by_id('id_notification_preference'))
+                self.button = self.selenium.find_element_by_xpath("//button[@class='btn btn-primary']")
 
         return RegistrationPage(self.selenium)
 
     def check_user_creation(self):
-        # TODO: check user soroush creation
-        pass
+        entries = User.objects.filter(first_name="soroush")
+        self.assertEqual(entries[0].last_name, "ebadian")
 
     @staticmethod
     def _fill(page):
+        page.username.send_keys('soroush_divar')
+        page.first_name.send_keys('soroush')
+        page.last_name.send_keys('ebadian')
         page.email.send_keys('soroush@divar.ir')
-        page.password.send_keys('123')
-        page.fname.send_keys('Soroush')
-        page.lname.send_keys('Ebadian')
-        page.phone.send_keys('09352543617')
+        page.phone_number.send_keys('09147898557')
+        page.password1.send_keys('ihatemakinguppasswords')
+        page.password2.send_keys('ihatemakinguppasswords')
+        page.account_number.send_keys('5678123456781234')
+        page.notification.select_by_visible_text('sms')
 
     def test_successful_registration(self):
         page = self.__get_page()
         self._fill(page)
         page.button.click()
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: driver.find_element_by_tag_name('body'))
         self.check_user_creation()
-        success = self.selenium.find_element_by_css_selector('.success')
-        self.assertEqual(success.text, "Hi Soroush!")
 
     @staticmethod
     def __get_text(element):
@@ -63,21 +65,20 @@ class RegistrationTest(StaticLiveServerTestCase):
 
     def test_empty_parts_registration(self):
         page = self.__get_page()
-        fields = [page.fname, page.lname, page.password, page.email, page.phone]
+        fields = [page.username, page.password1, page.password2, page.account_number]
         self._fill(page)
         for field in fields:
             prev_text = self.__get_text(field)
             field.clear()
             page.button.click()
-            error = self.selenium.find_element_by_css_selector('.has-error')
-            self.assertEqual(error.text, "Please fill all required fields.")
+            _ = self.selenium.find_element_by_id("id_phone_number")
             field.send_keys(prev_text)
 
     def test_already_existing_user(self):
         page = self.__get_page()
         self._fill(page)
-        page.email.clear()
-        page.email.send_keys('dollarialsharif@gmail.com')
+        page.username.clear()
+        page.username.send_keys('test')
         page.button.click()
-        error = self.selenium.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, "There exists an account with entered email.")
+        error = self.selenium.find_elements_by_tag_name('span')
+        self.assertEqual(self.__get_text(error[0]), "A user with that username already exists.")
