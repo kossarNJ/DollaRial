@@ -43,20 +43,20 @@
                         </div>
                         <div class="card-footer">
                             <form role="form" method="post">
-                                {% csrf_token %}
+                            {{ reviewable }}
                                 <button type="submit" class="btn btn-success btn-sm" name="accept"
                                         id="transaction_accept"
-                                        {% if reviewable %}  disabled {% endif %}>
+                                        {% if not reviewable %}  disabled {% endif %}>
                                     <i class="fa fa-dot-circle-o"></i> Accept
                                 </button>
                                 <button type="submit" class="btn btn-danger btn-sm" name="reject"
                                         id="transaction_reject"
-                                        {% if reviewable %}  disabled {% endif %}>
+                                        {% if not reviewable %}  disabled {% endif %}>
                                     <i class="fa fa-ban"></i> Reject
                                 </button>
                                 <button type="submit" class="btn btn-secondary btn-sm" name="skip"
                                         id="transaction_skip"
-                                        {% if reviewable %}  disabled {% endif %}>
+                                        {% if not reviewable %}  disabled {% endif %}>
                                     <i class="fa fa-angle-double-right"></i> Skip
                                 </button>
                             </form>
