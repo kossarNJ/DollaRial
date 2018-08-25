@@ -55,6 +55,8 @@ class InternalPaymentForm(forms.Form):
 
 
 class ServicePaymentForm(forms.ModelForm):
+    error_css_class = "error"
+
     def __init__(self, payment_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for flag, value in payment_type.required_fields:
@@ -65,6 +67,9 @@ class ServicePaymentForm(forms.ModelForm):
                     del self.fields[field]
         if payment_type.fixed_price:
             del self.fields['amount']
+        for field in self.fields:
+            if isinstance(self.fields[field], forms.DateField):
+                self.fields[field].widget.attrs['class'] = 'datepicker'
 
     def make_read_only(self):
         for field in self.fields:

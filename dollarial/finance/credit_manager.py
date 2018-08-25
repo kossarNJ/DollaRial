@@ -32,13 +32,13 @@ def create_internal_payment(user, amount, destination):
 @transaction.atomic
 def check_enough_credit(amount, currency, user):
     credit = user.get_credit(currency)
-    return amount > 0 or amount + credit >= 0
+    return credit >= 0 and credit >= amount
 
 
 @transaction.atomic
 def check_validity_of_new_transaction(transaction_object):
     return check_enough_credit(
-        amount=transaction_object.amount,
+        amount=transaction_object.amount * -1,
         currency=transaction_object.currency,
         user=transaction_object.owner
     )

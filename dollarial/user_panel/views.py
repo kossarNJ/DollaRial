@@ -1,5 +1,6 @@
 from collections import defaultdict, OrderedDict
 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
@@ -18,6 +19,18 @@ from finance import credit_manager
 from finance.models import Exchange, BankPayment, Transaction
 from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm, ExternalPaymentForm, ExchangeForm
 from dollarial.currency import *
+
+
+@login_required
+def get_wallets_context_data(request):
+    return {
+        "wallets": [
+            {
+                "name": currency.sign,
+                "credit": request.user.get_credit(currency.char)
+            } for currency in Currency.get_all_currencies()
+        ]
+    }
 
 
 class TransactionList(LoginRequiredMixin, ListView):
@@ -50,32 +63,40 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
     form_class = ServicePaymentForm
     success_url = reverse_lazy('user_transaction_list')
 
+    def __respond_in_error(self, payment_type_id, error_message='Something went wrong'):
+        redirect_respond = redirect('payment_form', payment_type_id)
+        messages.add_message(self.request, messages.ERROR, error_message)
+        return redirect_respond
+
     def get(self, request, payment_type_id, *args, **kwargs):
         payment_type = PaymentType.objects.get(pk=payment_type_id)
-        redirect_respond = redirect('payment_form', payment_type_id)
 
         form_data_key = 'service_payment_form_data'
         if form_data_key not in request.session:
-            return redirect_respond
+            return self.__respond_in_error(payment_type_id)
 
         form_data = request.session.get(form_data_key)
         del request.session[form_data_key]
         form = self.form_class(payment_type, form_data)
         if not form.is_valid():
-            return redirect_respond
+            return self.__respond_in_error(payment_type_id)
 
         form.make_read_only()
 
         final_amount = form.cleaned_data.get('amount', payment_type.price)
+        currency = payment_type.currency
         required_amount = final_amount / (1 - payment_type.wage_percentage / 100.0)
         final_amount = round(final_amount, 2)
         required_amount = round(required_amount, 2)
         wage = required_amount - final_amount
 
+        if not credit_manager.check_enough_credit(required_amount, currency, request.user):
+            return self.__respond_in_error(payment_type_id, "Not enough credit.")
+
         data = {
             'form': form,
             'payment_type': payment_type,
-            'final_amount':   final_amount,
+            'final_amount': final_amount,
             'required_amount': required_amount,
             'wage': wage,
         }
@@ -83,11 +104,10 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
 
     def post(self, request, payment_type_id, *args, **kwargs):
         payment_type = PaymentType.objects.get(pk=payment_type_id)
-        redirect_respond = redirect('payment_form', payment_type_id)
 
         form = self.form_class(payment_type, request.POST)
         if not form.is_valid():
-            return redirect_respond
+            return self.__respond_in_error(payment_type_id)
 
         payment_object = form.save(commit=False)
         payment_object.payment_type = payment_type
@@ -103,7 +123,12 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
         payment_object.amount = required_amount
         payment_object.owner = request.user
         payment_object.status = 'I'
-        payment_object.save()
+
+        with transaction.atomic():
+            if credit_manager.check_validity_of_new_transaction(payment_object):
+                payment_object.save()
+            else:
+                return self.__respond_in_error(payment_type_id, "Not enough credit.")
 
         return redirect(self.success_url)
 
@@ -127,6 +152,9 @@ class ServicePayment(LoginRequiredMixin, View):
         if form.is_valid():
             request.session['service_payment_form_data'] = form.cleaned_data
             return redirect('payment_form_confirmation', payment_type_id)
+        else:
+            print('form is not valid')
+
         data = {
             'form': form,
             'payment_type': payment_type
@@ -168,25 +196,32 @@ class ExternalPaymentConfirmation(LoginRequiredMixin, View):
     def get_wage_percentage():
         return TransactionConstants.NORMAL_WAGE_PERCENTAGE
 
-    def get(self, request, *args, **kwargs):
+    def __respond_in_error(self, error_message='Something went wrong'):
         redirect_respond = redirect('external_payment')
+        messages.add_message(self.request, messages.ERROR, error_message)
+        return redirect_respond
 
+    def get(self, request, *args, **kwargs):
         form_data_key = 'external_payment_form'
         if form_data_key not in request.session:
-            return redirect_respond
+            return self.__respond_in_error()
 
         form_data = request.session.get(form_data_key)
         del request.session[form_data_key]
         form = self.form_class(form_data)
         if not form.is_valid():
-            return redirect_respond
-
+            return self.__respond_in_error()
         form.make_read_only()
+
+        currency = form.cleaned_data['currency']
         final_amount = form.cleaned_data.get('amount')
         required_amount = final_amount / (1 - self.get_wage_percentage() / 100.0)
         final_amount = round(final_amount, 2)
         required_amount = round(required_amount, 2)
         wage = required_amount - final_amount
+
+        if not credit_manager.check_enough_credit(required_amount, currency, request.user):
+            return self.__respond_in_error("Not enough credit.")
 
         data = {
             'form': form,
@@ -198,11 +233,9 @@ class ExternalPaymentConfirmation(LoginRequiredMixin, View):
         return render(request, self.template_name, data)
 
     def post(self, request, *args, **kwargs):
-        redirect_respond = redirect('external_payment')
-
         form = self.form_class(request.POST)
         if not form.is_valid():
-            return redirect_respond
+            return self.__respond_in_error()
 
         payment_object = form.save(commit=False)
         payment_object.owner = request.user
@@ -214,7 +247,12 @@ class ExternalPaymentConfirmation(LoginRequiredMixin, View):
         payment_object.amount = -required_amount
         payment_object.owner = request.user
         payment_object.status = 'I'
-        payment_object.save()
+
+        with transaction.atomic():
+            if credit_manager.check_validity_of_new_transaction(payment_object):
+                payment_object.save()
+            else:
+                return self.__respond_in_error("Not enough credit.")
 
         messages.add_message(request, level=messages.SUCCESS, message=self.success_message)
         return redirect(self.success_url)
@@ -232,12 +270,7 @@ class ExternalPayment(LoginRequiredMixin, FormView):
 
 class Index(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
-        data = {
-            "wallets": [
-                {"name": currency.sign, "credit": request.user.get_credit(currency.char)}
-                for currency in Currency.get_all_currencies()
-            ]
-        }
+        data = get_wallets_context_data(request)
         return render(request, 'user_panel/user_index.html', data)
 
 
@@ -246,6 +279,11 @@ class ChargeCredit(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = BankPaymentForm
     success_url = reverse_lazy('user_index')
     success_message = "Wallet is charged successfully."
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data.update(get_wallets_context_data(request=self.request))
+        return data
 
     def form_valid(self, form):
         bank_payment = form.save(commit=False)
@@ -262,6 +300,11 @@ class DepositCredit(LoginRequiredMixin, SuccessMessageMixin, FormView):
     success_url = reverse_lazy('user_index')
     success_message = "You deposited from ﷼-wallet successfully!"
 
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data.update(get_wallets_context_data(request=self.request))
+        return data
+
     def form_valid(self, form):
         bank_payment = form.save(commit=False)
         bank_payment.currency = Currency.rial.char
@@ -273,8 +316,8 @@ class DepositCredit(LoginRequiredMixin, SuccessMessageMixin, FormView):
             if credit_manager.check_validity_of_new_transaction(bank_payment):
                 bank_payment.save()
             else:
-                messages.add_message(self.request, messages.WARNING, "Not enough credit.")
-                return render(self.request, self.template_name, {'form': form})
+                messages.add_message(self.request, messages.ERROR, "Not enough credit.")
+                return render(self.request, self.template_name, self.get_context_data())
 
         return super().form_valid(form)
 
@@ -283,10 +326,10 @@ class Services(LoginRequiredMixin, View):
     template_name = 'user_panel/user_services_list.html'
 
     def get(self, request, *args, **kwargs):
-        available_services = PaymentType.objects\
-            .filter(is_active=True)\
-            .values('transaction_group', 'id')\
-            .annotate(group_name=F('transaction_group__name'))\
+        available_services = PaymentType.objects \
+            .filter(is_active=True) \
+            .values('transaction_group', 'id') \
+            .annotate(group_name=F('transaction_group__name')) \
             .values_list('group_name', 'id', 'name', 'description', named=True)
         services = defaultdict(list)
         for row in available_services:
@@ -303,17 +346,21 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
     success_url = reverse_lazy('user_index')
     fail_url = reverse_lazy('user_exchange')
 
-    def get(self, request, *args, **kwargs):
+    @staticmethod
+    def __respond_in_error(request, error_message='Something went wrong'):
         redirect_respond = redirect('user_exchange')
+        messages.add_message(request, messages.ERROR, error_message)
+        return redirect_respond
 
+    def get(self, request, *args, **kwargs):
         form_data_key = 'exchange_data'
         if form_data_key not in request.session:
-            return redirect_respond
-
+            return self.__respond_in_error(request)
         form_data = request.session.get(form_data_key)
+        del request.session[form_data_key]
         form = self.form_class(form_data)
         if not form.is_valid():
-            return redirect_respond
+            return self.__respond_in_error(request)
 
         form.make_read_only()
 
@@ -339,35 +386,22 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
         wage = final_amount * (TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
         wage = round(wage, 2)
 
-        if self.request.user.get_credit(fcur) < required_amount:
-            print("error")
-            print(required_amount)
-            print(self.request.user.get_credit(fcur))
-            print(fcur)
-            exform = ExchangeForm()
-            exdata = {
-                'form': exform,
-            }
-            messages.add_message(self.request, messages.WARNING, "Not enough credit.")
-            return redirect(self.fail_url)
+        if not credit_manager.check_enough_credit(required_amount, fcur, request.user):
+            return self.__respond_in_error(request, error_message="Not enough credit.")
 
-        print("here")
         data = {
             'form': form,
-            'final_amount':   final_amount,
+            'final_amount': final_amount,
             'required_amount': required_amount,
             'wage': wage,
         }
         return render(request, self.template_name, data)
 
-    def post(self, request,*args, **kwargs):
-
-        redirect_respond = redirect('user_exchange')
-
+    def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
 
         if not form.is_valid():
-            return redirect_respond
+            return self.__respond_in_error(request)
 
         exchange_object = form.save(commit=False)
 
@@ -392,42 +426,26 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
         wage = final_amount * (TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
         wage = round(wage, 2)
 
-        if self.request.user.get_credit(fcur) < required_amount:
-            print("error")
-            print(required_amount)
-            print(self.request.user.get_credit(fcur))
-            print(fcur)
-            exform = ExchangeForm()
-            exdata = {
-                'form': exform
-            }
+        with transaction.atomic():
+            if credit_manager.check_enough_credit(required_amount, fcur, request.user):
+                bank_payment = BankPayment()
+                bank_payment.currency = exchange_object.currency
+                bank_payment.owner = self.request.user
+                bank_payment.amount = -1 * required_amount
+                bank_payment.status = 'A'
+                bank_payment.wage = wage
+                bank_payment.save()
 
-            messages.add_message(self.request, messages.WARNING, "Not enough credit.")
-            return redirect(self.fail_url)
-
-        bank_payment = BankPayment()
-        bank_payment.currency = exchange_object.currency
-        bank_payment.owner = self.request.user
-        bank_payment.amount = -1 * required_amount
-        bank_payment.status = 'A'
-        bank_payment.save()
-
-        bank_payment2 = BankPayment()
-        bank_payment2.currency = exchange_object.currency
-        bank_payment2.owner = get_dollarial_user()
-        bank_payment2.amount = wage
-        bank_payment2.status = 'A'
-        bank_payment2.save()
-
-        bank_payment3 = BankPayment()
-        bank_payment3.currency = exchange_object.final_currency
-        bank_payment3.owner = self.request.user
-        bank_payment3.amount = final_amount
-        bank_payment3.status = 'A'
-        bank_payment3.save()
+                bank_payment2 = BankPayment()
+                bank_payment2.currency = exchange_object.final_currency
+                bank_payment2.owner = self.request.user
+                bank_payment2.amount = final_amount
+                bank_payment2.status = 'A'
+                bank_payment2.save()
+            else:
+                return self.__respond_in_error(request, error_message="Not enough credit.")
 
         messages.add_message(self.request, messages.SUCCESS, "You exchanged your money successfully.")
-
         return redirect(self.success_url)
 
 
@@ -436,11 +454,15 @@ class ExchangeView(LoginRequiredMixin, View):
     template_name = 'user_panel/user_exchange_credit.html'
     form_class = ExchangeForm
 
+    def get_default_data(self):
+        return get_wallets_context_data(request=self.request)
+
     def get(self, request, *args, **kwargs):
         form = self.form_class()
         data = {
             'form': form,
         }
+        data.update(self.get_default_data())
         return render(request, self.template_name, data)
 
     def post(self, request, *args, **kwargs):
@@ -452,6 +474,7 @@ class ExchangeView(LoginRequiredMixin, View):
         data = {
             'form': form,
         }
+        data.update(self.get_default_data())
         return render(request, self.template_name, data)
 
 
