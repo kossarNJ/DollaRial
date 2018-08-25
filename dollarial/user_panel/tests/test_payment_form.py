@@ -32,8 +32,24 @@ class PaymentFormTest(StaticLiveServerTestCase):
                                              notification_preference="S")
         self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_form'))
 
-    def __login(self):
-        pass
+    def login(self):
+        user = User.objects.get(username="kossar")
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        session = SessionStore()
+        session[SESSION_KEY] = User.objects.get(username="kossar").id
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
+
+        cookie = {
+            'name': settings.SESSION_COOKIE_NAME,
+            'value': session.session_key,
+            'path': '/',
+        }
+
+        self.selenium.add_cookie(cookie)
+        self.selenium.refresh()
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_form/'))
 
     def __get_form_page(self):
         class FormPage(object):
@@ -77,25 +93,6 @@ class PaymentFormTest(StaticLiveServerTestCase):
                 self.rcontinue = self.selenium.find_element_by_xpath("//input[@class='btn btn-primary']")
 
         return ResultPage(self.selenium)
-
-    def login(self):
-        user = User.objects.get(username="kossar")
-        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
-        session = SessionStore()
-        session[SESSION_KEY] = User.objects.get(username="kossar").id
-        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
-        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
-        session.save()
-
-        cookie = {
-            'name': settings.SESSION_COOKIE_NAME,
-            'value': session.session_key,
-            'path': '/',
-        }
-
-        self.selenium.add_cookie(cookie)
-        self.selenium.refresh()
-        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_form/'))
 
     @staticmethod
     def __get_value(element):

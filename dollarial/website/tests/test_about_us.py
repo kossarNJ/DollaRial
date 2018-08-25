@@ -40,7 +40,6 @@ class AboutUsTestCase(StaticLiveServerTestCase):
         address = self.selenium.find_element_by_id("dollarial_address")
         phone = self.selenium.find_element_by_id("dollarial_phone")
         email = self.selenium.find_element_by_id("dollarial_email")
-        self.assertIn("Department of Computer Enginerring,\n                            Sharif University of "
-                      "Technology\n                    ", self.__get_text(address))
+        self.assertIn("Department of Computer Enginerring,", self.__get_text(address))
         self.assertIn("21 6600 5616", self.__get_text(phone))
         self.assertIn("dollarialsharif@gmail.com", self.__get_text(email))

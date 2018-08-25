@@ -1,5 +1,5 @@
 from importlib import import_module
-
+import time
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.support.select import Select
@@ -21,7 +21,7 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
                                              account_number="1234432112344321",
                                              notification_preference="S")
         self.selenium.implicitly_wait(10)
-        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/exchange'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/exchange/'))
 
     def tearDown(self):
         self.selenium.quit()
@@ -38,13 +38,10 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
         return ExchangePage(self.selenium)
 
     def __get_page_2(self):
-        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/exchange/accept/'))
-
         class ExchangePreviewPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.confirm_exchange = self.selenium.find_element_by_xpath("//button[@class='btn btn-success btn-sm']")
-                self.cancel_exchange = self.selenium.find_element_by_xpath("//button[@class='btn btn-danger btn-sm']")
+                self.confirm_exchange = self.selenium.find_element_by_xpath("//button[@type='submit']")
 
         return ExchangePreviewPage(self.selenium)
 
@@ -108,11 +105,13 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
 
     def test_preview_exchange(self):
         self.login()
+        self.charge_wallet(550000)
         page = self.__get_page_1()
         self._fill_1(page)
         page.button.click()
+        self.selenium.implicitly_wait(10)
         self.assertIn("accept", self.selenium.current_url)
-    #
+
     def test_preview_accept(self):
         self.login()
         self.charge_wallet(550000)
@@ -123,36 +122,37 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
 
         page2 = self.__get_page_2()
         page2.confirm_exchange.click()
+        time.sleep(3)
         credit = self.selenium.find_element_by_id("wallet_balance_$")
         self.assertEqual(float(1), float(self.__get_text(credit)))
         self.assertNotIn("accept", self.selenium.current_url)
 
-    #
-    # def test_preview_fail_unsuccessful(self): NOT OK
-    #     self.login()
-    #     self.charge_wallet('10000000')
-    #     page1 = self.__get_page_1()
-    #     self._fill_1(page1)
-    #     page1.amount.send_keys('10000000')
-    #     page1.button.click()
-    #     self.selenium.implicitly_wait(10)
-    #
-    #     page2 = self.__get_page_2()
-    #     page2.confirm_exchange.click()
-    #     error = self.selenium.find_element_by_css_selector('.error')
-    #     self.assertEqual(error.text, "Exchange unsuccessful. You can not exchange more than ")
-    #
-    # def test_preview_accept_unsuccess(self): NOT OK
-    #     page1 = self.__get_page_1()
-    #     self._login(page1)
-    #     self._fill_1(page1)
-    #     page1.amount.send_keys('100000')  # amount that is more than balance of account
-    #     page1.preview_button.click()
-    #     self.selenium.implicitly_wait(10)
-    #
-    #     page2 = self.__get_page_2()
-    #     page2.confirm_exchange.click()
-    #     error = self.selenium.find_element_by_css_selector('.has-error')
-    #     self.assertEqual(error.text, "The amount is more than the current balance")
+        #
+        # def test_preview_fail_unsuccessful(self): NOT OK
+        #     self.login()
+        #     self.charge_wallet('10000000')
+        #     page1 = self.__get_page_1()
+        #     self._fill_1(page1)
+        #     page1.amount.send_keys('10000000')
+        #     page1.button.click()
+        #     self.selenium.implicitly_wait(10)
+        #
+        #     page2 = self.__get_page_2()
+        #     page2.confirm_exchange.click()
+        #     error = self.selenium.find_element_by_css_selector('.error')
+        #     self.assertEqual(error.text, "Exchange unsuccessful. You can not exchange more than ")
+        #
+        # def test_preview_accept_unsuccess(self): NOT OK
+        #     page1 = self.__get_page_1()
+        #     self._login(page1)
+        #     self._fill_1(page1)
+        #     page1.amount.send_keys('100000')  # amount that is more than balance of account
+        #     page1.preview_button.click()
+        #     self.selenium.implicitly_wait(10)
+        #
+        #     page2 = self.__get_page_2()
+        #     page2.confirm_exchange.click()
+        #     error = self.selenium.find_element_by_css_selector('.has-error')
+        #     self.assertEqual(error.text, "The amount is more than the current balance")
 
-
+        # TODO fix these two tests or remove them
