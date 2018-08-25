@@ -30,8 +30,8 @@ PRODUCTION = False
 DEVELOPMENT = False
 
 on_heroku = False
-# TODO: update with a proper environment variable
-if 'ENV_VAR' in os.environ:
+
+if 'PRO_VAR' in os.environ:
     on_heroku = True
 
 if on_heroku:
@@ -181,4 +181,4 @@ AUTH_USER_MODEL = "dollarial.User"
 
 # MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
-
+SEND_GRID = os.environ.get('GRID_API')

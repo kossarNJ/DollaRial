@@ -6,6 +6,7 @@ from sendgrid.helpers.mail import *
 from django.shortcuts import render
 from dollarial.currency import get_dollar_rial_value
 from dollarial.currency import get_euro_rial_value
+from dollarial.settings import SEND_GRID
 
 
 def contact(request):
@@ -20,7 +21,7 @@ def contact(request):
             name = form.cleaned_data['name']
 
             sg = sendgrid.SendGridAPIClient(
-                apikey='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')
+                apikey= SEND_GRID)
             from_email = Email(email)
             to_email = Email("parand1997@gmail.com")
             subject = subject
