@@ -10,6 +10,9 @@ from dollarial.constants import TransactionConstants
 from dollarial.currency import Currency
 from dollarial.fields import PriceField, CurrencyField
 from kavenegar import *
+import sendgrid
+from dollarial.settings import SEND_GRID
+from sendgrid.helpers.mail import *
 
 
 class User(AbstractUser):
@@ -186,12 +189,12 @@ class PaymentType(models.Model):
         return self.name
 
 
-def send_sms_to_all_users(message):
+def send_sms_to_user(number, message):
     try:
         api = KavenegarAPI('457A5A6564762B35696C334E6D3957765672713035673D3D')
         params = {
             'sender': '',  # optinal
-            'receptor': '',  # multiple mobile number, split by comma
+            'receptor': number,  # multiple mobile number, split by comma
             'message': message,
         }
         response = api.sms_send(params)
@@ -200,3 +203,15 @@ def send_sms_to_all_users(message):
         print(e)
     except HTTPException as e:
         print(e)
+
+
+def send_email_to_user(subject, from_email, to_email, message):
+
+    sg = sendgrid.SendGridAPIClient(
+        apikey=SEND_GRID)
+    from_email = Email(from_email)
+    to_email = Email(to_email)
+    subject = subject
+    content = Content("text/plain", message)
+    mail = Mail(from_email, subject, to_email, content)
+    sg.client.mail.send.post(request_body=mail.get())
