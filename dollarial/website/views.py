@@ -1,11 +1,9 @@
 from website.forms import ContactForm
 from django.shortcuts import redirect
-import sendgrid
-from sendgrid.helpers.mail import *
-
 from django.shortcuts import render
 from dollarial.currency import get_dollar_rial_value
 from dollarial.currency import get_euro_rial_value
+from dollarial.models import send_email_to_user
 
 
 def contact(request):
@@ -15,18 +13,12 @@ def contact(request):
         form = ContactForm(request.POST)
         if form.is_valid():
             subject = form.cleaned_data['subject']
-            email = form.cleaned_data['email']
+            from_email = form.cleaned_data['email']
             message = form.cleaned_data['message']
             name = form.cleaned_data['name']
-
-            sg = sendgrid.SendGridAPIClient(
-                apikey='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')
-            from_email = Email(email)
-            to_email = Email("parand1997@gmail.com")
-            subject = subject
-            content = Content("text/plain", name + ":\n" + message)
-            mail = Mail(from_email, subject, to_email, content)
-            sg.client.mail.send.post(request_body=mail.get())
+            to_email = "parand1997@gmail.com"
+            content = name + ":\n" + message
+            send_email_to_user(subject, from_email, to_email, content)
 
             return redirect('home')
     return render(request, "website/contact.html", {'form': form})

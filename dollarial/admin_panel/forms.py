@@ -1,8 +1,9 @@
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
 from django import forms
+from django.core.validators import MinValueValidator
 
-from dollarial.models import Clerk, PaymentType
+from dollarial.models import Clerk, PaymentType, PaymentGroup
 
 from finance.models import BankPayment
 
@@ -23,6 +24,12 @@ class ClerkUpdateForm(forms.ModelForm):
         fields = ("user", "salary", "is_employee")
 
 
+class PaymentGroupGeneralForm(forms.ModelForm):
+    class Meta:
+        model = PaymentGroup
+        fields = ("name", )
+
+
 class PaymentTypeGeneralForm(forms.ModelForm):
     formfield_overrides = {
         BitField: {'widget': BitFieldCheckboxSelectMultiple},
@@ -35,6 +42,10 @@ class PaymentTypeGeneralForm(forms.ModelForm):
 
 
 class BankPaymentForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['amount'].validators.append(MinValueValidator(1))
+
     class Meta:
         model = BankPayment
         fields = ('amount', 'currency', )

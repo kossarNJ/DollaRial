@@ -4,7 +4,6 @@
 
 {% block stylesheets %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'assets/css/lib/datatable/dataTables.bootstrap.min.css' %}">
 {% endblock stylesheets %}
 
 {% block title %} Payment Form '{{ payment_type.name }}' {% endblock title %}
@@ -79,5 +78,13 @@
 {% endblock right_panel %}
 
 {% block js_files %}
+    <script>
+        $(function () {
+            $(".datepicker").datepicker({
+                changeMonth: true,
+                changeYear: true
+            });
+        });
+    </script>
 {% endblock js_files %}
 
