@@ -301,6 +301,7 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
     template_name = 'user_panel/user_exchange_acceptance.html'
     form_class = ExchangeForm
     success_url = reverse_lazy('user_index')
+    fail_url = reverse_lazy('user_exchange')
 
     def get(self, request, *args, **kwargs):
         redirect_respond = redirect('user_exchange')
@@ -331,7 +332,7 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
             sprice = get_euro_rial_value()
 
         final_amount = form.cleaned_data.get('final_amount')
-        print(final_amount)
+
         required_amount = final_amount * (1 + TransactionConstants.NORMAL_WAGE_PERCENTAGE / 100.0) * sprice / fprice
         final_amount = round(final_amount, 2)
         required_amount = round(required_amount, 2)
@@ -346,9 +347,9 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
             exform = ExchangeForm()
             exdata = {
                 'form': exform,
-                'is_error': 1
             }
-            return render(request, 'user_panel/user_exchange_credit.html', exdata)
+            messages.add_message(self.request, messages.WARNING, "Not enough credit.")
+            return redirect(self.fail_url)
 
         print("here")
         data = {
@@ -400,7 +401,9 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
             exdata = {
                 'form': exform
             }
-            return render(request, 'user_panel/user_exchange_credit.html', exdata)
+
+            messages.add_message(self.request, messages.WARNING, "Not enough credit.")
+            return redirect(self.fail_url)
 
         bank_payment = BankPayment()
         bank_payment.currency = exchange_object.currency
@@ -422,6 +425,8 @@ class ExchangeConfirmation(LoginRequiredMixin, View):
         bank_payment3.amount = final_amount
         bank_payment3.status = 'A'
         bank_payment3.save()
+
+        messages.add_message(self.request, messages.SUCCESS, "You exchanged your money successfully.")
 
         return redirect(self.success_url)
 
