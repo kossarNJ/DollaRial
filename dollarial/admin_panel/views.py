@@ -4,6 +4,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
+from django import urls
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView
 
@@ -72,7 +73,8 @@ class TransactionView(ClerkRequiredMixin, View):
                         request.user,
                         subject='#%d Transaction Review Result' % transaction_id,
                         message='Your transaction is reviewed and the result is %s.\nLink: %s' %
-                                (transaction.get_status_display(), reverse_lazy('user_transaction_view', ))
+                                (transaction.get_status_display(),
+                                 urls.reverse('user_transaction_view', args=[transaction_id]))
                     )
                 messages.add_message(request, messages.SUCCESS, "Your action is received.")
             except ValueError as err:
@@ -171,7 +173,7 @@ class TransactionGroupList(StaffRequiredMixin, ListView):
 class TransactionGroupView(StaffRequiredMixin, SuccessMessageMixin, UpdateView):
     model = PaymentGroup
     template_name = 'admin_panel/admin_transaction_group_view.html'
-    fields = ('name', )
+    fields = ('name',)
     success_url = reverse_lazy('admin_transaction_group_list')
     success_message = "Payment Group successfully updated."
 
@@ -179,7 +181,7 @@ class TransactionGroupView(StaffRequiredMixin, SuccessMessageMixin, UpdateView):
 class TransactionGroupAdd(StaffRequiredMixin, SuccessMessageMixin, CreateView):
     model = PaymentGroup
     template_name = 'admin_panel/admin_transaction_group_add.html'
-    fields = ('name', )
+    fields = ('name',)
     success_url = reverse_lazy('admin_transaction_group_list')
     success_message = "Payment Group successfully added."
 

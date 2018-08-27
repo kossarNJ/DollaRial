@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
-from dollarial.models import Clerk, get_dollarial_company,get_dollarial_user
-from dollarial.models import send_email_to_user
+from dollarial.models import Clerk, get_dollarial_company, get_dollarial_user
+from dollarial.notification import send_email_to_user
 from dollarial.settings import ADMIN_EMAIL
 from finance.models import Transaction
 
@@ -22,8 +22,8 @@ def update_salary():
         sum_all += clerk.salary
     if sum_all > company_credit:
         send_email_to_user("Low Credit", "auto@dollarial.com", ADMIN_EMAIL,
-                            "Your Credit is not enough to pay the salaries. Your Credit is " + str(
-                                company_credit) + " and total salaries is " + str(total))
+                           "Your Credit is not enough to pay the salaries. Your Credit is " +
+                           str(company_credit) + " and total salaries is " + str(total))
         raise Exception("Not enough credit to create salaries")
 
     else:

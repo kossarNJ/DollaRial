@@ -1,8 +1,5 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-#from dollarial.models import send_email_to_user
-from django.core.management import call_command
 
-from finance.management.commands import worker
 from subprocess import call
 
 sched = BlockingScheduler()
