@@ -126,33 +126,3 @@ class ExchangeCreditTest(StaticLiveServerTestCase):
         credit = self.selenium.find_element_by_id("wallet_balance_$")
         self.assertEqual(float(1), float(self.__get_text(credit)))
         self.assertNotIn("accept", self.selenium.current_url)
-
-        #
-        # def test_preview_fail_unsuccessful(self): NOT OK
-        #     self.login()
-        #     self.charge_wallet('10000000')
-        #     page1 = self.__get_page_1()
-        #     self._fill_1(page1)
-        #     page1.amount.send_keys('10000000')
-        #     page1.button.click()
-        #     self.selenium.implicitly_wait(10)
-        #
-        #     page2 = self.__get_page_2()
-        #     page2.confirm_exchange.click()
-        #     error = self.selenium.find_element_by_css_selector('.error')
-        #     self.assertEqual(error.text, "Exchange unsuccessful. You can not exchange more than ")
-        #
-        # def test_preview_accept_unsuccess(self): NOT OK
-        #     page1 = self.__get_page_1()
-        #     self._login(page1)
-        #     self._fill_1(page1)
-        #     page1.amount.send_keys('100000')  # amount that is more than balance of account
-        #     page1.preview_button.click()
-        #     self.selenium.implicitly_wait(10)
-        #
-        #     page2 = self.__get_page_2()
-        #     page2.confirm_exchange.click()
-        #     error = self.selenium.find_element_by_css_selector('.has-error')
-        #     self.assertEqual(error.text, "The amount is more than the current balance")
-
-        # TODO fix these two tests or remove them

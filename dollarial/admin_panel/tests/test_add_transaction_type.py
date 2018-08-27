@@ -117,14 +117,3 @@ class TransactionTypeAddTest(StaticLiveServerTestCase):
         page.name.clear()
         page.button.click()
         self.assertIn("add", self.selenium.current_url)
-
-        # TODO this test doesn't pass because we actually can re-add an existing transaction type
-        # def test_already_existing_transaction_type(self):
-        #     page = self.__get_page()
-        #     self._login(page)
-        #     self._fill(page)
-        #     page.name.clear()
-        #     page.name.send_keys('Toefl')
-        #     page.save_button.click()
-        #     error = self.selenium.find_element_by_css_selector('.has-error')
-        #     self.assertEqual(error.text, "There exists a Transaction Type with entered name.")

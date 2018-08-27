@@ -5,7 +5,6 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.common.exceptions import StaleElementReferenceException
 
 from selenium.webdriver.firefox.webdriver import WebDriver
-from dollarial.currency import Currency
 from dollarial.models import User
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY
 from django.conf import settings
@@ -132,19 +131,15 @@ class TransactionListTest(StaticLiveServerTestCase):
     def __get_text(element):
         return element.get_attribute('textContent')
 
-    def test_fields_content(self):
+    def test_filter_by_user(self):
         self.login()
         self.__create_transactions()
-        transactions = self.__get_transaction()
         page = self.__get_page()
-        for i in range(3):
-            self.assertIn(str(transactions[i].transaction_id), self.__get_text(page.id[i]))
-            self.assertIn(str(transactions[i].transaction_amount), self.__get_text(page.amount[i]))
-            self.assertIn(Currency.get_by_char(transactions[i].transaction_currency[0]).sign,
-                          self.__get_text(page.currency[i]))
-            self.assertIn(str(transactions[i].transaction_wage), self.__get_text(page.wage[i]))
-            self.assertIn(transactions[i].transaction_owner.username, self.__get_text(page.owner[i]))
-            self.assertIn(transactions[i].transaction_status, self.__get_text(page.status[i]))
-            self.assertIn(str(transactions[i].transaction_deleted), self.__get_text(page.deleted[i]))
-
-
+        page.search.send_keys("kossar")
+        sleep(10)
+        for owner in page.owner:
+            try:
+                self.assertIn("kossar", self.__get_text(owner))
+                break
+            except StaleElementReferenceException:
+                pass

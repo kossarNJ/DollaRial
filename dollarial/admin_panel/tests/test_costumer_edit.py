@@ -8,7 +8,7 @@ from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_K
 from django.conf import settings
 
 
-class CustomerViewTest(StaticLiveServerTestCase):
+class CustomerEditTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -72,7 +72,7 @@ class CustomerViewTest(StaticLiveServerTestCase):
         self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/costumers/1'))
 
     def __get_page(self):
-        class CustomerViewPage(object):
+        class CustomerEditPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
                 self.username = self.selenium.find_element_by_id('id_username')
@@ -86,7 +86,7 @@ class CustomerViewTest(StaticLiveServerTestCase):
 
                 self.button = self.selenium.find_element_by_xpath("//button[@type='submit']")
 
-        return CustomerViewPage(self.selenium)
+        return CustomerEditPage(self.selenium)
 
     @staticmethod
     def __get_value(element):
@@ -105,33 +105,11 @@ class CustomerViewTest(StaticLiveServerTestCase):
         costumer = User.objects.get(id="1")
         return costumer
 
-    def test_fields_of_costumer(self):
+    def test_save_button(self):
         self.__create_users()
         self.login()
         page = self.__get_page()
-        costumer = self.__get_costumer()
-        self.assertIn(costumer.username, self.__get_value(page.username))
-        self.assertIn(costumer.first_name, self.__get_value(page.first_name))
-        self.assertIn(costumer.last_name, self.__get_value(page.last_name))
-        self.assertIn(str(costumer.account_number), self.__get_value(page.account))
-        self.assertIn(costumer.email, self.__get_value(page.email))
-        self.assertIn(str(costumer.phone_number), self.__get_value(page.phone))
-        self.assertIn(str(costumer.is_active).lower(), self.__get_checked(page.active).lower())
-        self.assertIn(str(costumer.is_staff).lower(), self.__get_checked(page.staff).lower())
+        page.button.click()
+        self.assertNotIn("costumers/1", self.selenium.current_url)
 
-    # def test_save_button(self):
-    #     self.__create_users()
-    #     self.login()
-    #     page = self.__get_page()
-    #     page.button.click()
-    #     self.assertNotIn("costumers/1", self.selenium.current_url)
-
-    # def test_ban_button(self):
-    #     self.__create_users()
-    #     self.login()
-    #     page = self.__get_page()
-    #     page.active.click()
-    #     page.button.click()
-    #     active_status = self.__get_costumer().is_active
-    #     self.assertIn("False", str(active_status))
 

@@ -68,7 +68,7 @@ class ChangeWalletTest(StaticLiveServerTestCase):
     @staticmethod
     def _fill(page):
         page.withdraw_amount.clear()
-        page.withdraw_amount.send_keys('200')
+        page.withdraw_amount.send_keys('2000')
 
     @staticmethod
     def __get_text(element):
@@ -81,7 +81,7 @@ class ChangeWalletTest(StaticLiveServerTestCase):
         self._fill(page)
         page.withdraw_button.click()
         success = self.selenium.find_element_by_xpath('//*[@id="right-panel"]/div[2]/div/div[1]/div/div')
-        self.assertIn("You deposited from ﷼-wallet successfully!", self.__get_text(success))
+        self.assertIn("Your deposit request is submitted successfully.", self.__get_text(success))
 
     def test_withdraw_wallet_more_than_credit(self):
         self.login()
