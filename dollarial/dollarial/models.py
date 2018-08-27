@@ -215,3 +215,13 @@ def send_email_to_user(subject, from_email, to_email, message):
     content = Content("text/plain", message)
     mail = Mail(from_email, subject, to_email, content)
     sg.client.mail.send.post(request_body=mail.get())
+
+
+def send_notification_to_user(user, subject, message):
+    print("here")
+    print(user.notification_preference)
+    if user.notification_preference == 'S':
+        send_sms_to_user(user.phone_number, subject + ": \n" + message)
+    else:
+        send_email_to_user(subject, "support@dollarial.com", user.email, "Dear " + user.first_name + ", \n" + message  + "\n Best Regatds, \n Dollarial Team")
+
