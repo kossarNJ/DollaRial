@@ -1,5 +1,7 @@
 from django import forms
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+from dollarial.constants import TransactionConstants
 from dollarial.fields import PriceFormField
 from finance.models import BankPayment, FormPayment, Exchange, ExternalPayment
 from dollarial.models import User
@@ -11,6 +13,10 @@ class ExchangeForm(forms.ModelForm):
         self.fields['currency'].label = "First Wallet"
         self.fields['final_amount'].label = "Amount to Target Wallet"
         self.fields['final_currency'].label = "Target Wallet"
+        self.fields['final_amount'].validators.extend([
+            MinValueValidator(TransactionConstants.MIN_EXCHANGE_FINAL_AMOUNT),
+            MaxValueValidator(TransactionConstants.MAX_EXCHANGE_FINAL_AMOUNT)
+        ])
 
     def make_read_only(self):
         for field in self.fields:
@@ -22,9 +28,11 @@ class ExchangeForm(forms.ModelForm):
 
 
 class BankPaymentForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, charge_form=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['amount'].validators.append(MinValueValidator(1))
+        self.fields['amount'].validators.append(MinValueValidator(TransactionConstants.MIN_CHARGE_DEPOSIT_AMOUNT))
+        if charge_form:
+            self.fields['amount'].validators.append(MaxValueValidator(TransactionConstants.MAX_CHARGE_AMOUNT))
 
     class Meta:
         model = BankPayment
@@ -34,7 +42,10 @@ class BankPaymentForm(forms.ModelForm):
 class ExternalPaymentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['amount'].validators.append(MinValueValidator(1))
+        self.fields['amount'].validators.extend([
+            MinValueValidator(TransactionConstants.MIN_EXTERNAL_PAYMENT_AMOUNT),
+            MaxValueValidator(TransactionConstants.MAX_EXTERNAL_PAYMENT_AMOUNT)
+        ])
 
     def make_read_only(self):
         for field in self.fields:
@@ -51,7 +62,10 @@ class InternalPaymentForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['amount'].validators.append(MinValueValidator(1))
+        self.fields['amount'].validators.extend([
+            MinValueValidator(TransactionConstants.MIN_INTERNAL_PAYMENT_AMOUNT),
+            MaxValueValidator(TransactionConstants.MAX_INTERNAL_PAYMENT_AMOUNT)
+        ])
 
 
 class ServicePaymentForm(forms.ModelForm):
@@ -67,6 +81,11 @@ class ServicePaymentForm(forms.ModelForm):
                     del self.fields[field]
         if payment_type.fixed_price:
             del self.fields['amount']
+        else:
+            self.fields['amount'].validators.extend([
+                MinValueValidator(payment_type.min_amount),
+                MaxValueValidator(payment_type.max_amount),
+            ])
         for field in self.fields:
             if isinstance(self.fields[field], forms.DateField):
                 self.fields[field].widget.attrs['class'] = 'datepicker'

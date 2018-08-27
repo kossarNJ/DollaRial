@@ -13,54 +13,48 @@
 {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
-
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Transaction Table</strong>
-                        </div>
-                        <div class="card-body">
-                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Time</th>
-                                    <th>Amount</th>
-                                    <th>Currency</th>
-                                    <th>Wage</th>
-                                    <th>Owner</th>
-                                    <th>Status</th>
-                                    <th>Deleted</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for transaction in transaction_list %}
-                                    <tr id="transaction_row_{{ forloop.counter }}">
-                                        <td id="transaction_id_{{ transaction.id }}">
-                                            <a href="{% url 'admin_transaction_view' transaction.id %}">{{ transaction.id }}</a>
-                                        </td>
-                                        <td id="transaction_date_{{ transaction.id }}">{{ transaction.time }}</td>
-                                        <td id="transaction_amount_{{ transaction.id }}">{{ transaction.amount }}</td>
-                                        <td id="transaction_currency_{{ transaction.id }}">{{ transaction.get_currency_display }}</td>
-                                        <td id="transaction_wage_{{ transaction.id }}">{{ transaction.wage }}</td>
-                                        <td id="transaction_owner_{{ transaction.id }}">{{ transaction.owner.username }}</td>
-                                        <td id="transaction_status_{{ transaction.id }}">{{ transaction.get_status_display }}</td>
-                                        <td id="transaction_deleted_{{ transaction.id }}">{{ transaction.deleted }}</td>
-                                    </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Transaction Table</strong>
             </div>
-        </div><!-- .animated -->
-    </div><!-- .content -->
+            <div class="card-body">
+                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Time</th>
+                        <th>Amount</th>
+                        <th>Currency</th>
+                        <th>Wage</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                        <th>Deleted</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for transaction in transaction_list %}
+                        <tr id="transaction_row_{{ forloop.counter }}">
+                            <td id="transaction_id_{{ transaction.id }}">
+                                <a href="{% url 'admin_transaction_view' transaction.id %}">{{ transaction.id }}</a>
+                            </td>
+                            <td id="transaction_date_{{ transaction.id }}">{{ transaction.time }}</td>
+                            <td id="transaction_amount_{{ transaction.id }}">{{ transaction.amount|floatformat:2 }}</td>
+                            <td id="transaction_currency_{{ transaction.id }}">{{ transaction.get_currency_display }}</td>
+                            <td id="transaction_wage_{{ transaction.id }}">{{ transaction.wage|floatformat:2 }}</td>
+                            <td id="transaction_owner_{{ transaction.id }}">
+                                <a href="{% url 'admin_costumer_view' transaction.owner.id %}">{{ transaction.owner.username }}</a>
+                            </td>
+                            <td id="transaction_status_{{ transaction.id }}">{{ transaction.get_status_display }}</td>
+                            <td id="transaction_deleted_{{ transaction.id }}">{{ transaction.deleted }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 {% endblock right_panel %}
 
 {% block js_files %}

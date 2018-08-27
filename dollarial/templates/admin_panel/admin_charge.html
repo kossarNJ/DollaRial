@@ -12,34 +12,28 @@
 {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
-                <div class="col-md-4">
-                    <form role="form" method="post">
-                        {% csrf_token %}
+    <div class="col-md-4">
+        <form role="form" method="post">
+            {% csrf_token %}
 
-                        <div class="card">
-                            <div class="card-header">
-                                <strong class="card-title mb-3">Charge Wallet</strong>
-                            </div>
-                            <div class="card-body">
-                                <div id="charge-card">
-                                    <div class="card-body">
-                                        {{ form|bootstrap }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="fa fa-dot-circle-o"></i> Charge
-                                </button>
-                            </div>
+            <div class="card">
+                <div class="card-header">
+                    <strong class="card-title mb-3">Charge Wallet</strong>
+                </div>
+                <div class="card-body">
+                    <div id="charge-card">
+                        <div class="card-body">
+                            {{ form|bootstrap }}
                         </div>
-                    </form>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Charge
+                    </button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 {% endblock right_panel %}
 
