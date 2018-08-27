@@ -3,8 +3,9 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from dollarial.currency import get_dollar_rial_value
 from dollarial.currency import get_euro_rial_value
-from dollarial.models import send_email_to_user
+from dollarial.notification import send_email_to_user
 from dollarial.settings import ADMIN_EMAIL
+
 
 def contact(request):
     if request.method == 'GET':

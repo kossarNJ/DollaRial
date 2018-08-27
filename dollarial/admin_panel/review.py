@@ -1,9 +1,9 @@
-from django.db import transaction
+from django import db
 
 from admin_panel.models import ReviewHistory
 
 
-@transaction.atomic
+@db.transaction.atomic
 def review_transaction(request, transaction):
     if transaction is None:
         return

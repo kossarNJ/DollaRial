@@ -16,6 +16,7 @@ from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_u
 from django.views.generic import FormView
 from django.shortcuts import render, redirect
 
+from dollarial import notification
 from finance.models import Transaction
 from . import forms
 from admin_panel.forms import BankPaymentForm, SendNotificationForm
@@ -63,7 +64,16 @@ class TransactionView(ClerkRequiredMixin, View):
                 messages.add_message(request, messages.ERROR, 'This transaction is reviewed before.')
                 return success_redirect
             try:
+                pre_status = transaction.status
                 review_transaction(request, transaction)
+                post_status = transaction.status
+                if pre_status != post_status:
+                    notification.send_notification_to_user(
+                        request.user,
+                        subject='#%d Transaction Review Result' % transaction_id,
+                        message='Your transaction is reviewed and the result is %s.\nLink: %s' %
+                                (transaction.get_status_display(), reverse_lazy('user_transaction_view', ))
+                    )
                 messages.add_message(request, messages.SUCCESS, "Your action is received.")
             except ValueError as err:
                 print("Error: %s" % err)
