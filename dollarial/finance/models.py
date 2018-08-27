@@ -38,7 +38,8 @@ class Transaction(PolymorphicModel):
         ('R', 'Rejected'),
         ('A', 'Accepted')
     )
-    status = models.CharField(max_length=1, choices=TRANSACTION_STATUS, default='I', verbose_name="Status")
+    status = models.CharField(max_length=1, choices=TRANSACTION_STATUS, default='I', verbose_name="Status",
+                              db_index=True)
 
     def __str__(self):
         return "%s %s%s (%s)" % (self.owner.username, self.amount, self.currency, self.status)
