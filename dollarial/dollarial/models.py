@@ -4,6 +4,7 @@ from bitfield import BitField
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator
 from django.db import models, transaction
+from django.db.models import Sum
 
 from dollarial import settings
 from dollarial.constants import TransactionConstants
@@ -12,14 +13,15 @@ from dollarial.fields import PriceField, CurrencyField
 
 
 class User(AbstractUser):
-    account_number = models.CharField(max_length=64, verbose_name="Account Number")
+    account_number = models.CharField(max_length=64, verbose_name="Account Number", db_index=True)
     phone_number = models.CharField(max_length=32, blank=True, verbose_name="Phone Number")
     automatic_user = models.BooleanField(default=False, verbose_name="Automatically Created")
 
     NOTIFICATION_TYPES = (
         ('S', 'sms'),
         ('E', 'email'),
-        ('B', 'both')
+        ('B', 'both'),
+        ('N', 'none')
     )
     notification_preference = models.CharField(max_length=1, choices=NOTIFICATION_TYPES, default='B',
                                                verbose_name="Notification Preference")
@@ -111,7 +113,12 @@ class Company(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def get_credit(self, currency):
-        return self.user.get_credit(currency)
+        credit = self.user.get_credit(currency)
+        if self.user.username == 'dollarial':
+            from finance.models import Transaction
+            credit += Transaction.objects.filter(deleted=False, status='A', currency=currency, wage__isnull=False).\
+                aggregate(total_wage=Sum('wage'))['total_wage'] or 0
+        return credit
 
     def get_wallet(self, currency):
         return self.user.get_wallet(currency)
@@ -131,7 +138,8 @@ def _get_dollarial_company():
         dollarial_user = User.objects.create(
             username="dollarial",
             account_number="1234567890",
-            email="dollarial@sharif.ir"
+            email="dollarial@sharif.ir",
+            notification_preference='N'
         )
         dollarial_user.create_wallets()
         dollarial = Company.objects.create(

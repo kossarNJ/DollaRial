@@ -72,9 +72,7 @@ class TransactionView(ClerkRequiredMixin, View):
                     notification.send_notification_to_user(
                         request.user,
                         subject='#%d Transaction Review Result' % transaction_id,
-                        message='Your transaction is reviewed and the result is %s.\nLink: %s' %
-                                (transaction.get_status_display(),
-                                 urls.reverse('user_transaction_view', args=[transaction_id]))
+                        message='Your transaction is reviewed and the result is %s.' % transaction.get_status_display()
                     )
                 messages.add_message(request, messages.SUCCESS, "Your action is received.")
             except ValueError as err:
