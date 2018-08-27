@@ -1,0 +1,45 @@
+{% extends "admin_panel_base.html" %}
+{% load static %}
+{% load bootstrap %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Add Reviewer {% endblock title %}
+
+{% block page_title %}
+    Add Reviewer
+{% endblock page_title %}
+
+{% block right_breadcrumb %}
+    <li><a href="{% url 'admin_transaction_group_list' %}">Payment Groups</a></li>
+    <li class="active">Add Payment Group</li>
+{% endblock right_breadcrumb %}
+
+{% block right_panel %}
+    <div class="col-lg-6">
+        <div class="card">
+            <form role="form" method="post">
+                {% csrf_token %}
+
+                <div class="card-header">
+                    <strong class="card-title">New Payment Group</strong>
+                </div>
+                <div class="card-body">
+                    <div id="transaction-card">
+                        <div class="card-body">
+                            {{ form|bootstrap }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Add Payment Group
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock right_panel %}
