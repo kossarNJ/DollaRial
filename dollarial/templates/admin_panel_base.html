@@ -7,13 +7,6 @@
 {% load static %}
 
 <head>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
@@ -65,46 +58,59 @@
                     <a href="{% url 'admin_index' %}"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
                 </li>
 
-                <h3 class="menu-title">Models</h3><!-- /.menu-title -->
-                <li class="menu-item-has-children active dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false">
-                        <i class="menu-icon fa fa-usd"></i>Transactions
-                    </a>
-                    <ul class="sub-menu children dropdown-menu" style="background: #172538;">
-                        <li><i class="menu-icon fa fa-table"></i>
-                            <a href="{% url 'admin_transaction_list' %}">Transactions</a>
-                        </li>
-                        <li><i class="menu-icon fa fa-table"></i>
-                            <a href="{% url 'admin_transaction_type_list' %}">Payment Types</a>
-                        </li>
-                        <li><i class="menu-icon fa fa-table"></i>
-                            <a href="{% url 'admin_skipped_transaction_list' %}">Skipped Transactions</a>
-                        </li>
-                        <li><i class="menu-icon fa fa-table"></i>
-                            <a href="{% url 'admin_reviewed_transaction_history' %}">Reviewed Transactions</a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="menu-item-has-children active dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="false">
-                        <i class="menu-icon fa fa-users"></i>Users
-                    </a>
-                    <ul class="sub-menu children dropdown-menu" style="background: #172538;">
-                        <li><i class="menu-icon fa fa-user"></i>
-                            <a href="{% url 'admin_costumer_list' %}">Costumers</a>
-                        </li>
-                        <li><i class="menu-icon fa fa-user"></i>
-                            <a href="{% url 'admin_reviewer_list' %}">Reviewers</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="{% url 'admin_report_list' %}"> <i class="menu-icon fa fa-warning"></i>Reports </a>
-                </li>
+                {% if user.is_staff %}
+
+                    <h3 class="menu-title">Models</h3><!-- /.menu-title -->
+                    <li class="menu-item-has-children active dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">
+                            <i class="menu-icon fa fa-usd"></i>Transactions
+                        </a>
+                        <ul class="sub-menu children dropdown-menu" style="background: #172538;">
+                            <li><i class="menu-icon fa fa-table"></i>
+                                <a href="{% url 'admin_transaction_list' %}">Transactions</a>
+                            </li>
+                            <li><i class="menu-icon fa fa-table"></i>
+                                <a href="{% url 'admin_reviewed_transaction_history' %}">Reviewed Transactions</a>
+                            </li>
+                            <li><i class="menu-icon fa fa-table"></i>
+                                <a href="{% url 'admin_transaction_type_list' %}">Payment Types</a>
+                            </li>
+                            <li><i class="menu-icon fa fa-table"></i>
+                                <a href="{% url 'admin_skipped_transaction_list' %}">Skipped Transactions</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+
+                    <li>
+                        <a href="{% url 'admin_transaction_list' %}"><i
+                                class="menu-icon fa fa-table"></i>Transactions</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_reviewed_transaction_history' %}"><i class="menu-icon fa fa-table"></i>
+                            My Review History</a>
+                    </li>
+                {% endif %}
 
                 {% if user.is_staff %}
+                    <li class="menu-item-has-children active dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+                           aria-expanded="false">
+                            <i class="menu-icon fa fa-users"></i>Users
+                        </a>
+                        <ul class="sub-menu children dropdown-menu" style="background: #172538;">
+                            <li><i class="menu-icon fa fa-user"></i>
+                                <a href="{% url 'admin_costumer_list' %}">Costumers</a>
+                            </li>
+                            <li><i class="menu-icon fa fa-user"></i>
+                                <a href="{% url 'admin_reviewer_list' %}">Reviewers</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_report_list' %}"> <i class="menu-icon fa fa-warning"></i>Reports </a>
+                    </li>
                     <h3 class="menu-title">Actions</h3><!-- /.menu-title -->
                     <li class="menu-item-has-children active dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -130,13 +136,11 @@
                         <a href="{% url 'admin_send_notification' %}"> <i class="menu-icon fa fa-bell"></i> Send
                             Notification </a>
                     </li>
+                    <li>
+                        <a href="{% url 'admin_charge' %}"> <i class="menu-icon fa fa-money"></i> Charge
+                            Wallet </a>
+                    </li>
                 {% endif %}
-
-
-                <li>
-                    <a href="{% url 'admin_charge' %}"> <i class="menu-icon fa fa-money"></i> Charge
-                        Wallet </a>
-                </li>
 
             </ul>
         </div><!-- /.navbar-collapse -->
@@ -195,9 +199,30 @@
                 </div>
             </div>
         </div>
+    </div><div class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+
+                {% if messages %}
+                    <div class="col-sm-12 messages">
+                        {% for message in messages %}
+
+                            <div class="sufee-alert alert with-close alert-{% if message.tags %}{% if message.tags == 'error' %}{{ 'danger' }}{% else %}{{ message.tags }}{% endif %}{% else %}{{ 'default' }}{% endif %} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="row">
+                {% block right_panel %}
+                {% endblock right_panel %}
+            </div>
+        </div>
     </div>
-    {% block right_panel %}
-    {% endblock right_panel %}
 </div><!-- /#right-panel -->
 
 <!-- Right Panel -->

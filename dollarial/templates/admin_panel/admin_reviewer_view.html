@@ -18,41 +18,34 @@
 {% endblock right_breadcrumb %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
-                <!-- Transaction View -->
-                <div class="col-lg-6">
-                    <div class="card">
-                        <form role="form" method="post">
-                            {% csrf_token %}
+    <div class="col-lg-6">
+        <div class="card">
+            <form role="form" method="post">
+                {% csrf_token %}
 
-                            <div class="card-header">
-                                <strong class="card-title">Clerk {{ clerk.id }}</strong>
+                <div class="card-header">
+                    <strong class="card-title">Clerk {{ clerk.id }}</strong>
+                </div>
+                <div class="card-body">
+                    <div id="transaction-card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                Link to user profile:
+                                <a href="{% url 'admin_costumer_view' clerk.user.id %}">
+                                    {{ clerk.user.username }}
+                                </a>
                             </div>
-                            <div class="card-body">
-                                <div id="transaction-card">
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            Link to user profile:
-                                            <a href="{% url 'admin_costumer_view' clerk.user.id %}">
-                                                 {{ clerk.user.username }}
-                                            </a>
-                                        </div>
-                                        {{ form|bootstrap }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="fa fa-dot-circle-o"></i> Update Clerk
-                                </button>
-                            </div>
-                        </form>
+                            {{ form|bootstrap }}
+                        </div>
                     </div>
                 </div>
-                <!-- End of Transaction View -->
-            </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Update Clerk
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+    
 {% endblock right_panel %}

@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, UpdateView, CreateView
@@ -9,7 +11,7 @@ from admin_panel.models import ReportTransaction, ReviewHistory
 from admin_panel.review import review_transaction
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
-from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType, PaymentGroup
+from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType
 
 from django.views.generic import FormView
 from django.shortcuts import render, redirect
@@ -55,9 +57,14 @@ class TransactionView(ClerkRequiredMixin, View):
                     transaction=transaction
                 )
                 report_object.save()
+                messages.add_message(request, messages.SUCCESS, "Your report is sent to the admin.")
         else:
+            if not request.user.is_staff and transaction.status != 'I':
+                messages.add_message(request, messages.ERROR, 'This transaction is reviewed before.')
+                return success_redirect
             try:
                 review_transaction(request, transaction)
+                messages.add_message(request, messages.SUCCESS, "Your action is received.")
             except ValueError as err:
                 print("Error: %s" % err)
 
@@ -69,12 +76,13 @@ class UserList(ClerkRequiredMixin, ListView):
     template_name = 'admin_panel/admin_costumer_list.html'
 
 
-class UserUpdate(ClerkRequiredMixin, UpdateView):
+class UserUpdate(ClerkRequiredMixin, SuccessMessageMixin, UpdateView):
     model = User
     template_name = 'admin_panel/admin_costumer_view.html'
     fields = ['username', 'first_name', 'last_name', 'account_number', 'email', 'phone_number',
               'is_active', 'is_staff']
     success_url = reverse_lazy('admin_costumer_list')
+    success_message = "User profile is updated successfully."
 
 
 class ClerkList(StaffRequiredMixin, ListView):
@@ -82,24 +90,27 @@ class ClerkList(StaffRequiredMixin, ListView):
     template_name = 'admin_panel/admin_reviewer_list.html'
 
 
-class ClerkAdd(StaffRequiredMixin, CreateView):
+class ClerkAdd(StaffRequiredMixin, SuccessMessageMixin, CreateView):
     model = Clerk
     template_name = 'admin_panel/admin_reviewer_add.html'
     success_url = reverse_lazy('admin_reviewer_list')
+    success_message = "A new Clerk is added successfully."
     form_class = forms.ClerkCreateForm
 
 
-class ClerkUpdate(StaffRequiredMixin, UpdateView):
+class ClerkUpdate(StaffRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Clerk
     template_name = 'admin_panel/admin_reviewer_view.html'
     success_url = reverse_lazy('admin_reviewer_list')
+    success_message = "Clerk profile is updated successfully."
     form_class = forms.ClerkUpdateForm
 
 
-class PaymentTypeAdd(StaffRequiredMixin, CreateView):
+class PaymentTypeAdd(StaffRequiredMixin, SuccessMessageMixin, CreateView):
     model = PaymentType
     template_name = 'admin_panel/admin_transaction_type_add.html'
     success_url = reverse_lazy('admin_transaction_type_list')
+    success_message = "Payment Type is added successfully."
     form_class = forms.PaymentTypeGeneralForm
 
 
@@ -108,10 +119,11 @@ class PaymentTypeList(StaffRequiredMixin, ListView):
     template_name = 'admin_panel/admin_transaction_type_list.html'
 
 
-class PaymentTypeView(StaffRequiredMixin, UpdateView):
+class PaymentTypeView(StaffRequiredMixin, SuccessMessageMixin, UpdateView):
     model = PaymentType
     template_name = 'admin_panel/admin_transaction_type_view.html'
     success_url = reverse_lazy('admin_transaction_type_list')
+    success_message = "Payment Type is updated successfully."
     form_class = forms.PaymentTypeGeneralForm
 
 
@@ -123,29 +135,17 @@ class SkippedTransactionsHistory(StaffRequiredMixin, ListView):
         return self.model.objects.filter(action='S')
 
 
-def reviewed_transaction_history(request):
-    # TODO: read from db
-    data = {
-        "reviewed_items": [
-            {
-                "id": "1",
-                "reviewer_id": "2",
-                "reviewer_username": "soroush",
-                "transaction_id": "10",
-                "time": "01/01/99",
-                "status": "reject"
-            },
-            {
-                "id": "2",
-                "reviewer_id": "1",
-                "reviewer_username": "parand",
-                "transaction_id": "9",
-                "time": "01/01/99",
-                "status": "accept"
-            }
-        ]
-    }
-    return render(request, 'admin_panel/admin_reviewed_transaction_history.html', data)
+class ReviewedTransactionsHistory(ClerkRequiredMixin, ListView):
+    model = ReviewHistory
+    template_name = 'admin_panel/admin_reviewed_transaction_list.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        if not user.is_staff:
+            query_set = self.model.objects.filter(reviewer_id=user.id)
+        else:
+            query_set = self.model.objects.filter(action__in=['R', 'A'])
+        return query_set
 
 
 class ReportList(StaffRequiredMixin, ListView):
@@ -192,10 +192,11 @@ class Index(ClerkRequiredMixin, View):
         return render(request, 'admin_panel/admin_index.html', data)
 
 
-class ChargeCredit(StaffRequiredMixin, FormView):
+class ChargeCredit(StaffRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'admin_panel/admin_charge.html'
     form_class = BankPaymentForm
     success_url = reverse_lazy('admin_index')
+    success_message = "You charged company's wallet successfully!"
 
     def form_valid(self, form):
         bank_payment = form.save(commit=False)

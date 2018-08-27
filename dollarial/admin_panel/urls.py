@@ -11,7 +11,7 @@ urlpatterns = [
     path('costumers/', views.UserList.as_view(), name='admin_costumer_list'),
     path('costumers/<int:pk>', views.UserUpdate.as_view(), name='admin_costumer_view'),
     path('skipped/', views.SkippedTransactionsHistory.as_view(), name='admin_skipped_transaction_list'),
-    path('reviewed/', views.reviewed_transaction_history, name='admin_reviewed_transaction_history'),
+    path('reviewed/', views.ReviewedTransactionsHistory.as_view(), name='admin_reviewed_transaction_history'),
     path('transaction_types/', views.PaymentTypeList.as_view(), name='admin_transaction_type_list'),
     path('transaction_types/add/', views.PaymentTypeAdd.as_view(), name='admin_transaction_type_add'),
     path('transaction_types/<int:pk>', views.PaymentTypeView.as_view(),

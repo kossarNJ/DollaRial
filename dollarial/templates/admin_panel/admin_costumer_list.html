@@ -11,53 +11,44 @@
 {% block page_title %} Costumers {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
-
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Costumer Table</strong>
-                        </div>
-                        <div class="card-body">
-                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Account Number</th>
-                                    <th>Email</th>
-                                    <th>Phone Number</th>
-                                    <th>Active</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for costumer in user_list %}
-                                    <tr>
-                                        <td id="costumer_id_{{ costumer.id }}">
-                                            <a href="{% url 'admin_costumer_view' costumer.id %}">{{ costumer.id }}</a>
-                                        </td>
-                                        <td id="costumer_fname_{{ costumer.id }}">{{ costumer.first_name }}</td>
-                                        <td id="costumer_lname_{{ costumer.id }}">{{ costumer.last_name }}</td>
-                                        <td id="costumer_account_number_{{ costumer.id }}">{{ costumer.account_number }}</td>
-                                        <td id="costumer_email_{{ costumer.id }}">{{ costumer.email }}</td>
-                                        <td id="costumer_phone_number_{{ costumer.id }}">{{ costumer.phone_number }}</td>
-                                        <td id="costumer_ban_status_{{ costumer.id }}">{{ costumer.is_active }}</td>
-                                    </tr>
-                                {% endfor %}
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Costumer Table</strong>
             </div>
-        </div><!-- .animated -->
-    </div><!-- .content -->
+            <div class="card-body">
+                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Account Number</th>
+                        <th>Email</th>
+                        <th>Phone Number</th>
+                        <th>Active</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for costumer in user_list %}
+                        <tr>
+                            <td id="costumer_id_{{ costumer.id }}">
+                                <a href="{% url 'admin_costumer_view' costumer.id %}">{{ costumer.id }}</a>
+                            </td>
+                            <td id="costumer_fname_{{ costumer.id }}">{{ costumer.first_name }}</td>
+                            <td id="costumer_lname_{{ costumer.id }}">{{ costumer.last_name }}</td>
+                            <td id="costumer_account_number_{{ costumer.id }}">{{ costumer.account_number }}</td>
+                            <td id="costumer_email_{{ costumer.id }}">{{ costumer.email }}</td>
+                            <td id="costumer_phone_number_{{ costumer.id }}">{{ costumer.phone_number }}</td>
+                            <td id="costumer_ban_status_{{ costumer.id }}">{{ costumer.is_active }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock right_panel %}
 
 {% block js_files %}
