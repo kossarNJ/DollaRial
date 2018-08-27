@@ -39,6 +39,8 @@ if on_heroku:
 else:
     DEVELOPMENT = True
 
+SEND_NOTIFICATIONS = PRODUCTION
+
 # SECURITY WARNING: don't run with debug turned on in production!
 if DEVELOPMENT:
     DEBUG = True
