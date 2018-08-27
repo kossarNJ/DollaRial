@@ -1,0 +1,45 @@
+{% extends "admin_panel_base.html" %}
+{% load static %}
+{% load bootstrap %}
+
+{% block stylesheets %}
+    {{ block.super }}
+{% endblock stylesheets %}
+
+{% block title %} Payment Group View {% endblock title %}
+
+{% block page_title %}
+    Costumer View
+{% endblock page_title %}
+
+{% block right_breadcrumb %}
+    <li><a href="{% url 'admin_transaction_group_list' %}">Payment Groups</a></li>
+    <li class="active">Payment Group View</li>
+{% endblock right_breadcrumb %}
+
+{% block right_panel %}
+    <!-- Payment View -->
+    <div class="col-lg-6">
+        <div class="card">
+            <form role="form" method="post">
+                {% csrf_token %}
+                <div class="card-header">
+                    <strong class="card-title">Payment Group {{ transactiongroup.id }}</strong>
+                </div>
+                <div class="card-body">
+                    <!-- Credit Card -->
+                    <div id="transaction-card">
+                        <div class="card-body">
+                            {{ form|bootstrap }}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock right_panel %}

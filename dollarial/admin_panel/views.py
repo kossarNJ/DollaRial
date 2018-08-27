@@ -11,7 +11,7 @@ from admin_panel.models import ReportTransaction, ReviewHistory
 from admin_panel.review import review_transaction
 from dollarial.currency import Currency
 from dollarial.mixins import ClerkRequiredMixin, StaffRequiredMixin
-from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType
+from dollarial.models import User, Clerk, get_dollarial_company, get_dollarial_user, PaymentType, PaymentGroup
 
 from django.views.generic import FormView
 from django.shortcuts import render, redirect
@@ -151,6 +151,27 @@ class ReviewedTransactionsHistory(ClerkRequiredMixin, ListView):
 class ReportList(StaffRequiredMixin, ListView):
     template_name = 'admin_panel/admin_reports_list.html'
     model = ReportTransaction
+
+
+class TransactionGroupList(StaffRequiredMixin, ListView):
+    model = PaymentGroup
+    template_name = 'admin_panel/admin_transaction_group_list.html'
+
+
+class TransactionGroupView(StaffRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = PaymentGroup
+    template_name = 'admin_panel/admin_transaction_group_view.html'
+    fields = ('name', )
+    success_url = reverse_lazy('admin_transaction_group_list')
+    success_message = "Payment Group successfully updated."
+
+
+class TransactionGroupAdd(StaffRequiredMixin, SuccessMessageMixin, CreateView):
+    model = PaymentGroup
+    template_name = 'admin_panel/admin_transaction_group_add.html'
+    fields = ('name', )
+    success_url = reverse_lazy('admin_transaction_group_list')
+    success_message = "Payment Group successfully added."
 
 
 @staff_member_required

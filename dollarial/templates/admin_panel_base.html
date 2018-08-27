@@ -74,10 +74,13 @@
                                 <a href="{% url 'admin_reviewed_transaction_history' %}">Reviewed Transactions</a>
                             </li>
                             <li><i class="menu-icon fa fa-table"></i>
+                                <a href="{% url 'admin_skipped_transaction_list' %}">Skipped Transactions</a>
+                            </li>
+                            <li><i class="menu-icon fa fa-table"></i>
                                 <a href="{% url 'admin_transaction_type_list' %}">Payment Types</a>
                             </li>
                             <li><i class="menu-icon fa fa-table"></i>
-                                <a href="{% url 'admin_skipped_transaction_list' %}">Skipped Transactions</a>
+                                <a href="{% url 'admin_transaction_group_list' %}">Payment Groups</a>
                             </li>
                         </ul>
                     </li>
@@ -120,14 +123,16 @@
                         <ul class="sub-menu children dropdown-menu" style="background: #172538;">
 
                             <li>
-                                <i class="menu-icon fa fa-plus-square-o"></i> <a href="{% url 'admin_reviewer_add' %}">
-                                Add
-                                Reviewer</a>
+                                <i class="menu-icon fa fa-plus-square-o"></i>
+                                <a href="{% url 'admin_reviewer_add' %}">Add Reviewer</a>
                             </li>
-
                             <li>
-                                <i class="menu-icon fa fa-plus-square-o"></i> <a
-                                    href="{% url 'admin_transaction_type_add' %}"> Add Payment Type</a>
+                                <i class="menu-icon fa fa-plus-square-o"></i>
+                                <a href="{% url 'admin_transaction_type_add' %}">Add Payment Type</a>
+                            </li>
+                            <li>
+                                <i class="menu-icon fa fa-plus-square-o"></i>
+                                <a href="{% url 'admin_transaction_group_add' %}">Add Payment Group</a>
                             </li>
                         </ul>
                     </li>
@@ -199,7 +204,8 @@
                 </div>
             </div>
         </div>
-    </div><div class="content mt-3">
+    </div>
+    <div class="content mt-3">
         <div class="animated fadeIn">
             <div class="row">
 
