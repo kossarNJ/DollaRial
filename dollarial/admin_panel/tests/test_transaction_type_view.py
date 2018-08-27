@@ -1,95 +1,106 @@
+from importlib import import_module
+
+import time
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.select import Select
+
+from dollarial.models import User, PaymentType
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY
+from django.conf import settings
 
 
 class TransactionTypeViewTest(StaticLiveServerTestCase):
     def setUp(self):
         self.selenium = WebDriver()
         self.selenium.implicitly_wait(10)
+        self.user = User.objects.create_superuser(username="kossar_admin",
+                                                  email="k_na@gmail.com",
+                                                  password="likeicare",
+                                                  first_name="kossar",
+                                                  last_name="najafi",
+                                                  phone_number="09147898557",
+                                                  account_number="1234567812345678",
+                                                  notification_preference="S")
         self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/transaction_types/1'))
-        self.__create_users()
 
     def tearDown(self):
-        # TODO: drop database
         self.selenium.quit()
-        pass
-
-    def __create_users(self):
-        """
-         TODO: add reviewers to database
-         user1
-         user2
-         ...
-        """
-        pass
 
     def __get_page(self):
-        class TransactionTypeViewPage(object):
+        class TransactionTypeAddPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.name = self.selenium.find_element_by_id('cc-name')
-                self.description = self.selenium.find_element_by_id('cc-description')
-                self.fixed_price = self.selenium.find_element_by_id('cc-fixed-price')
-                self.currency_select = self.selenium.find_element_by_id('currency-select')
-                self.price = self.selenium.find_element_by_id('cc-price')
-                self.min_price = self.selenium.find_element_by_id('cc-min-price')
-                self.max_price = self.selenium.find_element_by_id('cc-max-price')
-                self.wage = self.selenium.find_element_by_id('cc-wage')
-                self.personal_info = self.selenium.find_element_by_id('personal-info')
-                self.public_info = self.selenium.find_element_by_id('public-info')
-                self.university_info = self.selenium.find_element_by_id('university-info')
-                self.Quiz_info = self.selenium.find_element_by_id('Quiz-info')
+                self.name = self.selenium.find_element_by_id('id_name')
+                self.description = self.selenium.find_element_by_id('id_description')
+                self.fixed_price = self.selenium.find_element_by_id('id_fixed_price')
+                self.currency_select = Select(self.selenium.find_element_by_id('id_currency'))
+                self.price = self.selenium.find_element_by_id('id_price')
+                self.min_price = self.selenium.find_element_by_id('id_min_amount')
+                self.max_price = self.selenium.find_element_by_id('id_max_amount')
+                self.wage = self.selenium.find_element_by_id('id_wage_percentage')
+                # self.group = self.selenium.find_element_by_id('id_transaction_group')
+                self.general_info = self.selenium.find_element_by_id('id_required_fields_0')
+                self.personal_info = self.selenium.find_element_by_id('id_required_fields_1')
+                self.exam_info = self.selenium.find_element_by_id('id_required_fields_2')
+                self.university_info = self.selenium.find_element_by_id('id_required_fields_3')
+                self.button = self.selenium.find_element_by_xpath("//button[@type='submit']")
 
-                self.save_button = self.selenium.find_element_by_id('save_button')
+        return TransactionTypeAddPage(self.selenium)
 
-        return TransactionTypeViewPage(self.selenium)
+    def login(self):
+        user = User.objects.get(username="kossar_admin")
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        session = SessionStore()
+        session[SESSION_KEY] = User.objects.get(username="kossar_admin").id
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
+
+        cookie = {
+            'name': settings.SESSION_COOKIE_NAME,
+            'value': session.session_key,
+            'path': '/',
+        }
+
+        self.selenium.add_cookie(cookie)
+        self.selenium.refresh()
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/transaction_types/1'))
 
     @staticmethod
-    def _fill(page):
-        page.name.send_keys('GRE')
-        page.description.send_keys('english exam')
-        page.fixed_price.click()
-
-        for option in page.currency_select.find_elements_by_tag_name('option'):
-            if option.text == 'Dollar':
-                option.click()
-                break
-        page.price.send_keys('300')
-        page.min_price.send_keys('10')
-        page.max_price.send_keys('1000')
-        page.wage.send_keys('5')
-        page.personal_info.click()
-        page.public_info.click()
-
-    @staticmethod
-    def _login(page):  # TODO
-        pass
-
-    def test_not_loggedin(self):  # TODO
-        pass
-
-    def test_successful_ttadd(self):
-        page = self.__get_page()
-        self._login(page)
-        self._fill(page)
-        page.save_button.click()
-        success = self.selenium.find_element_by_css_selector('.success')
-        self.assertEqual(success.text, "Changes Successfully Saved")
+    def __create_transaction_types():
+        type1 = PaymentType(name="toefl", description="english exam", price="200", currency="$")
+        type1.save()
+        type2 = PaymentType(name="ielts", description="english exam", price="200", currency="$")
+        type2.save()
+        type3 = PaymentType(name="gre", description="english exam", price="200", currency="$")
+        type3.save()
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
 
-    def test_empty_parts_add(self):
+    @staticmethod
+    def __get_checked(element):
+        return element.get_attribute('checked')
+
+    @staticmethod
+    def __send_keys_scrolling(input_element, keys):
+        _ = input_element.location_once_scrolled_into_view
+        time.sleep(1)
+        input_element.send_keys(keys)
+
+    def check_transaction_type_edit(self):
+        toefl = PaymentType.objects.get(id="1")
+        self.assertIn("This is an international exam evaluating", toefl.description)
+
+    def test_successful_ttedit(self):
+        self.__create_transaction_types()
+        self.login()
         page = self.__get_page()
-        self._login(page)
-        fields = [page.name, page.description, page.fixed_price, page.currency_select, page.price, page.min_price,
-                  page.max_price, page.wage, page.personal_info, page.public_info, page.university_info, page.Quiz_info]
-        self._fill(page)
-        for field in fields:
-            prev_text = self.__get_text(field)
-            field.clear()
-            page.save_button.click()
-            error = self.selenium.find_element_by_css_selector('.has-error')
-            self.assertEqual(error.text, "Please fill all required fields.")
-            field.send_keys(prev_text)
+        page.description.clear()
+        page.description.send_keys('This is an international exam evaluating one\'s aptitude in the English language.')
+        page.button.click()
+        self.check_transaction_type_edit()
+        self.assertNotIn("add", self.selenium.current_url)
+

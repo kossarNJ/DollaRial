@@ -22,12 +22,7 @@ class UserLogoutTest(StaticLiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
-    def __create_users(self):
-        # TODO: add employee to database
-        pass
-
     def setUp(self):
-        self.__create_users()
         self.user = User.objects.create_user(username="kossar",
                                              email="k_na@gmail.com",
                                              password="likeicare",
@@ -37,10 +32,6 @@ class UserLogoutTest(StaticLiveServerTestCase):
                                              account_number="1234432112344321",
                                              notification_preference="S")
         self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/'))
-
-    def tearDown(self):
-        # TODO: drop database
-        pass
 
     def login(self):
         user = User.objects.get(username="kossar")

@@ -1,88 +1,113 @@
+from importlib import import_module
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.select import Select
+
+from dollarial.models import User
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY
+from django.conf import settings
 
 
 class RegistrationTest(StaticLiveServerTestCase):
     def setUp(self):
         self.selenium = WebDriver()
         self.selenium.implicitly_wait(10)
-        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/reviewers/add'))
         self.__create_users()
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/reviewers/add'))
 
     def tearDown(self):
-        # TODO: drop database
         self.selenium.quit()
         pass
 
     def __create_users(self):
-        """
-         TODO: add reviewers to database
-         user1
-         user2
-         ...
-        """
-        pass
+        self.user = User.objects.create_superuser(username="kossar_admin",
+                                                  email="k_na@gmail.com",
+                                                  password="likeicare",
+                                                  first_name="kossar",
+                                                  last_name="najafi",
+                                                  phone_number="09147898557",
+                                                  account_number="1234567812345678",
+                                                  notification_preference="S")
+        self.user = User.objects.create_user(username="kossar",
+                                             email="k_naa@gmail.com",
+                                             password="likeicare",
+                                             first_name="kossar",
+                                             last_name="najafi",
+                                             phone_number="09147898557",
+                                             account_number="1234432112344321",
+                                             notification_preference="S")
+        self.user = User.objects.create_user(username="soroush",
+                                             email="soroush@gmail.com",
+                                             password="likeicare",
+                                             first_name="soroush",
+                                             last_name="ebadian",
+                                             phone_number="09147898557",
+                                             account_number="1234567887654321",
+                                             notification_preference="S")
+
+    def login(self):
+        user = User.objects.get(username="kossar_admin")
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        session = SessionStore()
+        session[SESSION_KEY] = User.objects.get(username="kossar_admin").id
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
+
+        cookie = {
+            'name': settings.SESSION_COOKIE_NAME,
+            'value': session.session_key,
+            'path': '/',
+        }
+
+        self.selenium.add_cookie(cookie)
+        self.selenium.refresh()
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/reviewers/add'))
 
     def __get_page(self):
         class AddReviewerPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.username = self.selenium.find_element_by_id('cc-username')
-                self.password = self.selenium.find_element_by_id('cc-password')
-                self.salary = self.selenium.find_element_by_id('cc-salary')
-                self.button = self.selenium.find_element_by_css_selector("button.btn-success")
+                self.username = Select(self.selenium.find_element_by_id('id_user'))
+                self.salary = self.selenium.find_element_by_id('id_salary')
+                self.employee = self.selenium.find_element_by_id('id_is_employee')
+                self.button = self.selenium.find_element_by_xpath("//button[@type='submit']")
 
         return AddReviewerPage(self.selenium)
-
-    def check_user_creation(self):
-        # TODO: check reviewer parand creation
-        pass
-
-    @staticmethod
-    def _fill(page):
-        page.username.send_keys('parand')
-        page.password.send_keys('123')
-        page.salary.send_keys('350000000')
-
-    @staticmethod
-    def _login(page): #TODO
-        pass
-
-    def test_not_loggedin(self): #TODO
-        pass
-
-    def test_successful_radd(self):
-        page = self.__get_page()
-        self._login(page)
-        self._fill(page)
-        page.button.click()
-        self.check_user_creation()
-        success = self.selenium.find_element_by_css_selector('.success')
-        self.assertEqual(success.text, "User Added Successfully")
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
 
-    def test_empty_parts_add(self):
+    @staticmethod
+    def _fill(page):
+        page.username.select_by_visible_text('kossar')
+        page.salary.clear()
+        page.salary.send_keys("2000")
+
+    def test_successful_radd(self):
+        self.login()
         page = self.__get_page()
-        self._login(page)
-        fields = [page.password, page.username, page.salary]
         self._fill(page)
-        for field in fields:
-            prev_text = self.__get_text(field)
-            field.clear()
-            page.button.click()
-            error = self.selenium.find_element_by_css_selector('.has-error')
-            self.assertEqual(error.text, "Please fill all required fields.")
-            field.send_keys(prev_text)
+        page.button.click()
+        self.assertNotIn("add", self.selenium.current_url)
+
+    def test_empty_parts_add(self):
+        self.login()
+        page = self.__get_page()
+        self._fill(page)
+        page.username.select_by_visible_text("---------")
+        page.button.click()
+        self.assertIn("add", self.selenium.current_url)
 
     def test_already_existing_reviewer(self):
+        self.login()
         page = self.__get_page()
-        self._login(page)
         self._fill(page)
-        page.username.clear()
-        page.username.send_keys('admin')
         page.button.click()
-        error = self.selenium.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, "There exists an account with entered email.")
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/reviewers/add'))
+        page = self.__get_page()
+        self._fill(page)
+        page.button.click()
+        self.assertIn("add", self.selenium.current_url)
