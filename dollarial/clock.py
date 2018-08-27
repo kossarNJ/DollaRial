@@ -4,20 +4,18 @@ from subprocess import call
 sched = BlockingScheduler()
 
 
-@sched.scheduled_job('interval', minutes=1)
+@sched.scheduled_job('cron', day='1st mon')
 def timed_job():
 
-    print("Saaalaaaary ^##############################")
     call(["python", "manage.py", "worker"])
-    print('salary paid')
+    print("salary paid")
 
 
-@sched.scheduled_job('interval', minutes=2)
+@sched.scheduled_job('interval', minutes=60)
 def timed_job2():
 
-    print("Trans ^##############################")
     call(["python", "manage.py", "autofail"])
-    print('trans')
+    print('transactions are checked')
 
 
 sched.start()
