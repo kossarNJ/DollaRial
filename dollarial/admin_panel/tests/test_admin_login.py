@@ -1,5 +1,11 @@
+import time
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.webdriver import WebDriver
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+from dollarial.models import User
 
 
 class AdminLoginTest(StaticLiveServerTestCase):
@@ -14,48 +20,54 @@ class AdminLoginTest(StaticLiveServerTestCase):
         cls.selenium.quit()
         super().tearDownClass()
 
-    def __create_users(self):
-        # TODO: add employee to database
-        pass
-
     def setUp(self):
-        self.__create_users()
-        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/login/'))
-
-    def tearDown(self):
-        # TODO: drop database
-        pass
+        self.user = User.objects.create_superuser(username="kossar",
+                                                  email="k_na@gmail.com",
+                                                  password="likeicare",
+                                                  first_name="kossar",
+                                                  last_name="najafi",
+                                                  phone_number="09147898557",
+                                                  account_number="1234432112344321",
+                                                  notification_preference="S")
+        self.selenium.get('%s%s' % (self.live_server_url, '/account/login/'))
 
     def __get_page(self):
         class AdminLoginPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.username = self.selenium.find_element_by_id('username')
-                self.password = self.selenium.find_element_by_id('pass')
-                self.button = self.selenium.find_element_by_xpath("//input[@class='btn btn-primary']")
+                self.username = self.selenium.find_element_by_id('id_username')
+                self.password = self.selenium.find_element_by_id('id_password')
+                self.button = WebDriverWait(self.selenium, 10).until(
+                    EC.presence_of_element_located((By.TAG_NAME, "button"))
+                )
 
         return AdminLoginPage(self.selenium)
 
+    @staticmethod
+    def __send_keys_scrolling(input_element, keys):
+        _ = input_element.location_once_scrolled_into_view
+        time.sleep(1)
+        input_element.send_keys(keys)
+
     def test_successful_login(self):
         page = self.__get_page()
-        page.username.send_keys('parand@cafebazaar.ir')
-        page.password.send_keys('12345')
+        self.__send_keys_scrolling(page.username, 'kossar')
+        self.__send_keys_scrolling(page.password, 'likeicare')
         page.button.click()
-        success = self.selenium.find_element_by_css_selector('.success')
-        self.assertEqual(success.text, "Hi Parand!")
+        WebDriverWait(self.selenium, 10).until(
+            lambda driver: driver.find_element_by_tag_name('body'))
+        self.assertIn("user_panel", self.selenium.current_url)
 
     def test_wrong_username_login(self):
         page = self.__get_page()
-        page.username.send_keys('parand')
-        page.password.send_keys('12345')
+        self.__send_keys_scrolling(page.username, 'kossar1')
+        self.__send_keys_scrolling(page.password, 'likeicare')
         page.button.click()
-        error = self.selenium.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, "Wrong username/password.")
+        _ = self.selenium.find_element_by_class_name('alert-danger')
 
     def test_wrong_password_login(self):
         page = self.__get_page()
-        page.username.send_keys('parand@cafebazaar.ir')
-        page.password.send_keys('xxx')
+        self.__send_keys_scrolling(page.username, 'kossar')
+        self.__send_keys_scrolling(page.password, 'wrongpass')
         page.button.click()
-        error = self.selenium.find_element_by_css_selector('.has-error')
-        self.assertEqual(error.text, "Wrong username/password.")
+        _ = self.selenium.find_element_by_class_name('alert-danger')

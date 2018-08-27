@@ -1,7 +1,15 @@
+from importlib import import_module
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 
 import time
+
+from selenium.webdriver.support.select import Select
+
+from dollarial.models import User
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY
+from django.conf import settings
 
 
 class IncreaseCreditTestCase(StaticLiveServerTestCase):
@@ -11,76 +19,69 @@ class IncreaseCreditTestCase(StaticLiveServerTestCase):
         cls.selenium = WebDriver()
         cls.selenium.implicitly_wait(10)
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.selenium.quit()
-        super().tearDownClass()
+    def tearDown(self):
+        self.selenium.quit()
 
+    def login(self):
+        user = User.objects.get(username="kossar_admin")
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        session = SessionStore()
+        session[SESSION_KEY] = User.objects.get(username="kossar_admin").id
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
 
-    @staticmethod
-    def _login(): #TODO
-        pass
+        cookie = {
+            'name': settings.SESSION_COOKIE_NAME,
+            'value': session.session_key,
+            'path': '/',
+        }
 
-    def test_not_loggedin(self): #TODO
-        pass
-
-    def test_not_admin(self):  # TODO
-        pass
-
+        self.selenium.add_cookie(cookie)
+        self.selenium.refresh()
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/charge/'))
 
     def setUp(self):
+        self.user = User.objects.create_superuser(username="kossar_admin",
+                                                  email="k_na@gmail.com",
+                                                  password="likeicare",
+                                                  first_name="kossar",
+                                                  last_name="najafi",
+                                                  phone_number="09147898557",
+                                                  account_number="1234567812345678",
+                                                  notification_preference="S")
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/charge/'))
+
+    def __get_page(self):
+        class IncreaseCredit(object):
+            def __init__(self, selenium):
+                self.selenium = selenium
+                self.amount = self.selenium.find_element_by_id('id_amount')
+                self.currency = Select(self.selenium.find_element_by_id('id_currency'))
+                self.button = self.selenium.find_element_by_xpath("//button[@type='submit']")
+
+        return IncreaseCredit(self.selenium)
+
+    @staticmethod
+    def __get_text(element):
+        return element.get_attribute('textContent')
+
+    def check_wallet(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/'))
+        dollar = self.selenium.find_element_by_xpath(
+            '//*[@id="right-panel"]/div[2]/div/div/div[1]/div/div[2]/div/div[2]/div[2]')
+        self.assertIn("2000", self.__get_text(dollar))
 
-    def __add_data(self):
-
-        #todo add to db
-
-        data = {
-            "wallets": [
-                {"name": "dollar",
-                 "credit": 2200,
-                 },
-                {"name": "rial",
-                 "credit": 1000,
-                 },
-                {"name": "euro",
-                 "credit": 1020
-                 }
-            ]
-        }
-        return data
+    @staticmethod
+    def _fill(page):
+        page.amount.clear()
+        page.amount.send_keys("2000")
+        page.currency.select_by_visible_text("$")
 
     def test_increase_successfully(self):
-        self._login()
-        data = self.__add_data()
-
-        i = 0
-        for d in data:
-            amount = self.selenium.find_element_by_id("cc-price_" + str(i))
-            charge = self.selenium.find_element_by_id("charge_" + str(i))
-            amount.send_keys(1234)
-            charge.click()
-            time.sleep(1)
-            confirm = self.selenium.find_element_by_css_selector("button.btn-primary")
-            confirm.click()
-            success = self.selenium.find_element_by_css_selector('.success')
-            self.assertEqual(success.text, "Increased Successfully")
-            break
-
-    def test_increase_cancel(self):
-        data = self.__add_data()
-
-        i = 0
-        for d in data:
-            amount = self.selenium.find_element_by_id("cc-price_" + str(i))
-            charge = self.selenium.find_element_by_id("charge_" + str(i))
-            amount.send_keys(1234)
-            charge.click()
-            time.sleep(1)
-            cancel = self.selenium.find_element_by_css_selector("button.btn-secondary")
-            cancel.click()
-            success = self.selenium.find_element_by_css_selector('.success')
-            self.assertEqual(success.text, "Cancel")
-            break
-
-
+        self.login()
+        page = self.__get_page()
+        self._fill(page)
+        page.button.click()
+        self.check_wallet()
+        self.assertNotIn("charge", self.selenium.current_url)

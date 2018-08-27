@@ -29,14 +29,14 @@ class ChangeWalletTest(StaticLiveServerTestCase):
                                              phone_number="09147898557",
                                              account_number="1234432112344321",
                                              notification_preference="S")
-        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/charge/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/deposit/'))
 
     def __get_page(self):
         class IndexPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.charge_amount = self.selenium.find_element_by_id('id_amount')
-                self.charge_button = self.selenium.find_element_by_id('charge-button')
+                self.withdraw_amount = self.selenium.find_element_by_id('id_amount')
+                self.withdraw_button = self.selenium.find_element_by_id('deposit-button')
 
         return IndexPage(self.selenium)
 
@@ -57,30 +57,45 @@ class ChangeWalletTest(StaticLiveServerTestCase):
 
         self.selenium.add_cookie(cookie)
         self.selenium.refresh()
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/deposit/'))
+
+    def charge_wallet(self):
         self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/charge/'))
+        self.selenium.find_element_by_id('id_amount').send_keys(45000)
+        self.selenium.find_element_by_id('charge-button').click()
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/deposit/'))
 
     @staticmethod
     def _fill(page):
-        page.charge_amount.clear()
-        page.charge_amount.send_keys('59000')
+        page.withdraw_amount.clear()
+        page.withdraw_amount.send_keys('2000')
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
 
-    def test_charge_wallet_successful(self):
+    def test_withdraw_wallet_successful(self):
         self.login()
+        self.charge_wallet()
         page = self.__get_page()
         self._fill(page)
-        page.charge_button.click()
+        page.withdraw_button.click()
         success = self.selenium.find_element_by_xpath('//*[@id="right-panel"]/div[2]/div/div[1]/div/div')
-        self.assertIn("Wallet is charged successfully.", self.__get_text(success))
+        self.assertIn("Your deposit request is submitted successfully.", self.__get_text(success))
 
-    def test_charge_wallet_unsuccessful(self):
+    def test_withdraw_wallet_more_than_credit(self):
         self.login()
         page = self.__get_page()
         self._fill(page)
-        page.charge_amount.clear()
-        page.charge_button.click()
+        page.withdraw_button.click()
+        success = self.selenium.find_element_by_xpath('//*[@id="right-panel"]/div[2]/div/div[1]/div/div')
+        self.assertIn("Not enough credit.", self.__get_text(success))
+
+    def test_withdraw_wallet_unsuccessful(self):
+        self.login()
+        page = self.__get_page()
+        self._fill(page)
+        page.withdraw_amount.clear()
+        page.withdraw_button.click()
         success_set = self.selenium.find_elements_by_xpath('//*[@id="right-panel"]/div[2]/div/div[1]/div/div')
         self.assertEqual(len(success_set), 0)

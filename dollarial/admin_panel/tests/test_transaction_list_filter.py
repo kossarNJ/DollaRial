@@ -1,13 +1,18 @@
 from importlib import import_module
+from time import sleep
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from selenium.common.exceptions import StaleElementReferenceException
+
 from selenium.webdriver.firefox.webdriver import WebDriver
 from dollarial.models import User
 from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY
 from django.conf import settings
 
+from finance.models import Transaction
 
-class CostumerListTest(StaticLiveServerTestCase):
+
+class TransactionListTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -44,7 +49,21 @@ class CostumerListTest(StaticLiveServerTestCase):
                                              phone_number="09147898557",
                                              account_number="1234567887654321",
                                              notification_preference="S")
-        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/costumers/'))
+        self.__create_transactions()
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/transactions/'))
+
+    @staticmethod
+    def __create_transactions():
+        user_k = User.objects.get(username="kossar")
+        user_s = User.objects.get(username="soroush")
+        transaction1 = Transaction(owner=user_k, amount="300", currency="D")
+        transaction1.save()
+        transaction2 = Transaction(owner=user_k, amount="30", currency="E")
+        transaction2.save()
+        transaction3 = Transaction(owner=user_k, amount="30000", currency="R")
+        transaction3.save()
+        transaction4 = Transaction(owner=user_s, amount="40000", currency="R")
+        transaction4.save()
 
     def login(self):
         user = User.objects.get(username="kossar_admin")
@@ -63,61 +82,64 @@ class CostumerListTest(StaticLiveServerTestCase):
 
         self.selenium.add_cookie(cookie)
         self.selenium.refresh()
-        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/costumers/'))
+        self.selenium.get('%s%s' % (self.live_server_url, '/admin_panel/transactions/'))
 
-    def __get_costumers(self):
-        class CostumerItem(object):
-            def __init__(self, costumer_id, first_name, last_name, account_number, email, phone_number, active):
-                self.costumer_id = costumer_id
-                self.first_name = first_name
-                self.last_name = last_name
-                self.account_number = account_number
-                self.email = email
-                self.phone_number = phone_number
-                self.active = active
+    def __get_transaction(self):
+        class TransactionItem(object):
+            def __init__(self, transaction_id, transaction_amount,
+                         transaction_currency, transaction_wage, transaction_owner,
+                         transaction_status, transaction_deleted):
+                self.transaction_id = transaction_id
+                self.transaction_amount = transaction_amount
+                self.transaction_currency = transaction_currency
+                self.transaction_wage = transaction_wage
+                self.transaction_owner = transaction_owner
+                self.transaction_status = transaction_status
+                self.transaction_deleted = transaction_deleted
 
-        costumers = User.objects.all()
+        transactions = Transaction.objects.all()
         result = []
-        for costumer in costumers:
-            result += [CostumerItem(costumer.id, costumer.first_name, costumer.last_name, costumer.account_number,
-                                    costumer.email, costumer.phone_number, costumer.is_active)]
+        for tr in transactions:
+            result += [TransactionItem(tr.id, tr.amount, tr.currency, tr.wage, tr.owner, tr.status, tr.deleted)]
         return result
 
     def __get_page(self):
-        class CostumerListPage(object):
+        class TransactionListPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
                 self.id = []
-                self.first_name = []
-                self.last_name = []
-                self.account_number = []
-                self.email = []
-                self.phone_number = []
-                self.active = []
+                self.amount = []
+                self.currency = []
+                self.wage = []
+                self.owner = []
+                self.status = []
+                self.deleted = []
                 for i in range(1, 4):
-                    self.id += [self.selenium.find_element_by_id('costumer_id_' + str(i))]
-                    self.first_name += [self.selenium.find_element_by_id('costumer_fname_' + str(i))]
-                    self.last_name += [self.selenium.find_element_by_id('costumer_lname_' + str(i))]
-                    self.account_number += [self.selenium.find_element_by_id('costumer_account_number_' + str(i))]
-                    self.email += [self.selenium.find_element_by_id('costumer_email_' + str(i))]
-                    self.phone_number += [self.selenium.find_element_by_id('costumer_phone_number_' + str(i))]
-                    self.active += [self.selenium.find_element_by_id('costumer_ban_status_' + str(i))]
+                    self.id += [self.selenium.find_element_by_id('transaction_id_' + str(i))]
+                    self.amount += [self.selenium.find_element_by_id('transaction_amount_' + str(i))]
+                    self.currency += [
+                        self.selenium.find_element_by_id('transaction_currency_' + str(i))]
+                    self.wage += [self.selenium.find_element_by_id('transaction_wage_' + str(i))]
+                    self.owner += [self.selenium.find_element_by_id('transaction_owner_' + str(i))]
+                    self.status += [self.selenium.find_element_by_id('transaction_status_' + str(i))]
+                    self.deleted += [self.selenium.find_element_by_id('transaction_deleted_' + str(i))]
+                self.search = self.selenium.find_element_by_xpath("//input[@type='search']")
 
-        return CostumerListPage(self.selenium)
+        return TransactionListPage(self.selenium)
 
     @staticmethod
     def __get_text(element):
         return element.get_attribute('textContent')
 
-    def test_fields_content(self):
+    def test_filter_by_user(self):
         self.login()
-        costumers = self.__get_costumers()
+        self.__create_transactions()
         page = self.__get_page()
-        for i in range(3):
-            self.assertIn(str(costumers[i].costumer_id), self.__get_text(page.id[i]))
-            self.assertIn(costumers[i].first_name, self.__get_text(page.first_name[i]))
-            self.assertIn(costumers[i].last_name, self.__get_text(page.last_name[i]))
-            self.assertIn(str(costumers[i].account_number), self.__get_text(page.account_number[i]))
-            self.assertIn(costumers[i].email, self.__get_text(page.email[i]))
-            self.assertIn(str(costumers[i].phone_number), self.__get_text(page.phone_number[i]))
-            self.assertIn(str(costumers[i].active), self.__get_text(page.active[i]))
+        page.search.send_keys("kossar")
+        sleep(10)
+        for owner in page.owner:
+            try:
+                self.assertIn("kossar", self.__get_text(owner))
+                break
+            except StaleElementReferenceException:
+                pass

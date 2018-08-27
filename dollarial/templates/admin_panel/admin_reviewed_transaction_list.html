@@ -6,35 +6,41 @@
     <link rel="stylesheet" href="{% static 'assets/css/lib/datatable/dataTables.bootstrap.min.css' %}">
 {% endblock stylesheets %}
 
-{% block title %} Reviewers {% endblock title %}
+{% block title %} Reviewed Transactions {% endblock title %}
 
-{% block page_title %} Reviewers {% endblock page_title %}
+{% block page_title %} Reviewed Transactions {% endblock page_title %}
 
 {% block right_panel %}
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <strong class="card-title">Reviewer Table</strong>
+                <strong class="card-title">Reviewed Transactions Table</strong>
             </div>
             <div class="card-body">
                 <table id="bootstrap-data-table" class="table table-striped table-bordered">
                     <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Username</th>
-                        <th>Salary</th>
-                        <th>Is Employee?</th>
+                        <th>Reviewer ID</th>
+                        <th>Transaction ID</th>
+                        <th>Time</th>
+                        <th>Status Before</th>
+                        <th>Action</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for reviewer in clerk_list %}
+                    {% for skipped_item in reviewhistory_list %}
                         <tr>
-                            <td id="reviewer_id_{{ reviewer.id }}"><a
-                                    href="{% url 'admin_reviewer_view' reviewer.id %}">{{ reviewer.id }}</a>
+                            <td id="item_id_{{ skipped_item.id }}">{{ skipped_item.id }}</td>
+                            <td id="item_reviewer_id_{{ skipped_item.id }}">
+                                <a href="{% url 'admin_reviewer_view' skipped_item.reviewer_id %}">Reviewer({{ skipped_item.reviewer_id }})</a>
                             </td>
-                            <td id="reviewer_username_{{ reviewer.id }}">{{ reviewer.user.username }}</td>
-                            <td id="reviewer_salary_{{ reviewer.id }}">{{ reviewer.salary }}</td>
-                            <td id="reviewer_is_employee_{{ reviewer.id }}">{{ reviewer.is_employee }}</td>
+                            <td id="item_transaction_id_{{ skipped_item.id }}">
+                                <a href="{% url 'admin_transaction_view' skipped_item.transaction_id %}">Transaction({{ skipped_item.transaction_id }})</a>
+                            </td>
+                            <td id="item_time_{{ skipped_item.id }}">{{ skipped_item.time }}</td>
+                            <td id="item_status_before_{{ skipped_item.id }}">{{ skipped_item.get_status_before_display }}</td>
+                            <td id="item_action_{{ skipped_item.id }}">{{ skipped_item.get_action_display }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -42,11 +48,10 @@
             </div>
         </div>
     </div>
+
 {% endblock right_panel %}
 
 {% block js_files %}
-
-
     <script src="{% static 'assets/js/lib/data-table/datatables.min.js' %}"></script>
     <script src="{% static 'assets/js/lib/data-table/dataTables.bootstrap.min.js' %}"></script>
     <script src="{% static 'assets/js/lib/data-table/dataTables.buttons.min.js' %}"></script>
@@ -58,7 +63,6 @@
     <script src="{% static 'assets/js/lib/data-table/buttons.print.min.js' %}"></script>
     <script src="{% static 'assets/js/lib/data-table/buttons.colVis.min.js' %}"></script>
     <script src="{% static 'assets/js/lib/data-table/datatables-init.js' %}"></script>
-
 
     <script type="text/javascript">
         $(document).ready(function () {

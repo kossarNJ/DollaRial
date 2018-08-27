@@ -11,49 +11,41 @@
 {% block page_title %} Reports {% endblock page_title %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
-
-                <div class="col-md-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong class="card-title">Reviewer Table</strong>
-                        </div>
-                        <div class="card-body">
-                            <table id="bootstrap-data-table" class="table table-striped table-bordered">
-                                <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Reviewer</th>
-                                    <th>Transaction</th>
-                                    <th>Comment</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for report in reporttransaction_list %}
-                                    <tr>
-                                        <td id="report_id_{{ report.id }}">{{ report.id }}</td>
-                                        <td id="reviewer_id_{{ report.id }}">
-                                            <a href="{% url 'admin_reviewer_view' report.reviewer_id %}">{{ report.reviewer_id }}</a>
-                                        </td>
-                                        <td id="transaction_id_{{ report.id }}">
-                                            <a href="{% url 'admin_transaction_view' report.transaction_id %}">{{ report.transaction_id }}</a>
-                                        </td>
-                                        <td id="report_message_{{ report.id }}">{{ report.comment }}</td>
-                                    </tr>
-                                {% endfor %}
-
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <strong class="card-title">Reviewer Table</strong>
             </div>
-        </div><!-- .animated -->
-    </div><!-- .content -->
+            <div class="card-body">
+                <table id="bootstrap-data-table" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Reviewer</th>
+                        <th>Transaction</th>
+                        <th>Comment</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for report in reporttransaction_list %}
+                        <tr>
+                            <td id="report_id_{{ report.id }}">{{ report.id }}</td>
+                            <td id="reviewer_id_{{ report.id }}">
+                                <a href="{% url 'admin_reviewer_view' report.reviewer_id %}">{{ report.reviewer_id }}</a>
+                            </td>
+                            <td id="transaction_id_{{ report.id }}">
+                                <a href="{% url 'admin_transaction_view' report.transaction_id %}">{{ report.transaction_id }}</a>
+                            </td>
+                            <td id="report_message_{{ report.id }}">{{ report.comment }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 {% endblock right_panel %}
 
 {% block js_files %}

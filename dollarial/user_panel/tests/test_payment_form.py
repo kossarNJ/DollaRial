@@ -1,6 +1,12 @@
+from importlib import import_module
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
 import time
+
+from dollarial.models import User
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY
+from django.conf import settings
 
 
 class PaymentFormTest(StaticLiveServerTestCase):
@@ -16,10 +22,34 @@ class PaymentFormTest(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
+        self.user = User.objects.create_user(username="kossar",
+                                             email="k_na@gmail.com",
+                                             password="likeicare",
+                                             first_name="kossar",
+                                             last_name="najafi",
+                                             phone_number="09147898557",
+                                             account_number="1234432112344321",
+                                             notification_preference="S")
         self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_form'))
 
-    def __login(self):
-        pass
+    def login(self):
+        user = User.objects.get(username="kossar")
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        session = SessionStore()
+        session[SESSION_KEY] = User.objects.get(username="kossar").id
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
+
+        cookie = {
+            'name': settings.SESSION_COOKIE_NAME,
+            'value': session.session_key,
+            'path': '/',
+        }
+
+        self.selenium.add_cookie(cookie)
+        self.selenium.refresh()
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/payment_form/'))
 
     def __get_form_page(self):
         class FormPage(object):
@@ -46,14 +76,12 @@ class PaymentFormTest(StaticLiveServerTestCase):
                 self.unit = self.selenium.find_element_by_xpath("//input[@type='radio' and @value='dollar']")
                 self.account = self.selenium.find_element_by_id('account')
 
-
                 self.amount_sec = self.selenium.find_element_by_id('amount')
                 self.account_sec = self.selenium.find_element_by_id('account')
 
                 self.button = self.selenium.find_element_by_xpath("//input[@class='btn btn-primary']")
 
         return FormPage(self.selenium)
-
 
     def __get_result_page(self):
         class ResultPage(object):
@@ -105,7 +133,6 @@ class PaymentFormTest(StaticLiveServerTestCase):
         time.sleep(0.1)
         page.uni_pass.send_keys('1234')
 
-
     @staticmethod
     def _fill_exam(page):
         _ = page.fname.location_once_scrolled_into_view
@@ -148,7 +175,6 @@ class PaymentFormTest(StaticLiveServerTestCase):
         time.sleep(0.1)
         page.exam_date.send_keys('01/07')
 
-
     @staticmethod
     def _fill_transfer(page):
 
@@ -174,12 +200,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
         time.sleep(0.1)
         page.account_sec.send_keys('1234')
 
-
-
-
     def test_empty_parts_university(self):
 
-        #todo if university
+        # todo if university
         self.__login()
         page = self.__get_form_page()
         fields = [page.fname, page.lname, page.phone, page.uni_link, page.uni_user, page.uni_pass]
@@ -192,13 +215,13 @@ class PaymentFormTest(StaticLiveServerTestCase):
             self.assertEqual(error.text, "Please fill all required fields.")
             field.send_keys(prev_text)
 
-
     def test_empty_parts_exam(self):
 
-        #todo if exam
+        # todo if exam
         self.__login()
         page = self.__get_form_page()
-        fields = [page.fname, page.lname, page.phone, page.passport, page.security, page.exam_center, page.exam_country, page.exam_date, page.exam_pass, page.exam_user]
+        fields = [page.fname, page.lname, page.phone, page.passport, page.security, page.exam_center, page.exam_country,
+                  page.exam_date, page.exam_pass, page.exam_user]
         self._fill_exam(page)
         for field in fields:
             prev_text = self.__get_text(field)
@@ -208,11 +231,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
             self.assertEqual(error.text, "Please fill all required fields.")
             field.send_keys(prev_text)
 
-
-
     def test_empty_parts_transfer(self):
 
-        #todo if transfer
+        # todo if transfer
         self.__login()
         page = self.__get_form_page()
         fields = [page.amount, page.account, page.unit]
@@ -225,11 +246,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
             self.assertEqual(error.text, "Please fill all required fields.")
             field.send_keys(prev_text)
 
-
-
     def test_empty_parts_internal(self):
 
-        #todo if internal
+        # todo if internal
         self.__login()
         page = self.__get_form_page()
         fields = [page.amount_sec, page.account_sec]
@@ -242,22 +261,18 @@ class PaymentFormTest(StaticLiveServerTestCase):
             self.assertEqual(error.text, "Please fill all required fields.")
             field.send_keys(prev_text)
 
-
-
-
-
     def __add_data(self):
-        #TODO add db
+        # TODO add db
         data = {
             "type": "University",
             "amount": "200 $",
             "destination": "Stanford University",
         }
         return data
+
     def test_success_university(self):
 
-
-        #todo if university
+        # todo if university
         data = self.__add_data()
         self.__login()
         page = self.__get_form_page()
@@ -277,12 +292,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Payment is completed")
 
-
-
-
     def test_success_exam(self):
 
-        #todo if exam
+        # todo if exam
         data = self.__add_data()
         self.__login()
         page = self.__get_form_page()
@@ -302,11 +314,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Payment is completed")
 
-
-
     def test_success_transfer(self):
 
-        #todo if transfer
+        # todo if transfer
         data = self.__add_data()
         self.__login()
         page = self.__get_form_page()
@@ -326,12 +336,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Payment is completed")
 
-
-
-
     def test_success_internal(self):
 
-        #todo if internal
+        # todo if internal
         data = self.__add_data()
         self.__login()
         page = self.__get_form_page()
@@ -351,14 +358,13 @@ class PaymentFormTest(StaticLiveServerTestCase):
         success = self.selenium.find_element_by_css_selector('.success')
         self.assertEqual(success.text, "Payment is completed")
 
-
     def __set_charge(self):
-        #todo
+        # todo
         pass
 
     def test_low_charge_exam(self):
 
-        #todo if exam
+        # todo if exam
 
 
         self.__set_charge()
@@ -381,11 +387,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
         error = self.selenium.find_element_by_css_selector('.has-error')
         self.assertEqual(error.text, "Payment can not be done. Charge your account")
 
-
     def test_low_charge_university(self):
 
-
-        #todo if university
+        # todo if university
 
         self.__set_charge()
         data = self.__add_data()
@@ -407,10 +411,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
         error = self.selenium.find_element_by_css_selector('.has-error')
         self.assertEqual(error.text, "Payment can not be done. Charge your account")
 
-
     def test_low_charge_transfer(self):
 
-        #todo if transfer
+        # todo if transfer
 
         self.__set_charge()
         data = self.__add_data()
@@ -432,12 +435,9 @@ class PaymentFormTest(StaticLiveServerTestCase):
         error = self.selenium.find_element_by_css_selector('.has-error')
         self.assertEqual(error.text, "Payment can not be done. Charge your account")
 
-
-
-
     def test_low_charge_internal(self):
 
-        #todo if internal
+        # todo if internal
 
         self.__set_charge()
         data = self.__add_data()

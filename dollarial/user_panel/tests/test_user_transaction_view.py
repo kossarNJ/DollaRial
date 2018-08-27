@@ -1,5 +1,13 @@
+from importlib import import_module
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.firefox.webdriver import WebDriver
+
+from dollarial.models import User
+from django.contrib.auth import SESSION_KEY, BACKEND_SESSION_KEY, HASH_SESSION_KEY
+from django.conf import settings
+
+from finance.models import Transaction
 
 
 class TransactionViewTest(StaticLiveServerTestCase):
@@ -15,20 +23,51 @@ class TransactionViewTest(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def setUp(self):
+        self.user = User.objects.create_user(username="kossar",
+                                             email="k_na@gmail.com",
+                                             password="likeicare",
+                                             first_name="kossar",
+                                             last_name="najafi",
+                                             phone_number="09147898557",
+                                             account_number="1234432112344321",
+                                             notification_preference="S")
+        self.__create_transactions()
+        self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/transactions/1'))
+
+    @staticmethod
+    def __create_transactions():
+        user = User.objects.get(username="kossar")
+        transaction1 = Transaction(owner=user, amount="300", currency="D")
+        transaction1.save()
+
+    def login(self):
+        user = User.objects.get(username="kossar")
+        SessionStore = import_module(settings.SESSION_ENGINE).SessionStore
+        session = SessionStore()
+        session[SESSION_KEY] = User.objects.get(username="kossar").id
+        session[BACKEND_SESSION_KEY] = settings.AUTHENTICATION_BACKENDS[0]
+        session[HASH_SESSION_KEY] = user.get_session_auth_hash()
+        session.save()
+
+        cookie = {
+            'name': settings.SESSION_COOKIE_NAME,
+            'value': session.session_key,
+            'path': '/',
+        }
+
+        self.selenium.add_cookie(cookie)
+        self.selenium.refresh()
         self.selenium.get('%s%s' % (self.live_server_url, '/user_panel/transactions/1'))
 
     def __get_page(self):
         class TransactionViewPage(object):
             def __init__(self, selenium):
                 self.selenium = selenium
-                self.id = self.selenium.find_element_by_id('cc-id')
-                self.type = self.selenium.find_element_by_id('cc-type')
-                self.link = self.selenium.find_element_by_id('link_of_type')
-                self.amount = self.selenium.find_element_by_id('cc-amount')
-                self.owner = self.selenium.find_element_by_id('cc-owner')
-                self.destination = self.selenium.find_element_by_id('cc-destination')
-                self.status = self.selenium.find_element_by_id('cc-status')
-
+                self.owner = self.selenium.find_element_by_id('cc-Owner')
+                self.amount = self.selenium.find_element_by_id('cc-Amount')
+                self.wage = self.selenium.find_element_by_id('cc-Wage')
+                self.deleted = self.selenium.find_element_by_id('cc-Deleted')
+                self.status = self.selenium.find_element_by_id('cc-Status')
 
         return TransactionViewPage(self.selenium)
 
@@ -44,31 +83,13 @@ class TransactionViewTest(StaticLiveServerTestCase):
     def __get_checked(element):
         return element.get_attribute('checked')
 
-    def __get_transaction(self):
-        # TODO: get user from DB
-        class Costumer(object):
-            def __init__(self):
-                self.id = " "
-                self.type = " "
-                self.link = " "
-                self.amount = " "
-                self.owner = " "
-                self.destination = " "
-                self.status = " "
-
-        return Costumer()
-
     def test_fields_of_costumer(self):
+        self.login()
+        self.__create_transactions()
         page = self.__get_page()
-        costumer = self.__get_transaction()
-        self.assertEqual(costumer.id, self.__get_value(page.id))
-        self.assertEqual(costumer.type, self.__get_value(page.type))
-        self.assertEqual(costumer.link, self.__get_value(page.link))
-        self.assertEqual(costumer.amount, self.__get_value(page.amount))
-        self.assertEqual(costumer.owner, self.__get_value(page.owner))
-        self.assertEqual(costumer.destination, self.__get_value(page.destination))
-        self.assertEqual(costumer.status, self.__get_checked(page.status))
-
-    def test_logged_in_user_access(self):
-        # TODO: implement.  user should be able to access this page.
-        pass
+        self.transaction = Transaction.objects.get(id=1)
+        self.assertIn(self.transaction.owner.username, self.__get_value(page.owner))
+        self.assertIn(str(self.transaction.amount), self.__get_value(page.amount))
+        self.assertIn(str(self.transaction.wage), self.__get_value(page.wage))
+        self.assertIn(str(self.transaction.deleted), self.__get_value(page.deleted))
+        self.assertIn(self.transaction.status, self.__get_value(page.status))

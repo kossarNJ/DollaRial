@@ -1,4 +1,5 @@
 from collections import defaultdict, OrderedDict
+import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -14,7 +15,7 @@ from django.views.generic import FormView, UpdateView, ListView
 
 from user_panel.forms import UserUpdateForm
 from dollarial.constants import TransactionConstants
-from dollarial.models import PaymentType, get_dollarial_user, User
+from dollarial.models import PaymentType, User
 from finance import credit_manager
 from finance.models import Exchange, BankPayment, Transaction
 from user_panel.forms import BankPaymentForm, ServicePaymentForm, InternalPaymentForm, ExternalPaymentForm, ExchangeForm
@@ -76,6 +77,8 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
             return self.__respond_in_error(payment_type_id)
 
         form_data = request.session.get(form_data_key)
+        if 'exam_date' in form_data:
+            form_data['exam_date'] = datetime.datetime.strptime(form_data['exam_date'], "%Y-%m-%d")
         del request.session[form_data_key]
         form = self.form_class(payment_type, form_data)
         if not form.is_valid():
@@ -113,9 +116,11 @@ class ServicePaymentConfirmation(LoginRequiredMixin, View):
         payment_object.payment_type = payment_type
         payment_object.currency = payment_type.currency
 
-        final_amount = payment_object.amount
         if payment_type.fixed_price:
             final_amount = payment_type.price
+        else:
+            final_amount = payment_object.amount
+
         final_amount = round(final_amount, 2)
         required_amount = final_amount / (1 - payment_type.wage_percentage / 100.0)
         required_amount = round(required_amount, 2)
@@ -150,7 +155,11 @@ class ServicePayment(LoginRequiredMixin, View):
         payment_type = PaymentType.objects.get(pk=payment_type_id)
         form = self.form_class(payment_type, request.POST)
         if form.is_valid():
-            request.session['service_payment_form_data'] = form.cleaned_data
+            data_to_session = form.cleaned_data
+            for key, value in data_to_session.items():
+                if isinstance(value, datetime.date):
+                    data_to_session[key] = value.strftime('%Y-%m-%d')
+            request.session['service_payment_form_data'] = data_to_session
             return redirect('payment_form_confirmation', payment_type_id)
         else:
             print('form is not valid')
@@ -175,14 +184,20 @@ class InternalPayment(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
-            credit_manager.create_internal_payment(
-                request.user,
-                amount=form.cleaned_data['amount'],
-                destination=form.cleaned_data['destination_account_number']
-            )
+            amount = form.cleaned_data['amount']
+            owner = request.user
 
-            messages.add_message(request, level=messages.SUCCESS, message=self.success_message)
-            return redirect(self.success_url)
+            if credit_manager.check_enough_credit(amount, currency='R', user=owner):
+                credit_manager.create_internal_payment(
+                    owner,
+                    amount=amount,
+                    destination=form.cleaned_data['destination_account_number']
+                )
+                messages.add_message(request, level=messages.SUCCESS, message=self.success_message)
+                return redirect(self.success_url)
+            else:
+                messages.add_message(request, level=messages.ERROR, message="Not enough credit")
+
         return render(request, self.template_name, {'form': form})
 
 
@@ -298,7 +313,7 @@ class DepositCredit(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = 'user_panel/user_deposit.html'
     form_class = BankPaymentForm
     success_url = reverse_lazy('user_index')
-    success_message = "You deposited from ﷼-wallet successfully!"
+    success_message = "Your deposit request is submitted successfully.\nPlease wait till we review your request."
 
     def get_context_data(self, **kwargs):
         data = super().get_context_data(**kwargs)
@@ -310,7 +325,7 @@ class DepositCredit(LoginRequiredMixin, SuccessMessageMixin, FormView):
         bank_payment.currency = Currency.rial.char
         bank_payment.owner = self.request.user
         bank_payment.amount *= -1
-        bank_payment.status = 'A'
+        bank_payment.status = 'I'
 
         with transaction.atomic():
             if credit_manager.check_validity_of_new_transaction(bank_payment):

@@ -18,37 +18,30 @@
 {% endblock right_breadcrumb %}
 
 {% block right_panel %}
-    <div class="content mt-3">
-        <div class="animated fadeIn">
-            <div class="row">
+    <!-- Add Reviewer -->
+    <div class="col-lg-6">
+        <div class="card">
+            <form role="form" method="post">
+                {% csrf_token %}
 
-                <!-- Add Reviewer -->
-                <div class="col-lg-6">
-                    <div class="card">
-                        <form role="form" method="post">
-                            {% csrf_token %}
-
-                            <div class="card-header">
-                                <strong class="card-title">Payment Type {{ paymenttype.id }}</strong>
-                            </div>
-                            <div class="card-body">
-                                <div id="transaction-card">
-                                    <div class="card-body">
-                                        {{ form|bootstrap }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-footer">
-                                <button type="submit" class="btn btn-success btn-sm">
-                                    <i class="fa fa-dot-circle-o"></i> Update Payment Type
-                                </button>
-                            </div>
-                        </form>
+                <div class="card-header">
+                    <strong class="card-title">Payment Type {{ paymenttype.id }}</strong>
+                </div>
+                <div class="card-body">
+                    <div id="transaction-card">
+                        <div class="card-body">
+                            {{ form|bootstrap }}
+                        </div>
                     </div>
                 </div>
-                <!-- Add Reviewer -->
-
-            </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fa fa-dot-circle-o"></i> Update Payment Type
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+    <!-- Add Reviewer -->
+
 {% endblock right_panel %}
