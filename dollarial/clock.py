@@ -7,19 +7,19 @@ from subprocess import call
 
 sched = BlockingScheduler()
 
+
 @sched.scheduled_job('interval', minutes=1)
 def timed_job():
 
-
-    print('This job is run every 1 minutes$$$$')
-
-    #cmd = worker.Command()
-    #opts = {}  # kwargs for your command -- lets you override stuff for testing...
-    #cmd.handle_noargs(**opts)
-
-    #call_command('worker')
     call(["python", "manage.py", "worker"])
-    #send_email_to_user('salam', 'parand1997@gmail.com', 'parand1997@gmail.com', 'bother')
-    print('This job is run every 1 minutes.')
+    print('salary paid')
+
+
+@sched.scheduled_job('interval', minutes=2)
+def timed_job2():
+
+    call(["python", "manage.py", "autofail"])
+    print('trans')
+
 
 sched.start()

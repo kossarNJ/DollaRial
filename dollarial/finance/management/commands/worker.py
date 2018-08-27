@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
-from dollarial.models import Clerk, get_dollarial_company,get_dollarial_user, Company
+from dollarial.models import Clerk, get_dollarial_company,get_dollarial_user
 from dollarial.models import send_email_to_user
 from dollarial.settings import ADMIN_EMAIL
 from finance.models import Transaction
+
 
 def update_salary():
     total = 0
