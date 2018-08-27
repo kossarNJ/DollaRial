@@ -1,4 +1,5 @@
 from enum import Enum
+import pytz
 
 from django.db import models
 from django.utils import timezone
@@ -14,8 +15,8 @@ class Transaction(PolymorphicModel):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="Owner")
     amount = PriceField(verbose_name="Amount")
     currency = CurrencyField(verbose_name="Currency")
-    time = models.DateTimeField(default=timezone.now, verbose_name="Time")
-    deleted = models.BooleanField(default=False, verbose_name="Deleted")
+    time = models.DateTimeField(default=timezone.now, verbose_name="Time", db_index=True)
+    deleted = models.BooleanField(default=False, verbose_name="Deleted", db_index=True)
     wage = PriceField(default=0, verbose_name="Wage")
 
     @property
