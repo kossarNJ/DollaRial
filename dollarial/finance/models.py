@@ -1,5 +1,4 @@
 from enum import Enum
-import pytz
 
 from django.db import models
 from django.utils import timezone
