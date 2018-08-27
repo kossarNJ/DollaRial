@@ -21,7 +21,7 @@ def update_salary():
         salary_objects.append([salary_object, payment_object])
         sum_all += clerk.salary
     if sum_all > company_credit:
-        send_email_to_user("Low Credit", "auto@dollarial.com", ADMIN_EMAIL,
+        #send_email_to_user("Low Credit", "auto@dollarial.com", ADMIN_EMAIL,
                            "Your Credit is not enough to pay the salaries. Your Credit is " +
                            str(company_credit) + " and total salaries is " + str(total))
         raise Exception("Not enough credit to create salaries")
@@ -30,7 +30,7 @@ def update_salary():
         for x,y in salary_objects:
             x.save()
             y.save()
-        send_email_to_user("Salary paid", "auto@dollarial.com", ADMIN_EMAIL, " Clerks Salary Paid. Current credit: " + str(company_credit - sum_all))
+        #send_email_to_user("Salary paid", "auto@dollarial.com", ADMIN_EMAIL, " Clerks Salary Paid. Current credit: " + str(company_credit - sum_all))
 
 
 class Command(BaseCommand):
