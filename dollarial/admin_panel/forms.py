@@ -38,7 +38,7 @@ class PaymentTypeGeneralForm(forms.ModelForm):
     class Meta:
         model = PaymentType
         fields = ("name", "description", "fixed_price", "currency", "price", "max_amount", "min_amount",
-                  "wage_percentage", "transaction_group", "required_fields")
+                  "wage_percentage", "transaction_group", "required_fields", "is_active")
 
 
 class BankPaymentForm(forms.ModelForm):
