@@ -4,7 +4,7 @@ from django.shortcuts import render
 from dollarial.currency import get_dollar_rial_value
 from dollarial.currency import get_euro_rial_value
 from dollarial.models import send_email_to_user
-
+from dollarial.settings import ADMIN_EMAIL
 
 def contact(request):
     if request.method == 'GET':
@@ -16,7 +16,7 @@ def contact(request):
             from_email = form.cleaned_data['email']
             message = form.cleaned_data['message']
             name = form.cleaned_data['name']
-            to_email = "parand1997@gmail.com"
+            to_email = ADMIN_EMAIL
             content = name + ":\n" + message
             send_email_to_user(subject, from_email, to_email, content)
 

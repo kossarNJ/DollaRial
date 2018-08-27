@@ -182,3 +182,5 @@ AUTH_USER_MODEL = "dollarial.User"
 # MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 SEND_GRID = os.environ.get('GRID_API')
+
+ADMIN_EMAIL = "parand1997@gmail.com"
