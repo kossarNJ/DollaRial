@@ -16,7 +16,7 @@ ipython-genutils==0.2.0
 jedi==0.12.1
 kavenegar==1.1.2
 libwapiti==0.2.1
-nltk==3.0.5
+nltk==3.4.5
 numpy==1.13.3
 parso==0.3.1
 pbr==4.0.3
